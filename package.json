@@ -1,8 +1,9 @@
 {
-  "name": "pohja",
+  "name": "ao13front",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@react-three/fiber": "^8.2.2",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.0.1",
     "@testing-library/user-event": "^13.5.0",
@@ -11,18 +12,24 @@
     "@types/node": "^16.11.27",
     "@types/react": "^18.0.5",
     "@types/react-dom": "^18.0.1",
+    "axios": "^0.27.2",
     "express": "^4.17.3",
+    "lodash": "^4.17.21",
     "path": "^0.12.7",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-icons": "^4.3.1",
+    "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1",
+    "socket.io-client": "^4.5.1",
+    "styled-components": "^5.3.5",
+    "three": "^0.143.0",
     "typescript": "^4.6.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "webrtc-adapter": "^8.1.1"
   },
   "scripts": {
-    "start": "node server/index.ts",
-    "devstart": "react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -40,6 +47,9 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.182",
+    "@types/styled-components": "^5.1.25",
+    "@types/three": "^0.143.0",
     "@typescript-eslint/eslint-plugin": "^5.19.0",
     "@typescript-eslint/parser": "^5.19.0",
     "eslint": "^8.13.0",

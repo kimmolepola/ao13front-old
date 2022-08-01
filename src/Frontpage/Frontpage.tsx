@@ -1,0 +1,81 @@
+import React from 'react';
+import styled from 'styled-components';
+import { useNavigate, Routes, Route } from 'react-router-dom';
+import theme from '../theme';
+import Login from './components/Login';
+import ForgottenPassword from './components/ForgottenPassword';
+import CreateAccount from './components/CreateAccount';
+import ResetPassword from './components/ResetPassword';
+import LoggedIn from './components/LoggedIn';
+import AppBar from './components/AppBar';
+
+const Title = styled.button<any>`
+  display: ${(props) => (props.show ? '' : 'none')};
+  cursor: pointer;
+  background: none;
+  border: none;
+  opacity: ${theme.opacity.basic};
+  font-family: ${theme.fontFamily};
+  font-size: 26px;
+  margin-bottom: 26px;
+`;
+
+const Container = styled.div`
+.`;
+
+const Container2 = styled.div<any>`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: ${(props) => (props.appbar ? theme.appbarHeight : '0px')};
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  background: ${theme.colors.mainBackground};
+`;
+
+const Frontpage = ({
+  refreshUser, history, user, setUser,
+}: any) => {
+  const navigate = useNavigate();
+  const handleTitleClick = () => {
+    navigate('/');
+  };
+
+  return (
+    <Container>
+      <AppBar history={history} setUser={setUser} user={user} />
+      <Container2 appbar={user}>
+        <Title show={!user} onClick={handleTitleClick}>
+          AO13
+        </Title>
+        <Routes>
+          <Route path="/resetpassword" element={<ResetPassword />} />
+          <Route path="/forgottenpassword" element={<ForgottenPassword />} />
+          <Route
+            path="/createaccount"
+            element={<CreateAccount user={user} setUser={setUser} history={history} />}
+          />
+          <Route
+            path="*"
+            element={(
+              <>
+                <Login user={user} setUser={setUser} history={history} />
+                <LoggedIn
+                  refreshUser={refreshUser}
+                  user={user}
+                  setUser={setUser}
+                  history={history}
+                />
+              </>
+            )}
+          />
+        </Routes>
+      </Container2>
+    </Container>
+  );
+};
+
+export default Frontpage;

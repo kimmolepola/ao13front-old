@@ -1,0 +1,170 @@
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+
+import theme from '../../theme';
+import { signup } from '../../networking/services/auth.service';
+
+const ErrorMessage = styled.div<any>`
+  max-width: 5cm;
+  display: ${(props) => (props.error ? '' : 'none')};
+  margin: ${theme.margins.large} 0px 0px ${theme.margins.basic};
+  font-size: 12px;
+  color: red;
+`;
+
+const Subtitle = styled.div`
+  margin: ${theme.margins.large} ${theme.margins.basic};
+  opacity: ${theme.opacity.basic};
+`;
+
+const Input = styled.input<any>`
+  margin: ${theme.margins.basic};
+  ${theme.basicInput}
+  height: 30px;
+  ${(props) => props.error && 'border-color: red;'}
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
+
+const SubmitButton = styled.button`
+  ${theme.secondaryButton}
+  height: 30px;
+  margin: ${theme.margins.basic};
+`;
+
+const Container = styled.div`
+  flex-direction: column;
+`;
+
+const CreateAccount = ({ user, history, setUser }: any) => {
+  const navigate = useNavigate();
+  const [validation, setValidation] = useState<any>({
+    dirty: false,
+    state: 'open',
+    create: null,
+    email: null,
+    password: null,
+    repeatPassword: null,
+  });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [repeatPassword, setRepeatPassword] = useState('');
+
+  const resetValidation = () => {
+    if (validation.dirty) {
+      setValidation({
+        dirty: false,
+        state: 'open',
+        create: null,
+        email: null,
+        password: null,
+        repeatPassword: null,
+      });
+    }
+  };
+
+  useEffect(() => {
+    const doit = () => {
+      if (user) {
+        navigate('/');
+      }
+    };
+    doit();
+  }, [user]);
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    const newValidation = {
+      dirty: true,
+      state: 'open',
+      create: null,
+      email: email.match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/)
+        ? null
+        : 'invalid email address',
+      password: password !== '' ? null : 'invalid password',
+      repeatPassword: password === repeatPassword ? null : 'password mismatch',
+    };
+    if (
+      !newValidation.email
+      && !newValidation.password
+      && !newValidation.repeatPassword
+    ) {
+      newValidation.state = 'loading';
+      setValidation(newValidation);
+      const { data, error } = await signup({ email, password });
+      newValidation.create = error;
+      newValidation.state = 'open';
+      if (!error) {
+        setUser(data);
+      }
+    }
+    setPassword('');
+    setRepeatPassword('');
+    setValidation({ ...newValidation });
+  };
+
+  const handleEmailInput = (e: any) => {
+    resetValidation();
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordInput = (e: any) => {
+    resetValidation();
+    setPassword(e.target.value);
+  };
+
+  const handleRepeatPasswordInput = (e: any) => {
+    resetValidation();
+    setRepeatPassword(e.target.value);
+  };
+
+  return (
+    <Container>
+      <Subtitle>
+        {validation.state !== 'loading' ? 'Create account' : 'Creating...'}
+      </Subtitle>
+      <Form onSubmit={handleSubmit}>
+        <ErrorMessage error={validation.create}>
+          {validation.create}
+        </ErrorMessage>
+        <ErrorMessage error={validation.email}>{validation.email}</ErrorMessage>
+        <Input
+          type="email"
+          error={validation.email}
+          onChange={handleEmailInput}
+          value={email}
+          placeholder="email"
+        />
+        <ErrorMessage error={validation.password}>
+          {validation.password}
+        </ErrorMessage>
+        <Input
+          error={validation.password}
+          onChange={handlePasswordInput}
+          type="password"
+          value={password}
+          placeholder="password"
+        />
+        <ErrorMessage error={validation.repeatPassword}>
+          {validation.repeatPassword}
+        </ErrorMessage>
+        <Input
+          error={validation.repeatPassword}
+          onChange={handleRepeatPasswordInput}
+          type="password"
+          value={repeatPassword}
+          placeholder="repeat password"
+        />
+        <SubmitButton disabled={validation.state === 'loading'} type="submit">
+          Create
+        </SubmitButton>
+      </Form>
+    </Container>
+  );
+};
+
+export default CreateAccount;
