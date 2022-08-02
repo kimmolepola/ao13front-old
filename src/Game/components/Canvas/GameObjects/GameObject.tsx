@@ -13,18 +13,12 @@ const GameObject = ({
       }
     }}
   >
-    <meshBasicMaterial attach="material" transparent opacity={0} />
-    <meshBasicMaterial attach="material" transparent opacity={0} />
-    <meshBasicMaterial attach="material" transparent opacity={0} />
-    <meshBasicMaterial attach="material" transparent opacity={0} />
     <meshBasicMaterial
-      attach="material"
+      attach="material-4"
       color={ids && objectId === id ? 'orange' : undefined}
       transparent
       map={map}
     />
-    <meshBasicMaterial attach="material" transparent opacity={0} />
-    <meshBasicMaterial attach="material" transparent opacity={0} />
 
     <boxGeometry
       args={[

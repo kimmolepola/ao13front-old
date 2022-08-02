@@ -25,6 +25,7 @@
     }
   },
   "rules": {
+    "no-lone-blocks": "warn",
     "no-plusplus": "off",
     "no-restricted-syntax": "off",
     "no-console": "off",
