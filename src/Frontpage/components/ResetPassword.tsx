@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
-import theme from '../../theme';
+import theme from '../../theme.js';
 import { resetPassword } from '../../networking/services/auth.service';
 
 const ErrorMessage = styled.div<any>`
@@ -39,7 +39,7 @@ const Button = styled.button<any>`
   flex: 1;
   ${theme.basicButton}
   height: 30px;
-  background-color: ${(props) => props.background || theme.colors.elementHighlights.button1};
+  background-color: ${(props) => props.background || theme.colors.highlight1};
   color: ${(props) => props.color || 'white'};
 `;
 

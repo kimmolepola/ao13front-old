@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate, Routes, Route } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+
 import { checkOkToStart } from '../../networking/services/user.service';
-import theme from '../../theme';
+import theme from '../../theme.js';
 import Settings from './Settings';
+
+import * as atoms from '../../atoms';
 
 const Score = styled.div<any>`
   display: ${(props) => (props.show ? 'flex' : 'none')};
@@ -24,11 +28,11 @@ const RefreshButton = styled.button<any>`
   box-shadow: none;
   border: none;
   margin: ${theme.margins.large};
-  color: ${theme.colors.elementHighlights.button1};
+  color: ${theme.colors.highlight1};
   background-color: ${(props) => props.background || 'transparent'};
   :active {
     background: ${(props) => props.background || 'transparent'};
-    color: ${theme.colors.elementHighlights.button1};
+    color: ${theme.colors.highlight1};
   }
   :disabled {
     background-color: transparent;
@@ -45,7 +49,7 @@ const Button = styled.button<any>`
   min-height: 40px;
   min-width: 100px;
   margin: ${theme.margins.basic};
-  background-color: ${(props) => props.background || theme.colors.elementHighlights.button1};
+  background-color: ${(props) => props.background || theme.colors.highlight1};
 `;
 
 const Form = styled.form`
@@ -60,8 +64,9 @@ const Container = styled.div<any>`
 `;
 
 const LoggedIn = ({
-  refreshUser, user, setUser, history,
+  refreshUser,
 }: any) => {
+  const user = useRecoilValue(atoms.user);
   const navigate = useNavigate();
   const [errorText, setErrorText] = useState<any>();
   const [loading, setLoading] = useState(false);
@@ -94,7 +99,7 @@ const LoggedIn = ({
       <Routes>
         <Route
           path="/settings"
-          element={<Settings history={history} user={user} setUser={setUser} />}
+          element={<Settings />}
         />
         <Route
           path="*"

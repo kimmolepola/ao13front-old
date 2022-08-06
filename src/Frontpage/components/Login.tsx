@@ -1,95 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
 
-import theme from '../../theme';
-import { guestLogin, login } from '../../networking/services/auth.service';
+import { login } from '../../networking/services/auth.service';
 
-const ErrorMessage = styled.div<any>`
-  max-width: 5cm;
-  display: ${(props) => (props.error ? '' : 'none')};
-  margin: ${theme.margins.large} 0px 0px ${theme.margins.basic};
-  font-size: 12px;
-  color: red;
-`;
+import * as atoms from '../../atoms';
+import * as types from '../types';
+import * as hooks from '../hooks';
 
-const Line = styled.div`
-  margin: 20px ${theme.margins.basic} 20px ${theme.margins.basic};
-  border-top: ${theme.borders.basic};
-  height: 1px;
-`;
-
-const ClickableText = styled.button`
-  color: ${(props) => props.color};
-  cursor: pointer;
-  background: none;
-  border: none;
-  margin: ${theme.margins.large};
-`;
-
-const Button = styled.button<any>`
-  ${theme.basicButton}
-  min-height: 30px;
-  margin: ${theme.margins.basic};
-  background-color: ${(props) => props.background || theme.colors.elementHighlights.button1};
-`;
-
-const Input = styled.input<any>`
-  ${theme.basicInput}
-  height: 30px;
-  margin: ${theme.margins.basic};
-  ${(props) => props.error && 'border-color: red;'}
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Container = styled.div<any>`
-  display: ${(props) => (props.show ? 'flex' : 'none')};
-  flex-direction: column;
-`;
-
-const Login = ({ user, setUser, history }: any) => {
+const Login = () => {
+  const setUser = useSetRecoilState(atoms.user);
   const navigate = useNavigate();
-  const [validation, setValidation] = useState<any>({
-    dirty: false,
-    state: 'open',
-    login: null,
-    username: null,
-    password: null,
-  });
+
+  const [validation, setValidation, resetValidation] = hooks.useValidation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const resetValidation = () => {
-    if (validation.dirty) {
-      setValidation({
-        dirty: false,
-        state: 'open',
-        login: null,
-        username: null,
-        password: null,
-      });
-    }
-  };
-
-  const handleSubmit = async (e: any) => {
+  const onSubmit = useCallback(async (e: any) => {
     e.preventDefault();
     const newValidation = {
       dirty: true,
-      state: 'open',
-      login: null,
-      username: username.length ? null : 'required',
-      password: password.length ? null : 'required',
+      state: types.ValidationState.OPEN,
+      login: undefined,
+      username: username.length ? undefined : 'Required',
+      password: password.length ? undefined : 'Required',
     };
     if (!newValidation.username && !newValidation.password) {
-      newValidation.state = 'loading';
+      newValidation.state = types.ValidationState.LOADING;
       setValidation(newValidation);
       const { data, error } = await login({ username, password });
       newValidation.login = error;
-      newValidation.state = 'open';
+      newValidation.state = types.ValidationState.OPEN;
       if (!error) {
         setUser(data);
         setUsername('');
@@ -97,92 +38,73 @@ const Login = ({ user, setUser, history }: any) => {
     }
     setPassword('');
     setValidation({ ...newValidation });
-  };
+  }, [password, setUser, username, setValidation]);
 
-  const handleUsernameInput = (e: any) => {
+  const onChangeUsername = useCallback((e: any) => {
     resetValidation();
     setUsername(e.target.value);
-  };
+  }, [resetValidation]);
 
-  const handlePasswordInput = (e: any) => {
+  const onChangePassword = useCallback((e: any) => {
     resetValidation();
     setPassword(e.target.value);
-  };
+  }, [resetValidation]);
 
-  const handleForgottenPasswordClick = () => {
-    navigate('/forgottenpassword');
-  };
-
-  const handleCreateAccountClick = () => {
+  const onClickCreate = useCallback(() => {
     navigate('/createaccount');
-  };
-
-  const handleGuestClick = async () => {
-    const { data, error } = await guestLogin();
-    console.log('--guest login, data:', data);
-    if (!error) {
-      setUser(data);
-    }
-  };
+  }, [navigate]);
 
   return (
-    <Container show={!user}>
-      <ErrorMessage error={validation.login}>{validation.login}</ErrorMessage>
-      <Form onSubmit={handleSubmit}>
-        <ErrorMessage error={validation.username}>
-          {validation.username}
-        </ErrorMessage>
-        <Input
+    <div className="flex flex-col text-sm gap-4 items-center w-full">
+      {validation.login && <div className="text-red-400">{validation.login}</div>}
+      <form onSubmit={onSubmit} className="flex flex-col gap-2 w-full max-w-[5cm]">
+        {validation.username && <div className="text-red-400">{validation.username}</div>}
+        <input
+          className={`pl-2 h-8 border ${validation.username && 'border-red-400'}`}
           autoCapitalize="none"
-          error={validation.username}
-          onChange={handleUsernameInput}
+          onChange={onChangeUsername}
           value={username}
           placeholder="username or email"
         />
-        <ErrorMessage error={validation.password}>
-          {validation.password}
-        </ErrorMessage>
-        <Input
+        {validation.password && <div className="text-red-400">{validation.password}</div>}
+        <input
+          className={`pl-2 h-8 border ${validation.password && 'border-red-400'}`}
           type="password"
-          error={validation.password}
-          onChange={handlePasswordInput}
+          onChange={onChangePassword}
           value={password}
           placeholder="password"
         />
-        <Button disabled={validation.state === 'loading'} type="submit">
+
+        <button
+          className="h-8 border text-gray-100 bg-rose-900 hover:border-zinc-400 active:bg-rose-700"
+          disabled={validation.state === types.ValidationState.LOADING}
+          type="submit"
+        >
           Log in
-        </Button>
-      </Form>
-      <ClickableText
-        color={theme.colors.elementHighlights.button1}
-        onClick={handleForgottenPasswordClick}
+        </button>
+      </form>
+      <Link
+        className="text-orange-800 hover:underline active:text-orange-500"
+        to="/forgottenpassword"
       >
         Forgotten password?
-      </ClickableText>
-      <Line>&nbsp;</Line>
-      <Button
-        background={theme.colors.elementHighlights.button2}
-        onClick={handleCreateAccountClick}
+      </Link>
+      <button
+        className="h-8 border text-gray-50 bg-orange-500 hover:border-zinc-400 active:bg-orange-400 w-full max-w-[5cm]"
+        type="button"
+        onClick={onClickCreate}
       >
         Create account
-      </Button>
-      <ClickableText
-        color={theme.colors.elementHighlights.button1}
-        onClick={handleGuestClick}
-      >
-        Sign in as a guest
-      </ClickableText>
-      <div style={{ marginTop: '1cm', maxWidth: '5cm' }}>
+      </button>
+      <div className="max-x-[5cm] text-zinc-900">
         for demo use please use
-        {' '}
         <br />
         username: demo
-        {' '}
         <br />
         password: demo
         <br />
       </div>
-    </Container>
+    </div>
   );
 };
 

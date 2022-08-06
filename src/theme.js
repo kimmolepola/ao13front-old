@@ -1,44 +1,39 @@
 const borderRadius = '2px';
 const borderWidth = '1px';
-const shadow = '0px 0px 1px 0px #A0A0A0';
 const colors = {
-  mainBackground: 'mistyrose',
-  elementHighlights: {
-    button1: 'brown',
-    button2: 'tomato',
-  },
-  elementBackgrounds: {
-    strong: 'lightblue',
-    medium: '#A0A0A0',
-    light: 'gainsboro',
-    verylight: '#F0F0F0',
-  },
+  bgMain: '#FFE4E1',
+  bgStrong: '#ADD8E6',
+  bgMedium: '#A0A0A0',
+  bgLight: '#DCDCDC',
+  bgVerylight: '#F0F0F0',
+  highlight1: '#A52A2A',
+  highlight2: '#FF6347',
 };
-
-const border = `${borderWidth} solid ${colors.elementBackgrounds.light}`;
+const shadow = `0px 0px 1px 0px ${colors.bgMedium}`;
+const border = `${borderWidth} solid ${colors.bgLight}`;
 
 const basicButton = `
   cursor: pointer;
   color: white;
-  background: ${colors.elementHighlights.button1};
+  background: ${colors.highlight1};
   box-shadow: ${shadow};
   border: ${border};
   border-radius: ${borderRadius};
   :active {
-    color: ${colors.elementBackgrounds.verylight};
+    color: ${colors.bgVerylight};
     background: black;
   }
   :focus {
-    border-color: ${colors.elementBackgrounds.strong};
+    border-color: ${colors.bgStrong};
     outline: none;
   }
   :hover:not(:focus) {
-    border-color: ${colors.elementBackgrounds.medium};
+    border-color: ${colors.bgMedium};
   }
   :disabled {
-    background-color: ${colors.elementBackgrounds.light};
+    background-color: ${colors.bgLight};
     :hover:not(:focus) {
-      border-color: ${colors.elementBackgrounds.light};
+      border-color: ${colors.bgLight};
     }
     cursor: auto;
   }
@@ -46,7 +41,7 @@ const basicButton = `
 
 const secondaryButton = `
   ${basicButton}
-  background: ${colors.elementHighlights.button2};
+  background: ${colors.highlight2};
 `;
 
 const theme = {
@@ -68,11 +63,11 @@ const theme = {
     border: ${border};
     border-radius: ${borderRadius};
     :focus {
-      border-color: ${colors.elementBackgrounds.strong};
+      border-color: ${colors.bgStrong};
       outline: none;
     }
     :hover:not(:focus) {
-      border-color: ${colors.elementBackgrounds.medium};
+      border-color: ${colors.bgMedium};
     }
     ::placeholder {
       /* Chrome, Firefox, Opera, Safari 10.1+ */
@@ -94,4 +89,4 @@ const theme = {
   borderRadius,
 };
 
-export default theme;
+module.exports = theme;

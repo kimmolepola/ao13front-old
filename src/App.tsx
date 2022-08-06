@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import {
-  useNavigate,
-  BrowserRouter,
   Routes,
   Route,
 } from 'react-router-dom';
+import {
+  useRecoilState,
+} from 'recoil';
+
 import Game from './Game/Game';
 import Frontpage from './Frontpage/Frontpage';
 import { setToken } from './networking/services/auth.service';
 import { getUser } from './networking/services/user.service';
 
-const Container = () => {
-  const history = useNavigate();
-  const [user, setUser] = useState<any>();
+import * as atoms from './atoms';
+
+const App = () => {
+  const [user, setUser] = useRecoilState(atoms.user);
 
   const refreshUser = async () => {
     console.log('refreshUser');
@@ -50,26 +53,17 @@ const Container = () => {
 
   return (
     <Routes>
-      <Route path="/play" element={<Game refreshUser={refreshUser} history={history} user={user} />} />
+      <Route path="/play" element={<Game refreshUser={refreshUser} />} />
       <Route
         path="*"
         element={(
           <Frontpage
             refreshUser={refreshUser}
-            history={history}
-            setUser={setUser}
-            user={user}
           />
         )}
       />
     </Routes>
   );
 };
-
-const App = () => (
-  <BrowserRouter>
-    <Container />
-  </BrowserRouter>
-);
 
 export default App;

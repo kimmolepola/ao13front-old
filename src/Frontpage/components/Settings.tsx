@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 
 import { updateUsername } from '../../networking/services/user.service';
-import theme from '../../theme';
+import theme from '../../theme.js';
+
+import * as atoms from '../../atoms';
 
 const Arrow = styled.button<any>`
   display: ${(props) => (props.show ? 'flex' : 'none')};
@@ -13,7 +16,7 @@ const Arrow = styled.button<any>`
   font-family: ${theme.fontFamily};
   font-size: 50px;
   font-weight: bold;
-  color: ${theme.colors.elementHighlights.button1};
+  color: ${theme.colors.highlight1};
   position: absolute;
   bottom: 33%;
   left: 0px;
@@ -45,7 +48,7 @@ const Button = styled.button<any>`
   ${theme.basicButton}
   min-height: 30px;
   margin: ${theme.margins.basic};
-  background-color: ${(props) => props.background || theme.colors.elementHighlights.button1};
+  background-color: ${(props) => props.background || theme.colors.highlight1};
 `;
 
 const Form = styled.form<any>`
@@ -69,7 +72,8 @@ const stateText = (state: any) => {
   }
 };
 
-const Settings = ({ history, user, setUser }: any) => {
+const Settings = () => {
+  const [user, setUser] = useRecoilState(atoms.user);
   const navigate = useNavigate();
   const [validation, setValidation] = useState<any>({
     dirty: false,

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import theme from '../../../../../theme';
+import theme from '../../../../../theme.js';
 import appContext from '../../../../../context/appContext';
 
 const Avatar = styled.img`
@@ -24,7 +24,7 @@ const Text = styled.div`
 
 const Divider = styled.hr`
   border-style: solid;
-  border-color: ${theme.colors.elementBackgrounds.verylight} transparent
+  border-color: ${theme.colors.bgVerylight} transparent
     transparent;
   margin: 0;
 `;
@@ -35,12 +35,12 @@ const Container = styled.div`
   }
 
   ::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 8px ${theme.colors.elementBackgrounds.light};
+    -webkit-box-shadow: inset 0 0 8px ${theme.colors.bgLight};
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: ${theme.colors.elementBackgrounds.medium};
-    outline: 1px solid ${theme.colors.elementBackgrounds.light};
+    background-color: ${theme.colors.bgMedium};
+    outline: 1px solid ${theme.colors.bgLight};
   }
   display: flex;
   flex-direction: column-reverse;

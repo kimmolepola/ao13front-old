@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
 import Canvas from './components/Canvas';
 import AppContext from '../context/appContext';
@@ -11,6 +12,8 @@ import { subscribeToKeyboardEvents } from './controls';
 import { sendDataOnOrderedChannelsAndRelay } from '../networking/services/game.service';
 import { saveGameState } from '../networking/services/gameObject.service';
 import UI from './components/UI';
+
+import * as atoms from '../atoms';
 
 const mainUpdatePeers = (
   idsNew: any,
@@ -56,7 +59,9 @@ const cleanup = (idsNew: any, objects: any) => {
   objects.current = objectsNew;
 };
 
-const Game = ({ refreshUser, history, user }: any) => {
+const Game = ({ refreshUser }: any) => {
+  console.log('--RENDER GAME');
+  const user = useRecoilValue(atoms.user);
   const navigate = useNavigate();
   if (!user) {
     navigate('/');
@@ -155,7 +160,6 @@ const Game = ({ refreshUser, history, user }: any) => {
     username: user.username,
     refreshUser,
     quit,
-    history,
     score,
     windowHeight,
     objects,
@@ -170,7 +174,6 @@ const Game = ({ refreshUser, history, user }: any) => {
     user.username,
     refreshUser,
     quit,
-    history,
     score,
     windowHeight,
     objects,

@@ -1,144 +1,88 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { useMemo, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import theme from '../../theme';
 import { requestPasswordReset } from '../../networking/services/auth.service';
 
-const ErrorMessage = styled.div<any>`
-  max-width: 5cm;
-  display: ${(props) => (props.error ? '' : 'none')};
-  margin: ${theme.margins.large} 0px 0px ${theme.margins.basic};
-  font-size: 12px;
-  color: red;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-`;
-
-const Subtitle = styled.div`
-  margin: ${theme.margins.large} ${theme.margins.basic};
-  opacity: ${theme.opacity.basic};
-  word-break: normal;
-`;
-
-const Input = styled.input<any>`
-  margin: ${theme.margins.basic};
-  ${theme.basicInput}
-  height: 30px;
-  ${(props) => props.error && 'border-color: red;'}
-`;
-
-const Form = styled.form<any>`
-  display: ${(props) => (props.show ? 'flex' : 'none')};
-  flex-direction: column;
-`;
-
-const Button = styled.button<any>`
-  margin: ${theme.margins.basic};
-  flex: 1;
-  ${theme.basicButton}
-  height: 30px;
-  background-color: ${(props) => props.background || theme.colors.elementHighlights.button1};
-  color: ${(props) => props.color || 'white'};
-`;
-
-const Container = styled.div`
-  flex-direction: column;
-`;
-
-const stateText = (state: any) => {
-  switch (state) {
-    case 'loading':
-      return 'Please wait...';
-    case 'success':
-      return 'Email sent (check spam)';
-    default:
-      return 'Enter your username or email';
-  }
-};
+import * as types from '../types';
+import * as hooks from '../hooks';
 
 const ForgottenPassword = () => {
   const navigate = useNavigate();
-  const [validation, setValidation] = useState<any>({
-    dirty: false,
-    state: 'open',
-    request: null,
-    username: null,
-  });
+  const [validation, setValidation, resetValidation] = hooks.useValidation();
   const [username, setUsername] = useState('');
 
-  const resetValidation = () => {
-    if (validation.dirty) {
-      setValidation({
-        dirty: false,
-        state: 'open',
-        request: null,
-        username: null,
-      });
+  const stateText = useMemo(() => {
+    switch (validation.state) {
+      case types.ValidationState.LOADING:
+        return 'Please wait...';
+      case types.ValidationState.SUCCESS:
+        return 'Email sent (check spam)';
+      default:
+        return 'Enter your username or email';
     }
-  };
+  }, [validation.state]);
 
-  const handleSubmit = async (e: any) => {
+  const onSubmit = useCallback(async (e: any) => {
     e.preventDefault();
     const newValidation = {
       dirty: true,
-      state: 'open',
-      request: null,
-      username: username.length ? null : 'required',
+      state: types.ValidationState.OPEN,
+      request: undefined,
+      username: username.length ? undefined : 'required',
     };
     if (!newValidation.username) {
-      newValidation.state = 'loading';
+      newValidation.state = types.ValidationState.LOADING;
       setValidation(newValidation);
-      const { data, error } = await requestPasswordReset({ username });
+      const { error } = await requestPasswordReset({ username });
       newValidation.request = error;
-      newValidation.state = error ? 'open' : 'success';
+      newValidation.state = error ? types.ValidationState.OPEN : types.ValidationState.SUCCESS;
       setUsername('');
     }
     setValidation({ ...newValidation });
-  };
+  }, [setValidation, username]);
 
-  const handleUsernameInput = (e: any) => {
+  const onChangeUsername = useCallback((e: any) => {
     resetValidation();
     setUsername(e.target.value);
-  };
+  }, [resetValidation]);
 
-  const handleCancelClick = () => {
+  const onClickCancel = () => {
     navigate('/login');
   };
 
   return (
-    <Container>
-      <Subtitle>{stateText(validation.state)}</Subtitle>
-      <ErrorMessage error={validation.request}>
-        {validation.request}
-      </ErrorMessage>
-      <Form show={validation.state !== 'success'} onSubmit={handleSubmit}>
-        <ErrorMessage error={validation.username}>
-          {validation.username}
-        </ErrorMessage>
-        <Input
-          autoCapitalize="none"
-          error={validation.username}
-          onChange={handleUsernameInput}
-          value={username}
-          placeholder="username or email"
-        />
-        <ButtonContainer>
-          <Button
-            onClick={handleCancelClick}
-            color={theme.colors.elementHighlights.button1}
-            background="transparent"
-            type="button"
-          >
-            Cancel
-          </Button>
-          <Button disabled={validation.state === 'loading'} type="submit">
-            Submit
-          </Button>
-        </ButtonContainer>
-      </Form>
-    </Container>
+    <div className="flex flex-col text-sm gap-4 items-center w-full">
+      {stateText}
+      {validation.request && <div className="text-red-400">{validation.request}</div>}
+      {validation.state !== types.ValidationState.SUCCESS
+        && (
+          <form onSubmit={onSubmit} className="flex flex-col gap-2 w-full max-w-[5cm]">
+            {validation.username && <div className="text-red-400">{validation.username}</div>}
+            <input
+              className={`pl-2 h-8 border ${validation.username && 'border-red-400'}`}
+              autoCapitalize="none"
+              onChange={onChangeUsername}
+              value={username}
+              placeholder="username or email"
+            />
+            <div className="flex justify-between gap-2">
+              <button
+                className="h-8 border border-rose-900 text-rose-900 bg-transparent grow"
+                onClick={onClickCancel}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={validation.state === types.ValidationState.LOADING}
+                type="submit"
+                className="h-8 border text-gray-50 bg-rose-900 grow"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        )}
+    </div>
   );
 };
 

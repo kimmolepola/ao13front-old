@@ -17,7 +17,8 @@
   },
   "plugins": [
     "react",
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "react-hooks"
   ],
   "settings": {
     "import/resolver": {
@@ -25,11 +26,18 @@
     }
   },
   "rules": {
+    "import/prefer-default-export": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": [
+      "error"
+    ],
     "no-lone-blocks": "warn",
     "no-plusplus": "off",
     "no-restricted-syntax": "off",
     "no-console": "off",
-    "no-unused-vars": "warn",
+    "react/require-default-props": "off",
     "react/react-in-jsx-scope": "off",
     "import/extensions": [
       "error",
@@ -37,6 +45,12 @@
       {
         "ts": "never",
         "tsx": "never"
+      }
+    ],
+    "react-hooks/exhaustive-deps": [
+      "warn",
+      {
+        "additionalHooks": "(useRecoilCallback|useRecoilTransaction_UNSTABLE)"
       }
     ],
     "react/jsx-filename-extension": [

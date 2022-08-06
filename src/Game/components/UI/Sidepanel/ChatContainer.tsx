@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import Chat from './ChatContainer/Chat';
 import InputForm from './ChatContainer/InputForm';
-import theme from '../../../../theme';
+import theme from '../../../../theme.js';
 
 const Container = styled.div`
-  background: ${theme.colors.elementBackgrounds.verylight};
+  background: ${theme.colors.bgVerylight};
   box-shadow: ${theme.shadow};
   border: ${theme.borders.basic};
   border-radius: ${theme.borderRadius};

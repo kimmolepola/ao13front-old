@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import theme from '../../../theme';
+import theme from '../../../theme.js';
 import appContext from '../../../context/appContext';
 import { handlePressed, handleReleased } from '../../controls';
 
@@ -10,7 +10,7 @@ const Connecting = styled.div<any>`
   right: max(calc(50% - 150px), 0px);
   bottom: max(calc(50% - 75px), 0px);
   left: max(calc(50% - 150px), 0px);
-  background: ${theme.colors.elementBackgrounds.verylight};
+  background: ${theme.colors.bgVerylight};
   display: ${(props) => (props.show ? 'flex' : 'none')};
   justify-content: center;
   align-items: center;
@@ -55,8 +55,8 @@ const Button = styled.button`
   padding: 0px;
   display: flex;
   opacity: 85%;
-  color: ${theme.colors.elementHighlights.button1};
-  border-color: ${theme.colors.elementHighlights.button1};
+  color: ${theme.colors.highlight1};
+  border-color: ${theme.colors.highlight1};
   align-items: center;
   justify-content: center;
   font-size: 22px;

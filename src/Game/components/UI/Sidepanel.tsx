@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom';
 
 import ChatContainer from './Sidepanel/ChatContainer';
 import appContext from '../../../context/appContext';
-import theme from '../../../theme';
+import theme from '../../../theme.js';
 
 const Text = styled.div`
   margin: ${theme.margins.basic};
   opacity: ${theme.opacity.basic};
   font-family: ${theme.fontFamily};
   font-size: 16px;
-  color: ${theme.colors.elementHighlights.button1};
+  color: ${theme.colors.highlight1};
   font-weight: bold;
   user-select: none;
 `;
@@ -25,13 +25,13 @@ const Button = styled.button`
   width: 40px;
   ${theme.basicButton}
   background-color: transparent;
-  color: ${theme.colors.elementHighlights.button1};
+  color: ${theme.colors.highlight1};
   font-weight: bold;
 `;
 
 const InfoBox = styled.div`
   margin-bottom: ${theme.margins.basic};
-  color: ${theme.colors.elementBackgrounds.medium};
+  color: ${theme.colors.bgMedium};
   background: white;
   padding: 2px;
   font-family: ${theme.fontFamily};
@@ -62,7 +62,7 @@ const Container = styled.div<any>`
   flex-direction: column;
   justify-content: space-between;
   padding: 3px;
-  background: ${theme.colors.mainBackground};
+  background: ${theme.colors.bgMain};
 `;
 
 const Sidepanel = () => {
@@ -71,7 +71,6 @@ const Sidepanel = () => {
   const {
     refreshUser,
     quit,
-    history,
     score,
     windowHeight,
     id,
