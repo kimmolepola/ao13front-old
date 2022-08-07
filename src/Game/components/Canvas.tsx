@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import styled from 'styled-components';
 import Objects from './Canvas/GameObjects';
 import Loop from './Canvas/Loop';
-import theme from '../../theme.js';
+import theme from '../../themets.js';
 
 const Container = styled.div<any>`
   position: absolute;

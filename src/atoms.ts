@@ -10,5 +10,3 @@ export const user = atom<{
   key: 'user',
   default: undefined,
 });
-
-export const somethingElse = {};

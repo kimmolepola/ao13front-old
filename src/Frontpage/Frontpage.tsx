@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import {
   Link, useLocation, Routes, Route,
 } from 'react-router-dom';
@@ -5,7 +6,7 @@ import { useRecoilValue } from 'recoil';
 
 import Login from './components/Login';
 import ForgottenPassword from './components/ForgottenPassword';
-import CreateAccount from './components/CreateAccount';
+import SignUp from './components/SignUp';
 import ResetPassword from './components/ResetPassword';
 import LoggedIn from './components/LoggedIn';
 import AppBar from './components/AppBar';
@@ -14,7 +15,7 @@ import * as atoms from '../atoms';
 
 const Frontpage = ({
   refreshUser,
-}: any) => {
+}: { refreshUser: () => Promise<boolean> }) => {
   const user = useRecoilValue(atoms.user);
   const location = useLocation();
 
@@ -27,8 +28,8 @@ const Frontpage = ({
           <Route path="/resetpassword" element={<ResetPassword />} />
           <Route path="/forgottenpassword" element={<ForgottenPassword />} />
           <Route
-            path="/createaccount"
-            element={<CreateAccount />}
+            path="/signup"
+            element={<SignUp />}
           />
           <Route
             path="*"
@@ -46,4 +47,4 @@ const Frontpage = ({
   );
 };
 
-export default Frontpage;
+export default memo(Frontpage);

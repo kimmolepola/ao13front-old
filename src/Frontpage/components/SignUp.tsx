@@ -1,14 +1,17 @@
-import { useCallback, useEffect, useState } from 'react';
+import {
+  memo, useCallback, useEffect, useState,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
 import { signup } from '../../networking/services/auth.service';
 
+import * as theme from '../../theme';
 import * as atoms from '../../atoms';
 import * as types from '../types';
 import * as hooks from '../hooks';
 
-const CreateAccount = () => {
+const SignUp = () => {
   const navigate = useNavigate();
   const [user, setUser] = useRecoilState(atoms.user);
   const [validation, setValidation, resetValidation] = hooks.useValidation();
@@ -22,7 +25,7 @@ const CreateAccount = () => {
     }
   }, [navigate, user]);
 
-  const onSubmit = useCallback(async (e: any) => {
+  const onSubmit = async (e: any) => {
     e.preventDefault();
     const newValidation = {
       dirty: true,
@@ -51,7 +54,7 @@ const CreateAccount = () => {
     setPassword('');
     setRepeatPassword('');
     setValidation({ ...newValidation });
-  }, [email, password, repeatPassword, setUser, setValidation]);
+  };
 
   const onChangeEmail = useCallback((e: any) => {
     resetValidation();
@@ -69,29 +72,33 @@ const CreateAccount = () => {
   }, [resetValidation]);
 
   return (
-    <div className="flex flex-col text-sm gap-4 items-center w-full">
+    <div className={theme.cContainerPage}>
       {validation.state !== types.ValidationState.LOADING ? 'Create account' : 'Creating...'}
-      <form onSubmit={onSubmit} className="flex flex-col gap-2 w-full max-w-[5cm]">
-        {validation.create && <div className="text-red-400">{validation.create}</div>}
-        {validation.email && <div className="text-red-400">{validation.email}</div>}
+      <form onSubmit={onSubmit} className={theme.cForm}>
+        {validation.create && <div className={theme.cValidationError}>{validation.create}</div>}
+        {validation.email && <div className={theme.cValidationError}>{validation.email}</div>}
         <input
-          className={`pl-2 h-8 border ${validation.email && 'border-red-400'}`}
+          className={theme.cInput(validation.email)}
           onChange={onChangeEmail}
           value={email}
           placeholder="email"
         />
-        {validation.password && <div className="text-red-400">{validation.password}</div>}
+        {validation.password && <div className={theme.cValidationError}>{validation.password}</div>}
         <input
-          className={`pl-2 h-8 border ${validation.password && 'border-red-400'}`}
+          className={theme.cInput(validation.password)}
           onChange={onChangePassword}
           type="password"
           value={password}
           placeholder="password"
         />
-        {validation.repeatPassword && <div className="text-red-400">{validation.repeatPassword}</div>}
-
+        {validation.repeatPassword
+          && (
+            <div className={theme.cValidationError}>
+              {validation.repeatPassword}
+            </div>
+          )}
         <input
-          className={`pl-2 h-8 border ${validation.repeatPassword && 'border-red-400'}`}
+          className={theme.cInput(validation.repeatPassword)}
           onChange={onChangeRepeatPassword}
           type="password"
           value={repeatPassword}
@@ -100,7 +107,7 @@ const CreateAccount = () => {
         <button
           disabled={validation.state === types.ValidationState.LOADING}
           type="submit"
-          className="h-8 border text-gray-50 bg-orange-500 w-full max-w-[5cm]"
+          className={theme.cButtonOrange}
         >
           Create
         </button>
@@ -109,4 +116,4 @@ const CreateAccount = () => {
   );
 };
 
-export default CreateAccount;
+export default memo(SignUp);

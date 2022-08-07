@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import theme from '../../../../../theme.js';
+import theme from '../../../../../themets.js';
 import appContext from '../../../../../context/appContext';
 
 const Avatar = styled.img`

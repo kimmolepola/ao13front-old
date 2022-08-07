@@ -2,6 +2,7 @@ import { useMemo, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { requestPasswordReset } from '../../networking/services/auth.service';
 
+import * as theme from '../../theme';
 import * as types from '../types';
 import * as hooks from '../hooks';
 
@@ -21,7 +22,7 @@ const ForgottenPassword = () => {
     }
   }, [validation.state]);
 
-  const onSubmit = useCallback(async (e: any) => {
+  const onSubmit = async (e: any) => {
     e.preventDefault();
     const newValidation = {
       dirty: true,
@@ -38,33 +39,34 @@ const ForgottenPassword = () => {
       setUsername('');
     }
     setValidation({ ...newValidation });
-  }, [setValidation, username]);
+  };
 
   const onChangeUsername = useCallback((e: any) => {
     resetValidation();
     setUsername(e.target.value);
   }, [resetValidation]);
 
-  const onClickCancel = () => {
+  const onClickCancel = useCallback(() => {
     navigate('/login');
-  };
+  }, [navigate]);
 
   return (
-    <div className="flex flex-col text-sm gap-4 items-center w-full">
+    <div className={theme.cContainerPage}>
       {stateText}
-      {validation.request && <div className="text-red-400">{validation.request}</div>}
+      {validation.request && <div className={theme.cValidationError}>{validation.request}</div>}
       {validation.state !== types.ValidationState.SUCCESS
         && (
-          <form onSubmit={onSubmit} className="flex flex-col gap-2 w-full max-w-[5cm]">
-            {validation.username && <div className="text-red-400">{validation.username}</div>}
+          <form onSubmit={onSubmit} className={theme.cForm}>
+            {validation.username
+              && <div className={theme.cValidationError}>{validation.username}</div>}
             <input
-              className={`pl-2 h-8 border ${validation.username && 'border-red-400'}`}
+              className={theme.cInput(validation.username)}
               autoCapitalize="none"
               onChange={onChangeUsername}
               value={username}
               placeholder="username or email"
             />
-            <div className="flex justify-between gap-2">
+            <div className="flex justify-between gap-2 w-full">
               <button
                 className="h-8 border border-rose-900 text-rose-900 bg-transparent grow"
                 onClick={onClickCancel}

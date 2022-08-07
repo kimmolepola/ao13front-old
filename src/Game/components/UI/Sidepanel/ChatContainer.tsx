@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Chat from './ChatContainer/Chat';
 import InputForm from './ChatContainer/InputForm';
-import theme from '../../../../theme.js';
+import theme from '../../../../themets.js';
 
 const Container = styled.div`
   background: ${theme.colors.bgVerylight};

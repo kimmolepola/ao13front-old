@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import ChatContainer from './Sidepanel/ChatContainer';
 import appContext from '../../../context/appContext';
-import theme from '../../../theme.js';
+import theme from '../../../themets.js';
 
 const Text = styled.div`
   margin: ${theme.margins.basic};

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
-import theme from '../../../../../theme.js';
+import theme from '../../../../../themets.js';
 import appContext from '../../../../../context/appContext';
 import { sendDataOnOrderedChannelsAndRelay } from '../../../../../networking/services/game.service';
 import Chat from './Chat';

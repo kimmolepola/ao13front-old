@@ -1,9 +1,10 @@
-import { useCallback, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { memo, useCallback, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
-import { login } from '../../networking/services/auth.service';
+import { setToken, login } from '../../networking/services/auth.service';
 
+import * as theme from '../../theme';
 import * as atoms from '../../atoms';
 import * as types from '../types';
 import * as hooks from '../hooks';
@@ -11,12 +12,12 @@ import * as hooks from '../hooks';
 const Login = () => {
   const setUser = useSetRecoilState(atoms.user);
   const navigate = useNavigate();
-
   const [validation, setValidation, resetValidation] = hooks.useValidation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
 
-  const onSubmit = useCallback(async (e: any) => {
+  const onSubmit = async (e: any) => {
     e.preventDefault();
     const newValidation = {
       dirty: true,
@@ -33,12 +34,16 @@ const Login = () => {
       newValidation.state = types.ValidationState.OPEN;
       if (!error) {
         setUser(data);
+        setToken(data.token);
         setUsername('');
+        if (rememberMe) {
+          localStorage.setItem('loggedAo13User', JSON.stringify(data));
+        }
       }
     }
     setPassword('');
     setValidation({ ...newValidation });
-  }, [password, setUser, username, setValidation]);
+  };
 
   const onChangeUsername = useCallback((e: any) => {
     resetValidation();
@@ -50,25 +55,27 @@ const Login = () => {
     setPassword(e.target.value);
   }, [resetValidation]);
 
-  const onClickCreate = useCallback(() => {
-    navigate('/createaccount');
-  }, [navigate]);
+  const onChangeRememberMe = useCallback((e: any) => {
+    setRememberMe(e.target.checked);
+  }, []);
+
+  const onClickSignUp = useCallback(() => { navigate('/signup'); }, [navigate]);
 
   return (
-    <div className="flex flex-col text-sm gap-4 items-center w-full">
-      {validation.login && <div className="text-red-400">{validation.login}</div>}
-      <form onSubmit={onSubmit} className="flex flex-col gap-2 w-full max-w-[5cm]">
-        {validation.username && <div className="text-red-400">{validation.username}</div>}
+    <div className={theme.cContainerPage}>
+      {validation.login && <div className={theme.cValidationError}>{validation.login}</div>}
+      <form onSubmit={onSubmit} className={theme.cForm}>
+        {validation.username && <div className={theme.cValidationError}>{validation.username}</div>}
         <input
-          className={`pl-2 h-8 border ${validation.username && 'border-red-400'}`}
+          className={theme.cInput(validation.username)}
           autoCapitalize="none"
           onChange={onChangeUsername}
           value={username}
           placeholder="username or email"
         />
-        {validation.password && <div className="text-red-400">{validation.password}</div>}
+        {validation.password && <div className={theme.cValidationError}>{validation.password}</div>}
         <input
-          className={`pl-2 h-8 border ${validation.password && 'border-red-400'}`}
+          className={theme.cInput(validation.password)}
           type="password"
           onChange={onChangePassword}
           value={password}
@@ -76,36 +83,31 @@ const Login = () => {
         />
 
         <button
-          className="h-8 border text-gray-100 bg-rose-900 hover:border-zinc-400 active:bg-rose-700"
+          className={theme.cButtonRose}
           disabled={validation.state === types.ValidationState.LOADING}
           type="submit"
         >
-          Log in
+          Sign in
         </button>
+        <label className="flex gap-1 cursor-pointer select-none">
+          <input type="checkbox" checked={rememberMe} onChange={onChangeRememberMe} />
+          Remember me
+        </label>
       </form>
       <Link
-        className="text-orange-800 hover:underline active:text-orange-500"
         to="/forgottenpassword"
       >
         Forgotten password?
       </Link>
       <button
-        className="h-8 border text-gray-50 bg-orange-500 hover:border-zinc-400 active:bg-orange-400 w-full max-w-[5cm]"
+        className={theme.cButtonOrange}
         type="button"
-        onClick={onClickCreate}
+        onClick={onClickSignUp}
       >
-        Create account
+        Sign up
       </button>
-      <div className="max-x-[5cm] text-zinc-900">
-        for demo use please use
-        <br />
-        username: demo
-        <br />
-        password: demo
-        <br />
-      </div>
     </div>
   );
 };
 
-export default Login;
+export default memo(Login);

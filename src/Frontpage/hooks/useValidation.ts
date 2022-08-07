@@ -8,6 +8,7 @@ export const useValidation = () => {
     login: undefined,
     create: undefined,
     request: undefined,
+    update: undefined,
     email: undefined,
     username: undefined,
     password: undefined,

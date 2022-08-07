@@ -8,6 +8,7 @@ export type Validation = {
   login?: undefined | string,
   create?: undefined | string,
   request?: undefined | string,
+  update?: undefined | string,
   email?: undefined | string,
   username?: undefined | string,
   password?: undefined | string,
