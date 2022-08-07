@@ -15,7 +15,7 @@ import * as atoms from '../atoms';
 
 const Frontpage = ({
   refreshUser,
-}: { refreshUser: () => Promise<boolean> }) => {
+}: { refreshUser: () => Promise<void> }) => {
   const user = useRecoilValue(atoms.user);
   const location = useLocation();
 

@@ -24,7 +24,6 @@ const App = () => {
       const { data } = await getUser();
       setUser(data);
     }
-    return true;
   }, [setUser]);
 
   useEffect(

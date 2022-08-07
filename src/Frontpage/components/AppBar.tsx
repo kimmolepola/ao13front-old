@@ -15,7 +15,7 @@ const AppBar = () => {
   }, [navigate, setUser]);
 
   return (
-    <div className="absolute left-0 right-0 top-0 h-12 bg-zinc-200 justify-between flex items-center border border-b-zinc-300">
+    <div className="absolute left-0 right-0 top-0 h-12 bg-zinc-100 justify-between flex items-center border border-b-zinc-300">
       <div className="w-1/3 pl-3">
         <Link className="text-rose-900 active:brightness-125 font-bold" to="/">
           AO13

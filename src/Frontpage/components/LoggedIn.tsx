@@ -12,7 +12,7 @@ import * as atoms from '../../atoms';
 
 const LoggedIn = ({
   refreshUser,
-}: { refreshUser: () => Promise<boolean> }) => {
+}: { refreshUser: () => Promise<void> }) => {
   const user = useRecoilValue(atoms.user);
   const navigate = useNavigate();
   const [errorText, setErrorText] = useState<string>();
