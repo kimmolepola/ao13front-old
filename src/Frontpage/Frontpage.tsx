@@ -22,8 +22,8 @@ const Frontpage = ({
   return (
     <>
       {Boolean(user) && <AppBar />}
-      <div className={`flex flex-col items-center absolute inset-0 bg-rose-50 text-zinc-900 gap-4 ${user ? 'pt-12 top-12' : 'pt-24'}`}>
-        {!user && location.pathname === '/' ? <a href="/">AO13</a> : <Link to="/">AO13</Link>}
+      <div className={`flex flex-col items-center absolute inset-0 bg-rose-50 text-zinc-800 gap-4 ${user ? 'pt-12 top-12' : 'pt-24'}`}>
+        {!user && location.pathname === '/' ? <a className="active:text-black" href="/">AO13</a> : <Link className="active:text-black" to="/">AO13</Link>}
         <Routes>
           <Route path="/resetpassword" element={<ResetPassword />} />
           <Route path="/forgottenpassword" element={<ForgottenPassword />} />

@@ -86,7 +86,7 @@ const ResetPassword = () => {
             <button
               disabled={validation.state === types.ValidationState.LOADING}
               type="submit"
-              className="h-8 border text-gray-50 bg-rose-900 grow"
+              className={theme.cButtonRose}
             >
               Submit
             </button>

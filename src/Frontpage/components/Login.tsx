@@ -81,7 +81,6 @@ const Login = () => {
           value={password}
           placeholder="password"
         />
-
         <button
           className={theme.cButtonRose}
           disabled={validation.state === types.ValidationState.LOADING}
