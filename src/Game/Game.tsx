@@ -61,8 +61,10 @@ const cleanup = (idsNew: any, objects: any) => {
 
 const Game = ({ refreshUser }: any) => {
   console.log('--RENDER GAME');
+
   const user = useRecoilValue(atoms.user);
   const navigate = useNavigate();
+
   if (!user) {
     navigate('/');
     return <div />;

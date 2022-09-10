@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import * as types from "../../types"
+
 const server = process.env.NODE_ENV === 'production'
   ? `https://${process.env.REACT_APP_BACKEND}`
   : `http://${process.env.REACT_APP_BACKEND}`;
@@ -8,10 +10,11 @@ const server = process.env.NODE_ENV === 'production'
 export const getGameObject = async (id: any) => {
   try {
     const response = await axios.get(`${server}/api/v1/gameObject/${id}`);
-    return { data: response.data, error: null };
+    return { data: response.data as types.InitialGameObject | undefined };
   } catch (err: any) {
     const error = err.response ? err.response.data.error : err.toString();
-    return { data: null, error };
+    console.error("gameobject fetch error:", error);
+    return { error };
   }
 };
 
