@@ -4,11 +4,16 @@ import { useSetRecoilState } from 'recoil';
 import iceServers from '../iceServers';
 
 import * as atoms from '../../atoms';
+import * as types from '../../types';
 
 export const useRTCPeerConnection = () => {
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
 
-  const create = useCallback((remoteId: string, mainHandleNewId: Function, signaler: { emit: Function }) => {
+  const create = useCallback((
+    remoteId: string,
+    onPeerConnected: (remoteId: string) => void,
+    sendSignaling: (x: types.Signaling) => void,
+  ) => {
     const pc = new RTCPeerConnection({ iceServers });
 
     pc.onconnectionstatechange = () => {
@@ -20,7 +25,7 @@ export const useRTCPeerConnection = () => {
         case 'connected':
           setConnectionMessage(`peer ${remoteId}, connection ready`);
           console.log('peer', remoteId, 'peer connection ready');
-          mainHandleNewId(remoteId);
+          onPeerConnected(remoteId);
           break;
         case 'closed':
           setConnectionMessage(`peer ${remoteId}, connection closed`);
@@ -32,16 +37,18 @@ export const useRTCPeerConnection = () => {
     };
 
     pc.onicecandidate = ({ candidate }) => {
-      signaler.emit('signaling', { remoteId, candidate });
+      sendSignaling({ remoteId, candidate });
     };
 
     pc.onnegotiationneeded = async () => {
       try {
         await pc.setLocalDescription();
-        signaler.emit('signaling', {
-          remoteId,
-          description: pc.localDescription,
-        });
+        sendSignaling(
+          {
+            remoteId,
+            description: pc.localDescription,
+          },
+        );
       } catch (err) {
         console.error(err);
       }

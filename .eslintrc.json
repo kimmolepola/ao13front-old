@@ -35,7 +35,7 @@
       {
         "maximum": 1,
         "when": "multiline"
-      },
+      }
     ],
     "react/jsx-indent-props": [
       2,
@@ -43,7 +43,7 @@
     ],
     "react/jsx-closing-bracket-location": [
       2,
-      "tag-aligned",
+      "tag-aligned"
     ],
     "max-len": "off",
     "jsx-a11y/label-has-associated-control": [

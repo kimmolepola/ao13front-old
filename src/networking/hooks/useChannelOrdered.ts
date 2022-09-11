@@ -6,7 +6,7 @@ import * as atoms from '../../atoms';
 export const useChannelOrdered = () => {
   const setChannelsOrdered = useSetRecoilState(atoms.channelsOrdered);
 
-  const create = useCallback((peerConnection: any, receiveData: Function, mainUpdatePeers: Function) => {
+  const create = useCallback((peerConnection: any, receiveData: Function, onChannelOpen: () => void) => {
     const channel = peerConnection.createDataChannel('orderedChannel', {
       ordered: true,
       negotiated: true,
@@ -21,7 +21,7 @@ export const useChannelOrdered = () => {
 
     channel.onopen = () => {
       setChannelsOrdered((x) => [...x, channel]);
-      mainUpdatePeers();
+      onChannelOpen();
     };
 
     channel.onmessage = ({ data }: any) => {

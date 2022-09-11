@@ -4,21 +4,21 @@ const server = process.env.NODE_ENV === 'production'
   ? `https://${process.env.REACT_APP_BACKEND}`
   : `http://${process.env.REACT_APP_BACKEND}`;
 
-export const setToken = (token: any) => {
+export const setToken = (token: string) => {
   axios.defaults.headers.common = { Authorization: `Bearer ${token}` };
 };
 
 export const guestLogin = async () => {
   try {
     const response = await axios.post(`${server}/api/v1/auth/guestLogin`);
-    return { data: response.data, error: null };
+    return { data: response.data };
   } catch (err: any) {
     const error = err.response ? err.response.data.error : err.toString();
-    return { data: null, error };
+    return { error };
   }
 };
 
-export const resetPassword = async ({ token, userId, password }: any) => {
+export const resetPassword = async ({ token, userId, password }: { token: string, userId: string, password: string }) => {
   try {
     const response = await axios.post(`${server}/api/v1/auth/resetpassword`, {
       token,
@@ -32,7 +32,7 @@ export const resetPassword = async ({ token, userId, password }: any) => {
   }
 };
 
-export const requestPasswordReset = async ({ username }: any) => {
+export const requestPasswordReset = async ({ username }: { username: string }) => {
   try {
     const response = await axios.post(
       `${server}/api/v1/auth/requestResetPassword`,
@@ -40,35 +40,35 @@ export const requestPasswordReset = async ({ username }: any) => {
         username,
       },
     );
-    return { data: response.data, error: null };
+    return { data: response.data };
   } catch (err: any) {
     const error = err.response ? err.response.data.error : err.toString();
-    return { data: null, error };
+    return { error };
   }
 };
 
-export const login = async ({ username, password }: any) => {
+export const login = async ({ username, password }: { username: string, password: string }) => {
   try {
     const response = await axios.post(`${server}/api/v1/auth/login`, {
       username,
       password,
     });
-    return { data: response.data, error: null };
+    return { data: response.data };
   } catch (err: any) {
     const error = err.response ? err.response.data.error : err.toString();
-    return { data: null, error };
+    return { error };
   }
 };
 
-export const signup = async ({ email, password }: any) => {
+export const signup = async ({ email, password }: { email: string, password: string }) => {
   try {
     const response = await axios.post(`${server}/api/v1/auth/signup`, {
       email,
       password,
     });
-    return { data: response.data, error: null };
+    return { data: response.data };
   } catch (err: any) {
     const error = err.response ? err.response.data.error : err.toString();
-    return { data: null, error };
+    return { error };
   }
 };

@@ -1,4 +1,8 @@
+import { RefObject } from 'react';
+
 import { chatMessageTimeToLiveSeconds } from '../../Game/parameters';
+
+import * as types from '../../types';
 
 let doStuffTime = Date.now();
 
@@ -15,32 +19,18 @@ const logError = (error: any, data: any) => {
   }
 };
 
-export const sendDataOnRelay = (data: any, connection: any) => {
-  if (connection.getRelay()) {
+export const sendDataOnUnorderedChannels = (data: any, unorderedChannelsRef: RefObject<types.Channel[] | null>) => {
+  const stringData = JSON.stringify(data);
+  unorderedChannelsRef.current?.forEach((x) => {
     try {
-      connection.getRelay().emit('data', data);
+      x.send(stringData);
     } catch (error) {
       logError(error, data);
     }
-  }
+  });
 };
 
-export const sendDataOnUnorderedChannels = (data: any, connection: any) => {
-  if (connection.getChannels().unordered.length) {
-    const stringData = JSON.stringify(data);
-    connection.getChannels().unordered.forEach((x: any) => {
-      try {
-        x.send(stringData);
-      } catch (error) {
-        logError(error, data);
-      }
-    });
-  }
-};
-
-export const sendDataOnOrderedChannelsAndRelay = (arg: any, connection: any) => {
-  console.log('sendOrderedAndRelay-data:', arg);
-  console.log('channels-length:', connection.getChannels().ordered.length);
+const processData = (arg: any) => {
   let data: any;
   switch (arg.type) {
     case 'chatMessage': {
@@ -65,25 +55,19 @@ export const sendDataOnOrderedChannelsAndRelay = (arg: any, connection: any) => 
       data = arg;
       break;
   }
-  if (connection.getChannels().ordered.length) {
-    const dataString = JSON.stringify(data);
+  return data;
+};
 
-    connection.getChannels().ordered.forEach((x: any) => {
-      try {
-        x.send(dataString);
-      } catch (error) {
-        logError(error, data);
-      }
-    });
-  }
-  console.log('ordered data:', data);
-  try {
-    const relay = connection.getRelay();
-    console.log('relay: ', relay);
-    if (relay) relay.emit('data', data);
-  } catch (error) {
-    logError(error, data);
-  }
+export const sendDataOnOrderedChannels = (arg: any, orderedChannelsRef: RefObject<types.Channel[] | null>) => {
+  const data = processData(arg);
+  const dataString = JSON.stringify(data);
+  orderedChannelsRef.current?.forEach((x) => {
+    try {
+      x.send(dataString);
+    } catch (error) {
+      logError(error, data);
+    }
+  });
 };
 
 export const receiveData = (
@@ -181,7 +165,7 @@ export const receiveData = (
       if (main === ownId) {
         message.mainrelay = true; // main is relaying other client's message
         message.id = message.userId;
-        sendDataOnOrderedChannelsAndRelay(message, connection);
+        sendDataOnOrderedChannels(message, connection);
       }
       setChatMessages((x: any) => [message, ...x]);
       setTimeout(

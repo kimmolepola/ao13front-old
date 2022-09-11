@@ -35,13 +35,21 @@ const ResetPassword = () => {
     if (!newValidation.password && !newValidation.repeatPassword) {
       newValidation.state = types.ValidationState.LOADING;
       setValidation(newValidation);
-      const { error } = await resetPassword({
-        password,
-        token: query.get('token'),
-        userId: query.get('id'),
-      });
-      newValidation.request = error;
-      newValidation.state = error ? types.ValidationState.OPEN : types.ValidationState.SUCCESS;
+      const token = query.get('token');
+      const userId = query.get('id');
+      let err;
+      if (token && userId) {
+        const { error } = await resetPassword({
+          password,
+          token,
+          userId,
+        });
+        err = error;
+      } else {
+        err = 'Missing token or userId';
+      }
+      newValidation.request = err;
+      newValidation.state = err ? types.ValidationState.OPEN : types.ValidationState.SUCCESS;
     }
     setPassword('');
     setRepeatPassword('');
