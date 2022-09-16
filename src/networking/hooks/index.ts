@@ -4,3 +4,5 @@ export { useConnections } from './useConnections';
 export { usePeerConnection } from './usePeerConnection';
 export { useRTCPeerConnection } from './useRTCPeerConnection';
 export { useSignaler } from './useSignaler';
+export { useGameService } from './useGameService';
+export { useGameServiceMain } from './useGameServiceMain';

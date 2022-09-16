@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 import Canvas from './components/Canvas';
 import AppContext from '../context/appContext';
@@ -60,6 +60,13 @@ const cleanup = (idsNew: any, objects: any) => {
 };
 
 const Game = ({ refreshUser }: any) => {
+  const setObjects = useSetRecoilState(atoms.objects);
+  const objects = useRef({});
+
+  useEffect(() => {
+    setObjects(objects);
+  }, [setObjects]);
+
   console.log('--RENDER GAME');
 
   const user = useRecoilValue(atoms.user);
@@ -77,7 +84,6 @@ const Game = ({ refreshUser }: any) => {
   const [chatMessages, setChatMessages] = useState([]);
   const [id, setId] = useState<any>();
   const [ids, setIds] = useState([]);
-  const objects: any = useRef({});
   const objectIds = useRef([]);
   const text = useRef();
   const score = useRef({ value: 0, textContent: 0 });

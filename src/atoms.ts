@@ -1,23 +1,37 @@
+import { RefObject } from 'react';
 import {
   atom,
 } from 'recoil';
 
-export const objects = atom<{ [id: string]: { username: string, score: number } }>({
-  key: "objects",
-  default: {},
-})
+import * as types from './types';
+
+export const chatMessages = atom<types.ChatMessage[]>({
+  key: 'chatMessages',
+  default: [],
+});
+
+export const objectIds = atom<string[]>({
+  key: 'objectIds',
+  default: [],
+});
+
+export const objects = atom<RefObject<{ [id: string]: types.GameObject }>>({
+  key: 'objects',
+  default: undefined,
+  dangerouslyAllowMutability: true,
+});
 
 export const ownId = atom<string | undefined>({
   key: 'ownId',
   default: undefined,
 });
 
-export const main = atom<string | undefined>({
+export const main = atom<boolean>({
   key: 'main',
-  default: undefined,
+  default: false,
 });
 
-export const remotes = atom<{ [id: string]: { peerConnection: any, orderedChannel: any, unorderedChannel: any }; }>({
+export const remotes = atom<{ [id: string]: { peerConnection: any }; }>({
   key: 'remotes',
   default: {},
 });

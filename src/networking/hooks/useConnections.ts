@@ -1,63 +1,63 @@
 import { useCallback } from 'react';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil';
 
-import { saveGameState, getGameObject } from '../services/gameObject.service';
+import { saveGameState } from '../services/gameObject.service';
 
 import * as hooks from '.';
 import * as atoms from '../../atoms';
 import * as types from '../../types';
 
-export const useConnections = (receiveData: Function, mainUpdatePeers: Function) => {
-  const [ownId, setOwnId] = useRecoilState(atoms.ownId);
+export const useConnections = (mainUpdatePeers: Function) => {
+  const setOwnId = useSetRecoilState(atoms.ownId);
+  const objects = useRecoilValue(atoms.objects);
+  const [objectIds, setObjectIds] = useRecoilState(atoms.objectIds);
   const [main, setMain] = useRecoilState(atoms.main);
-  const [objects, setObjects] = useRecoilState(atoms.objects);
   const [remotes, setRemotes] = useRecoilState(atoms.remotes);
 
   const connectToSignaler = hooks.useSignaler();
   const connectToPeer = hooks.usePeerConnection();
 
   const handleDeleteId = useCallback((delId: string) => {
-    const newObjects = { ...objects };
+    delete objects.current?.[delId];
     const newRemotes = { ...remotes };
-    delete newObjects[delId];
     delete newRemotes[delId];
-    setObjects(newObjects);
     setRemotes(newRemotes);
-  }, [objects, remotes, setObjects, setRemotes]);
+  }, [objects, remotes, setRemotes]);
 
   const mainHandleNewId = useCallback(async (newId: string) => {
-    if (!objects[newId]) {
-      const { data } = await getGameObject(newId);
-      if (data) {
-        setObjects((x) => ({ ...x, [newId]: data }));
-      }
+    if (!objectIds.includes(newId)) {
+      setObjectIds([...objectIds, newId]);
+      // CREATE OBJECT HERE ?
+      // const { data } = await getGameObject(newId);
+      // if (data && objects.current) {
+      // objects.current[newId] = data;
+      // }
     }
-  }, [objects, setObjects]);
+  }, [objectIds, setObjectIds]);
 
   const onChannelOpen = useCallback(() => {
     mainUpdatePeers();
   }, [mainUpdatePeers]);
 
   const onPeerConnected = useCallback((remoteId: string) => {
-    if (main && main === ownId) {
+    if (main) {
       mainHandleNewId(remoteId);
     }
-  }, [main, mainHandleNewId, ownId]);
+  }, [main, mainHandleNewId]);
 
   const onReceiveInit = useCallback((id: string) => {
     setOwnId(id);
   }, [setOwnId]);
 
   const onReceiveMain = useCallback((id: string) => {
-    setMain(id);
+    setMain(true);
     mainHandleNewId(id);
   }, [mainHandleNewId, setMain]);
 
   const onReceiveConnectToMain = useCallback((remoteId: string, sendSignaling: (x: types.Signaling) => void) => {
-    setMain(remoteId);
-    const remote = connectToPeer(remoteId, sendSignaling, receiveData, onChannelOpen, onPeerConnected);
+    const remote = connectToPeer(remoteId, sendSignaling, onChannelOpen, onPeerConnected);
     setRemotes((x) => ({ ...x, [remoteId]: remote }));
-  }, [connectToPeer, onChannelOpen, onPeerConnected, receiveData, setMain, setRemotes]);
+  }, [connectToPeer, onChannelOpen, onPeerConnected, setRemotes]);
 
   const onReceiveSignaling = useCallback(async (
     { remoteId, description, candidate }: types.Signaling,
@@ -65,7 +65,7 @@ export const useConnections = (receiveData: Function, mainUpdatePeers: Function)
   ) => {
     let remote = remotes[remoteId];
     if (!remote) {
-      remote = connectToPeer(remoteId, sendSignaling, receiveData, onChannelOpen, onPeerConnected);
+      remote = connectToPeer(remoteId, sendSignaling, onChannelOpen, onPeerConnected);
       setRemotes((x) => ({ ...x, [remoteId]: remote }));
     }
     const { peerConnection } = remote;
@@ -85,15 +85,15 @@ export const useConnections = (receiveData: Function, mainUpdatePeers: Function)
     } catch (err) {
       console.error(err);
     }
-  }, [connectToPeer, onChannelOpen, onPeerConnected, receiveData, remotes, setRemotes]);
+  }, [connectToPeer, onChannelOpen, onPeerConnected, remotes, setRemotes]);
 
   const onReceivePeerDisconnected = useCallback((remoteId: string) => {
-    if (main && main === ownId) {
-      saveGameState(Object.keys(objects).map((x) => ({ playerId: x, score: objects[x].score })));
+    if (main) {
+      saveGameState(Object.keys(objects).map((x) => ({ playerId: x, score: objects.current?.[x]?.score })));
     }
     remotes[remoteId]?.peerConnection.close();
     handleDeleteId(remoteId);
-  }, [handleDeleteId, main, objects, ownId, remotes]);
+  }, [handleDeleteId, main, objects, remotes]);
 
   const connect = useCallback(() => {
     const { disconnectFromSignaler } = connectToSignaler(
