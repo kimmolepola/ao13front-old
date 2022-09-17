@@ -1,17 +1,14 @@
 import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
 
-import * as atoms from '../../atoms';
 import * as types from '../../types';
 
 export const useChannelOrdered = () => {
-  const setChannelsOrdered = useSetRecoilState(atoms.channelsOrdered);
-
   const create = useCallback((
     remoteId: string,
-    peerConnection: any,
-    onReceiveData: (remoteId: string, data: any) => void,
-    onChannelOpen: () => void,
+    peerConnection: RTCPeerConnection,
+    onReceiveData: (remoteId: string, data: types.NetData) => void,
+    onChannelOpen: (remoteId: string, channel: RTCDataChannel) => void,
+    onChannelClosed: (remoteId: string, channel: RTCDataChannel) => void,
   ) => {
     const channel = peerConnection.createDataChannel('orderedChannel', {
       ordered: true,
@@ -20,20 +17,17 @@ export const useChannelOrdered = () => {
     });
 
     channel.onclose = () => {
-      setChannelsOrdered((x) => x.filter(
-        (xx) => xx !== channel,
-      ));
+      onChannelClosed(remoteId, channel);
     };
 
     channel.onopen = () => {
-      setChannelsOrdered((x) => [...x, channel]);
-      onChannelOpen();
+      onChannelOpen(remoteId, channel);
     };
 
-    channel.onmessage = ({ data }: { data: any }) => {
+    channel.onmessage = ({ data }: { data: types.NetData }) => {
       onReceiveData(remoteId, data);
     };
-  }, [setChannelsOrdered]);
+  }, []);
 
   return create;
 };

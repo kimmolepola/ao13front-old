@@ -7,68 +7,41 @@ import * as hooks from '.';
 import * as atoms from '../../atoms';
 import * as types from '../../types';
 
-export const useConnections = (mainUpdatePeers: Function) => {
+export const useConnections = () => {
   const setOwnId = useSetRecoilState(atoms.ownId);
   const objects = useRecoilValue(atoms.objects);
-  const [objectIds, setObjectIds] = useRecoilState(atoms.objectIds);
-  const [main, setMain] = useRecoilState(atoms.main);
-  const [remotes, setRemotes] = useRecoilState(atoms.remotes);
+  const main = useRecoilValue(atoms.main);
+  const [peerConnections, setPeerConnections] = useRecoilState(atoms.peerConnections);
 
+  const { onReceiveMain } = hooks.useMain();
   const connectToSignaler = hooks.useSignaler();
   const connectToPeer = hooks.usePeerConnection();
 
   const handleDeleteId = useCallback((delId: string) => {
     delete objects.current?.[delId];
-    const newRemotes = { ...remotes };
-    delete newRemotes[delId];
-    setRemotes(newRemotes);
-  }, [objects, remotes, setRemotes]);
-
-  const mainHandleNewId = useCallback(async (newId: string) => {
-    if (!objectIds.includes(newId)) {
-      setObjectIds([...objectIds, newId]);
-      // CREATE OBJECT HERE ?
-      // const { data } = await getGameObject(newId);
-      // if (data && objects.current) {
-      // objects.current[newId] = data;
-      // }
-    }
-  }, [objectIds, setObjectIds]);
-
-  const onChannelOpen = useCallback(() => {
-    mainUpdatePeers();
-  }, [mainUpdatePeers]);
-
-  const onPeerConnected = useCallback((remoteId: string) => {
-    if (main) {
-      mainHandleNewId(remoteId);
-    }
-  }, [main, mainHandleNewId]);
+    const newPeerConnections = { ...peerConnections };
+    delete newPeerConnections[delId];
+    setPeerConnections(newPeerConnections);
+  }, [objects, peerConnections, setPeerConnections]);
 
   const onReceiveInit = useCallback((id: string) => {
     setOwnId(id);
   }, [setOwnId]);
 
-  const onReceiveMain = useCallback((id: string) => {
-    setMain(true);
-    mainHandleNewId(id);
-  }, [mainHandleNewId, setMain]);
-
   const onReceiveConnectToMain = useCallback((remoteId: string, sendSignaling: (x: types.Signaling) => void) => {
-    const remote = connectToPeer(remoteId, sendSignaling, onChannelOpen, onPeerConnected);
-    setRemotes((x) => ({ ...x, [remoteId]: remote }));
-  }, [connectToPeer, onChannelOpen, onPeerConnected, setRemotes]);
+    const peerConnection = connectToPeer(remoteId, sendSignaling);
+    setPeerConnections((x) => ({ ...x, [remoteId]: peerConnection }));
+  }, [connectToPeer, setPeerConnections]);
 
   const onReceiveSignaling = useCallback(async (
     { remoteId, description, candidate }: types.Signaling,
     sendSignaling: (x: types.Signaling) => void,
   ) => {
-    let remote = remotes[remoteId];
-    if (!remote) {
-      remote = connectToPeer(remoteId, sendSignaling, onChannelOpen, onPeerConnected);
-      setRemotes((x) => ({ ...x, [remoteId]: remote }));
+    let peerConnection = peerConnections[remoteId];
+    if (!peerConnection) {
+      peerConnection = connectToPeer(remoteId, sendSignaling);
+      setPeerConnections((x) => ({ ...x, [remoteId]: peerConnection }));
     }
-    const { peerConnection } = remote;
     try {
       if (description) {
         await peerConnection.setRemoteDescription(description);
@@ -85,15 +58,15 @@ export const useConnections = (mainUpdatePeers: Function) => {
     } catch (err) {
       console.error(err);
     }
-  }, [connectToPeer, onChannelOpen, onPeerConnected, remotes, setRemotes]);
+  }, [connectToPeer, peerConnections, setPeerConnections]);
 
   const onReceivePeerDisconnected = useCallback((remoteId: string) => {
     if (main) {
       saveGameState(Object.keys(objects).map((x) => ({ playerId: x, score: objects.current?.[x]?.score })));
     }
-    remotes[remoteId]?.peerConnection.close();
+    peerConnections[remoteId]?.close();
     handleDeleteId(remoteId);
-  }, [handleDeleteId, main, objects, remotes]);
+  }, [handleDeleteId, main, objects, peerConnections]);
 
   const connect = useCallback(() => {
     const { disconnectFromSignaler } = connectToSignaler(
@@ -105,13 +78,22 @@ export const useConnections = (mainUpdatePeers: Function) => {
     );
 
     const disconnect = () => {
-      Object.values(remotes).forEach((x) => x.peerConnection.close());
+      Object.values(peerConnections).forEach((x) => x.close());
       disconnectFromSignaler();
-      setRemotes({});
+      setPeerConnections({});
     };
 
     return disconnect;
-  }, [connectToSignaler, onReceiveConnectToMain, onReceiveInit, onReceiveMain, onReceivePeerDisconnected, onReceiveSignaling, remotes, setRemotes]);
+  }, [
+    connectToSignaler,
+    onReceiveConnectToMain,
+    onReceiveInit,
+    onReceiveMain,
+    onReceivePeerDisconnected,
+    onReceiveSignaling,
+    peerConnections,
+    setPeerConnections,
+  ]);
 
   return connect;
 };

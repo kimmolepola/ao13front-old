@@ -93,7 +93,7 @@ export const useSignaler = () => {
     });
 
     signaler.on('peerDisconnected', (remoteId: any) => {
-      onReceivePeerDisconnected(remoteId);
+      // onReceivePeerDisconnected(remoteId);
       setConnectionMessage(`peer ${remoteId} disconnected`);
       console.log('peer', remoteId, 'disconnected');
     });

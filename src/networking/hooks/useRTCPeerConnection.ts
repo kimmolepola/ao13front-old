@@ -11,7 +11,6 @@ export const useRTCPeerConnection = () => {
 
   const create = useCallback((
     remoteId: string,
-    onPeerConnected: (remoteId: string) => void,
     sendSignaling: (x: types.Signaling) => void,
   ) => {
     const pc = new RTCPeerConnection({ iceServers });
@@ -25,7 +24,6 @@ export const useRTCPeerConnection = () => {
         case 'connected':
           setConnectionMessage(`peer ${remoteId}, connection ready`);
           console.log('peer', remoteId, 'peer connection ready');
-          onPeerConnected(remoteId);
           break;
         case 'closed':
           setConnectionMessage(`peer ${remoteId}, connection closed`);

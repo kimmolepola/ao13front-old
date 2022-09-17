@@ -21,6 +21,11 @@ export const objects = atom<RefObject<{ [id: string]: types.GameObject }>>({
   dangerouslyAllowMutability: true,
 });
 
+export const connectedIds = atom<string[]>({
+  key: 'connectedIds',
+  default: [],
+});
+
 export const ownId = atom<string | undefined>({
   key: 'ownId',
   default: undefined,
@@ -31,17 +36,17 @@ export const main = atom<boolean>({
   default: false,
 });
 
-export const remotes = atom<{ [id: string]: { peerConnection: any }; }>({
-  key: 'remotes',
+export const peerConnections = atom<{ [id: string]: RTCPeerConnection }>({
+  key: 'peerConnections',
   default: {},
 });
 
-export const channelsOrdered = atom<any[]>({
+export const channelsOrdered = atom<{ remoteId: string, channel: RTCDataChannel }[]>({
   key: 'channelsOrdered',
   default: [],
 });
 
-export const channelsUnordered = atom<any[]>({
+export const channelsUnordered = atom<{ remoteId: string, channel: RTCDataChannel }[]>({
   key: 'channelsUnordered',
   default: [],
 });

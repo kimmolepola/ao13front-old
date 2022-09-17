@@ -5,58 +5,61 @@ export type ChatMessage = {
   message: string,
 }
 
+export enum NetDataType {
+  ChatMessageFromClient,
+  ChatMessageFromMain,
+  Controls,
+  Update,
+  AllObjectIds,
+}
+
 export type ChatMessageFromClient = {
+  type: NetDataType.ChatMessageFromClient,
   message: string,
 }
 
 export type ChatMessageFromMain = {
+  type: NetDataType.ChatMessageFromMain,
   id: string,
   userId: string,
   message: string,
 }
 
-export type Controls = [
+export type Controls = {
+  type: NetDataType.Controls,
   up: number,
   down: number,
   left: number,
   right: number,
-]
+}
 
 export type Update = {
-  [id: string]: [
-    controlsUp: number,
-    controlsDown: number,
-    controlsLeft: number,
-    controlsRight: number,
-    rotationSpeed: number,
-    speed: number,
-    positionX: number,
-    positionY: number,
-    positionZ: number,
-    quaternionX: number,
-    quaternionY: number,
-    quaternionZ: number,
-    quaternionW: number,
-  ]
+  type: NetDataType.Update
+  data: {
+    [id: string]: {
+      controlsUp: number,
+      controlsDown: number,
+      controlsLeft: number,
+      controlsRight: number,
+      rotationSpeed: number,
+      speed: number,
+      positionX: number,
+      positionY: number,
+      positionZ: number,
+      quaternionX: number,
+      quaternionY: number,
+      quaternionZ: number,
+      quaternionW: number,
+    }
+  }
 }
 
-export type AllObjectIds = string[]
-
-export type NetDataFromClient = {
-  chatMessageFromClient?: ChatMessageFromClient,
-  controls?: Controls,
-  allObjectIds: never,
-  chatMessageFromMain: never,
-  update: never,
+export type AllObjectIds = {
+  type: NetDataType.AllObjectIds,
+  ids: string[]
 }
 
-export type NetDataFromMain = {
-  allObjectIds?: AllObjectIds,
-  chatMessageFromMain?: ChatMessageFromMain,
-  update?: Update,
-  chatMessageFromClient: never,
-  controls: never,
-}
+export type NetData = ChatMessageFromClient | Controls | ChatMessageFromMain | Update | AllObjectIds;
 
 export type Channel = {
   send: (stringData: string) => void
