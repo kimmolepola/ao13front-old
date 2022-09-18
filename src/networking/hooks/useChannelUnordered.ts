@@ -6,7 +6,7 @@ export const useChannelUnordered = () => {
   const create = useCallback((
     remoteId: string,
     peerConnection: RTCPeerConnection,
-    receiveData: (remoteId: string, data: types.NetData) => void,
+    receiveData: (data: types.NetData, remoteId: string) => void,
     onChannelOpen: (remoteId: string, channel: RTCDataChannel) => void,
     onChannelClosed: (remoteId: string, channel: RTCDataChannel) => void,
   ) => {
@@ -25,7 +25,7 @@ export const useChannelUnordered = () => {
     };
 
     channel.onmessage = ({ data }: any) => {
-      receiveData(remoteId, data);
+      receiveData(data, remoteId);
     };
 
     return channel;

@@ -13,8 +13,8 @@ export const usePeerConnection = () => {
   const createRTCPeerConnection = hooks.useRTCPeerConnection();
   const createOrderedChannel = hooks.useChannelOrdered();
   const createUnorderedChannel = hooks.useChannelUnordered();
-  const { onReceiveData: onReceiveDataForMain } = hooks.useGameServiceForMain();
-  const { onReceiveData: onReceiveDataForClient } = hooks.useGameServiceForClient();
+  const { onReceive: onReceiveOnMain } = hooks.useReceiveOnMain();
+  const { onReceive: onReceiveOnClient } = hooks.useReceiveOnClient();
 
   const onChannelOrderedOpen = useCallback((remoteId: string, channel: RTCDataChannel) => {
     setChannelsOrdered((x) => [...x, { remoteId, channel }]);
@@ -44,11 +44,11 @@ export const usePeerConnection = () => {
     console.log('peer', remoteId, 'connecting');
     const peerConnection = createRTCPeerConnection(remoteId, sendSignaling);
     if (main) {
-      createOrderedChannel(remoteId, peerConnection, onReceiveDataForMain, onChannelOrderedOpen, onChannelOrderedClosed);
-      createUnorderedChannel(remoteId, peerConnection, onReceiveDataForMain, onChannelUnorderedOpen, onChannelUnorderedClosed);
+      createOrderedChannel(remoteId, peerConnection, onReceiveOnMain, onChannelOrderedOpen, onChannelOrderedClosed);
+      createUnorderedChannel(remoteId, peerConnection, onReceiveOnMain, onChannelUnorderedOpen, onChannelUnorderedClosed);
     } else {
-      createOrderedChannel(remoteId, peerConnection, onReceiveDataForClient, onChannelOrderedOpen, onChannelOrderedClosed);
-      createUnorderedChannel(remoteId, peerConnection, onReceiveDataForClient, onChannelUnorderedOpen, onChannelUnorderedClosed);
+      createOrderedChannel(remoteId, peerConnection, onReceiveOnClient, onChannelOrderedOpen, onChannelOrderedClosed);
+      createUnorderedChannel(remoteId, peerConnection, onReceiveOnClient, onChannelUnorderedOpen, onChannelUnorderedClosed);
     }
     return (peerConnection);
   }, [
@@ -57,8 +57,8 @@ export const usePeerConnection = () => {
     createRTCPeerConnection,
     createOrderedChannel,
     createUnorderedChannel,
-    onReceiveDataForMain,
-    onReceiveDataForClient,
+    onReceiveOnMain,
+    onReceiveOnClient,
     onChannelOrderedOpen,
     onChannelOrderedClosed,
     onChannelUnorderedOpen,

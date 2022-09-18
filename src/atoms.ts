@@ -5,17 +5,18 @@ import {
 
 import * as types from './types';
 
+export const overlayInfotext = atom<RefObject<HTMLDivElement>>({
+  key: 'overlayInfotext',
+  default: undefined,
+  dangerouslyAllowMutability: true,
+});
+
 export const chatMessages = atom<types.ChatMessage[]>({
   key: 'chatMessages',
   default: [],
 });
 
-export const objectIds = atom<string[]>({
-  key: 'objectIds',
-  default: [],
-});
-
-export const objects = atom<RefObject<{ [id: string]: types.GameObject }>>({
+export const objects = atom<RefObject<types.GameObject[]>>({
   key: 'objects',
   default: undefined,
   dangerouslyAllowMutability: true,

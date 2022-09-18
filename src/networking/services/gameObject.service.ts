@@ -18,7 +18,7 @@ export const getGameObject = async (id: any) => {
   }
 };
 
-export const saveGameState = async (data: any) => {
+export const saveGameState = async (data: { remoteId: string, score: number }[]) => {
   try {
     const response = await axios.post(
       `${server}/api/v1/gameObject/saveGameState`,

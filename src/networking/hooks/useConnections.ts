@@ -18,10 +18,10 @@ export const useConnections = () => {
   const connectToPeer = hooks.usePeerConnection();
 
   const handleDeleteId = useCallback((delId: string) => {
-    delete objects.current?.[delId];
-    const newPeerConnections = { ...peerConnections };
-    delete newPeerConnections[delId];
-    setPeerConnections(newPeerConnections);
+    // delete objects.current?.[delId];
+    // const newPeerConnections = { ...peerConnections };
+    // delete newPeerConnections[delId];
+    // setPeerConnections(newPeerConnections);
   }, [objects, peerConnections, setPeerConnections]);
 
   const onReceiveInit = useCallback((id: string) => {
@@ -61,12 +61,12 @@ export const useConnections = () => {
   }, [connectToPeer, peerConnections, setPeerConnections]);
 
   const onReceivePeerDisconnected = useCallback((remoteId: string) => {
-    if (main) {
-      saveGameState(Object.keys(objects).map((x) => ({ playerId: x, score: objects.current?.[x]?.score })));
-    }
+    // if (main) {
+    //   saveGameState(Object.keys(objects).map((x) => ({ playerId: x, score: objects.current?.[x]?.score })));
+    // }
     peerConnections[remoteId]?.close();
-    handleDeleteId(remoteId);
-  }, [handleDeleteId, main, objects, peerConnections]);
+    //    handleDeleteId(remoteId);
+  }, [peerConnections]);
 
   const connect = useCallback(() => {
     const { disconnectFromSignaler } = connectToSignaler(
