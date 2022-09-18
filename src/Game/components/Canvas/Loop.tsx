@@ -151,32 +151,20 @@ const Loop = () => {
   useFrame((state, delta) => {
     if (main) {
       const updateData: { [id: string]: types.UpdateObject } = {};
-
       for (let i = (objects.current || []).length; i > -1; i--) {
         const o = objects.current?.[i];
         if (o && o.elRef) {
           if (o.id === ownId) {
-            // handle keys
             handleKeys(delta, o);
-            // handle camera when for loop is on self
             handleCamera(camera, o, o.elRef);
-            // handle own overlay info text
             handleOverlayInfotext(overlayInfotext, o, o.elRef);
           }
-          // handle movement
           handleMovement(delta, o, o.elRef);
           if (Date.now() > nextSendTime) {
-            // gather update data
             gatherUpdateData(updateData, o);
-            // reset accumulated control values
             resetControlValues(o);
           }
-          // handle infoRef
-          // o.infoRef.textContent = o.username;
-          // v.copy(o.elRef.position);
-          // v.project(camera);
-          // o.infoRef.style.top = `calc(${h * -v.y + h}px + 10%)`;
-          // o.infoRef.style.left = `${w * v.x + w}px`;
+          handleInfoRef(o, v, h, w, o.elRef, camera);
         }
       }
       if (Date.now() > nextSendTime) {
