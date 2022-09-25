@@ -1,0 +1,1 @@
+export { useObjects } from "./useObjects";

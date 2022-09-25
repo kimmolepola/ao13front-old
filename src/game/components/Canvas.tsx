@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import styled from 'styled-components';
-import Objects from './Canvas/GameObjects';
+import Objects from './Canvas/Objects';
 import Loop from './Canvas/Loop';
 import theme from '../../themets.js';
 

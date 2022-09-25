@@ -6,8 +6,8 @@ import { setToken, login } from '../../networking/services/auth.service';
 
 import * as theme from '../../theme';
 import * as atoms from '../../atoms';
-import * as types from '../types';
-import * as hooks from '../hooks';
+import * as types from "../types";
+import * as hooks from "../hooks";
 
 const Login = () => {
   const setUser = useSetRecoilState(atoms.user);

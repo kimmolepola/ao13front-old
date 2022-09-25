@@ -1,4 +1,5 @@
 import { RefObject } from 'react';
+import * as THREE from 'three';
 
 export type OverlayInfotextRef = RefObject<HTMLDivElement>
 
@@ -16,8 +17,6 @@ export enum Keys {
   RIGHT = 'right'
 }
 
-export type GameObjectElement = { rotateZ: any, translateY: any, position: any, rotation: any };
-
 export type GameObject = {
   id: string,
   username: string,
@@ -32,23 +31,13 @@ export type GameObject = {
   controlsOverChannelsRight: number,
   rotationSpeed: number,
   speed: number,
-  positionX: number,
-  positionY: number,
-  positionZ: number,
-  quaternionX: number,
-  quaternionY: number,
-  quaternionZ: number,
-  quaternionW: number,
-  backendPositionX: number,
-  backendPositionY: number,
-  backendPositionZ: number,
-  backendQuaternionX: number,
-  backendQuaternionY: number,
-  backendQuaternionZ: number,
-  backendQuaternionW: number,
+  position: THREE.Vector3,
+  quaternion: THREE.Quaternion,
+  backendPosition: THREE.Vector3,
+  backendQuaternion: THREE.Quaternion,
   keyDowns: Keys[],
-  elRef: GameObjectElement | undefined,
-  infoRef: HTMLDivElement,
+  infoRef: HTMLDivElement | undefined,
+  object3D: THREE.Object3D | undefined,
 }
 
 export enum NetDataType {
@@ -73,10 +62,12 @@ export type ChatMessageFromMain = {
 
 export type Controls = {
   type: NetDataType.CONTROLS,
-  up: number,
-  down: number,
-  left: number,
-  right: number,
+  data: {
+    up: number,
+    down: number,
+    left: number,
+    right: number,
+  }
 }
 
 export type UpdateObject = {

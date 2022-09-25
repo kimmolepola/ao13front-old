@@ -7,7 +7,7 @@ import {
   useSetRecoilState,
 } from 'recoil';
 
-import Game from './Game/Game';
+import Game from './game/Game';
 import Frontpage from './Frontpage/Frontpage';
 import { setToken } from './networking/services/auth.service';
 import { getUser } from './networking/services/user.service';

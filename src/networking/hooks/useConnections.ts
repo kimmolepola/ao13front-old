@@ -61,11 +61,10 @@ export const useConnections = () => {
   }, [connectToPeer, peerConnections, setPeerConnections]);
 
   const onReceivePeerDisconnected = useCallback((remoteId: string) => {
-    // if (main) {
-    //   saveGameState(Object.keys(objects).map((x) => ({ playerId: x, score: objects.current?.[x]?.score })));
-    // }
     peerConnections[remoteId]?.close();
-    //    handleDeleteId(remoteId);
+    const newPeerConnections = { ...peerConnections };
+    delete newPeerConnections[remoteId];
+    setPeerConnections(newPeerConnections);
   }, [peerConnections]);
 
   const connect = useCallback(() => {

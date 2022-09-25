@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { chatMessageTimeToLive } from '../../Game/parameters';
+import { chatMessageTimeToLive } from '../../parameters';
 
 import * as atoms from '../../atoms';
 import * as types from '../../types';

@@ -2,10 +2,10 @@ import React, { memo } from 'react';
 import { useLoader } from '@react-three/fiber';
 import { TextureLoader } from 'three/src/loaders/TextureLoader';
 import * as THREE from 'three';
-import GameObject from './GameObjects/GameObject';
-import Background from './GameObjects/Background';
+import GameObject from './GameObject';
+import Background from './Background';
 
-const GameObjects = ({
+const Container = ({
   ids, id, objectIds, objects,
 }: any) => {
   const [fighterImage, image1] = useLoader(TextureLoader, [
@@ -34,10 +34,10 @@ const GameObjects = ({
   );
 };
 
-GameObjects.displayName = 'GameObjects';
-const MemoGameObjects = memo(
-  GameObjects,
+Container.displayName = 'Container';
+const MemoContainer = memo(
+  Container,
   (prev, next) => prev.ids === next.ids,
 );
 
-export default MemoGameObjects;
+export default MemoContainer;

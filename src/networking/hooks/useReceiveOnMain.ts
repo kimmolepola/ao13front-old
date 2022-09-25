@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { chatMessageTimeToLive } from '../../Game/parameters';
+import { chatMessageTimeToLive } from '../../game/parameters';
 
 import * as atoms from '../../atoms';
 import * as types from '../../types';
@@ -16,28 +16,28 @@ export const useReceiveOnMain = () => {
     remoteId: string,
   ) => {
     switch (data.type) {
-      case types.NetDataType.Controls: {
+      case types.NetDataType.CONTROLS: {
         const o = objects.current?.find((x) => x.id === remoteId);
         if (o) {
-          o.controlsUp += data.up || 0;
-          o.controlsDown += data.down || 0;
-          o.controlsLeft += data.left || 0;
-          o.controlsRight += data.right || 0;
-          o.controlsOverChannelsUp += data.up || 0;
-          o.controlsOverChannelsDown += data.down || 0;
-          o.controlsOverChannelsLeft += data.left || 0;
-          o.controlsOverChannelsRight += data.right || 0;
+          o.controlsUp += data.data.up || 0;
+          o.controlsDown += data.data.down || 0;
+          o.controlsLeft += data.data.left || 0;
+          o.controlsRight += data.data.right || 0;
+          o.controlsOverChannelsUp += data.data.up || 0;
+          o.controlsOverChannelsDown += data.data.down || 0;
+          o.controlsOverChannelsLeft += data.data.left || 0;
+          o.controlsOverChannelsRight += data.data.right || 0;
         }
         break;
       }
-      case types.NetDataType.ChatMessageFromClient: {
+      case types.NetDataType.CHATMESSAGE_CLIENT: {
         const message = {
           message: data.message,
           id: Date.now().toString(),
           userId: remoteId,
           username: objects.current?.find((x) => x.id === remoteId)?.username || '',
         };
-        sendOrdered({ ...message, type: types.NetDataType.ChatMessageFromMain });
+        sendOrdered({ ...message, type: types.NetDataType.CHATMESSAGE_MAIN });
         setChatMessages([message, ...chatMessages]);
         setTimeout(
           () => setChatMessages((x) => x.filter((xx) => xx !== message)),

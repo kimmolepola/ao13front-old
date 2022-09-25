@@ -16,6 +16,11 @@ export const chatMessages = atom<types.ChatMessage[]>({
   default: [],
 });
 
+export const objectIds = atom<string[]>({
+  key: "objectIds",
+  default: [],
+})
+
 export const objects = atom<RefObject<types.GameObject[]>>({
   key: 'objects',
   default: undefined,
