@@ -1,39 +1,43 @@
-import React, { memo } from 'react';
+import { memo, useMemo } from 'react';
+import * as THREE from "three";
+import { useRecoilValue } from "recoil";
 
-const GameObject = ({
-  ids, objects, id, map, objectId,
-}: any) => (
-  <mesh
-    ref={(ref) => {
-      const obj = objects.current[objectId];
-      if (ref && obj && !obj.elref) {
-        obj.elref = ref;
-        obj.elref.position.set(...obj.startPosition);
-        obj.elref.quaternion.set(...obj.startQuaternion);
-      }
-    }}
-  >
-    <meshBasicMaterial
-      attach="material-4"
-      color={ids && objectId === id ? 'orange' : undefined}
-      transparent
-      map={map}
-    />
+import * as atoms from "../../../../atoms";
 
-    <boxGeometry
-      args={[
-        Math.min(1, map.image.width / map.image.height),
-        Math.min(1, map.image.height / map.image.width),
-        1,
-      ]}
-    />
-  </mesh>
-);
+const GameObject = ({ id, map }: { id: string, map: THREE.Texture }) => {
+  const ownId = useRecoilValue(atoms.ownId)
+  const gameObjectsRef = useRecoilValue(atoms.objects)
+  const o = gameObjectsRef.current?.find((x) => x.id === id);
 
-GameObject.displayName = 'GameObject';
-const MemoGameObject = memo(
-  GameObject,
-  (prev, next) => prev.objectId === next.objectId,
-);
+  const meshColor = useMemo(() => ownId === id ? 'orange' : undefined, [ownId, id])
 
-export default MemoGameObject;
+  const boxGeometryArgs = useMemo(() => ({
+    width: Math.min(1, map.image.width / map.image.height),
+    height: Math.min(1, map.image.height / map.image.width),
+    depth: 1,
+  }), [map]);
+
+  if (!o) {
+    return <></>
+  }
+
+  return (
+    <mesh ref={(ref) => o.object3D = ref as THREE.Object3D}>
+      <meshBasicMaterial
+        attach="material-4"
+        color={meshColor}
+        transparent
+        map={map}
+      />
+      <boxGeometry
+        args={[
+          boxGeometryArgs.width,
+          boxGeometryArgs.height,
+          boxGeometryArgs.depth,
+        ]}
+      />
+    </mesh>
+  )
+};
+
+export default memo(GameObject);

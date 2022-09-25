@@ -59,7 +59,7 @@ const cleanup = (idsNew: any, objects: any) => {
   objects.current = objectsNew;
 };
 
-const Game = ({ refreshUser }: any) => {
+const Container = ({ refreshUser }: any) => {
   const setObjects = useSetRecoilState(atoms.objects);
   const objects = useRef({});
 
@@ -78,7 +78,7 @@ const Game = ({ refreshUser }: any) => {
   }
 
   const [connection, setConnection] = useState<any>();
-  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  const setWindowHeight = useSetRecoilState(atoms.windowHeight);
   const [connectionMessage, setConnectionMessage] = useState();
   const [main, setMain] = useState();
   const [chatMessages, setChatMessages] = useState([]);
@@ -169,7 +169,6 @@ const Game = ({ refreshUser }: any) => {
     refreshUser,
     quit,
     score,
-    windowHeight,
     objects,
     main,
     ids,
@@ -183,7 +182,6 @@ const Game = ({ refreshUser }: any) => {
     refreshUser,
     quit,
     score,
-    windowHeight,
     objects,
     main,
     ids,
@@ -199,7 +197,6 @@ const Game = ({ refreshUser }: any) => {
       <Canvas
         connection={connection}
         score={score}
-        windowHeight={windowHeight}
         ids={ids}
         main={main}
         id={id}
@@ -216,4 +213,4 @@ const Game = ({ refreshUser }: any) => {
   );
 };
 
-export default Game;
+export default Container;

@@ -1,6 +1,6 @@
 import React from 'react';
-import CanvasOverlay from './UI/CanvasOverlay';
-import Sidepanel from './UI/Sidepanel';
+import CanvasOverlay from './CanvasOverlay';
+import Sidepanel from './Sidepanel';
 
 const UI = () => (
   <>

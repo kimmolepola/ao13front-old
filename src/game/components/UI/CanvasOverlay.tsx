@@ -1,8 +1,12 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
+import { useRecoilValue } from "recoil";
+
 import theme from '../../../themets.js';
 import appContext from '../../../context/appContext';
 import { handlePressed, handleReleased } from '../../controls';
+
+import * as atoms from "../../../atoms";
 
 const Connecting = styled.div<any>`
   position: absolute;
@@ -144,8 +148,10 @@ const ControlButton = ({ control, id, objects }: any) => (
 );
 
 const CanvasOverlay = () => {
+  const windowHeight = useRecoilValue(atoms.windowHeight);
+
   const {
-    ids, windowHeight, id, objects, text,
+    ids, id, objects, text,
   }: any = useContext(appContext);
 
   return (

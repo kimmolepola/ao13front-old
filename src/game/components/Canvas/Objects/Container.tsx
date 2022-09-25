@@ -1,43 +1,32 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { useLoader } from '@react-three/fiber';
-import { TextureLoader } from 'three/src/loaders/TextureLoader';
-import * as THREE from 'three';
+import { useRecoilValue } from "recoil";
+import * as THREE from "three";
+
 import GameObject from './GameObject';
 import Background from './Background';
 
-const Container = ({
-  ids, id, objectIds, objects,
-}: any) => {
-  const [fighterImage, image1] = useLoader(TextureLoader, [
+import * as atoms from "../../../../atoms"
+
+const Container = () => {
+  const objectIds = useRecoilValue(atoms.objectIds);
+  const [fighterImage, backgroundImage] = useLoader(THREE.TextureLoader, [
     'fighter.png',
     'image1.jpeg',
   ]);
 
-  image1.wrapS = THREE.MirroredRepeatWrapping;
-  image1.wrapT = THREE.MirroredRepeatWrapping;
-  image1.repeat.set(120, 120);
-
   return (
     <>
-      <Background map={image1} />
-      {objectIds.current.map((x: any, i: any) => (
+      <Background map={backgroundImage} />
+      {objectIds.map((x: string) => (
         <GameObject
-          ids={ids}
-          objects={objects}
-          id={id}
-          map={fighterImage}
-          objectId={x}
           key={x}
+          id={x}
+          map={fighterImage}
         />
       ))}
     </>
   );
 };
 
-Container.displayName = 'Container';
-const MemoContainer = memo(
-  Container,
-  (prev, next) => prev.ids === next.ids,
-);
-
-export default MemoContainer;
+export default memo(Container);

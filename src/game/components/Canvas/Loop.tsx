@@ -3,12 +3,12 @@ import { useThree, useFrame } from '@react-three/fiber';
 import { useRecoilValue } from 'recoil';
 
 import * as networkingHooks from '../../../networking/hooks';
-import { radiansToDegrees } from '../../utils';
+import { radiansToDegrees } from '../../../utils';
 import {
   interpolationAlpha,
   sendIntervalClient,
   sendIntervalMain,
-} from '../../parameters';
+} from '../../../parameters';
 
 import * as atoms from '../../../atoms';
 import * as types from '../../../types';
@@ -120,11 +120,13 @@ const handleInfoRef = (
   camera: THREE.Camera,
 ) => {
   const o = gameObject;
-  o.infoRef.textContent = o.username;
-  v.copy(object3D.position);
-  v.project(camera);
-  o.infoRef.style.top = `calc(${h * -v.y + h}px + 10%)`;
-  o.infoRef.style.left = `${w * v.x + w}px`;
+  if (o.infoRef) {
+    o.infoRef.textContent = o.username;
+    v.copy(object3D.position);
+    v.project(camera);
+    o.infoRef.style.top = `calc(${h * -v.y + h}px + 10%)`;
+    o.infoRef.style.left = `${w * v.x + w}px`;
+  }
 };
 
 const gatherControlsData = (o: types.GameObject) => ({

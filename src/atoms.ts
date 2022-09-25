@@ -5,6 +5,11 @@ import {
 
 import * as types from './types';
 
+export const windowHeight = atom<number>({
+  key: "windowHeight",
+  default: window.innerHeight,
+})
+
 export const overlayInfotext = atom<RefObject<HTMLDivElement>>({
   key: 'overlayInfotext',
   default: undefined,

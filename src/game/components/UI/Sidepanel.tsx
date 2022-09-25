@@ -1,10 +1,13 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from "recoil";
 
 import ChatContainer from './Sidepanel/ChatContainer';
 import appContext from '../../../context/appContext';
 import theme from '../../../themets.js';
+
+import * as atoms from "../../../atoms";
 
 const Text = styled.div`
   margin: ${theme.margins.basic};
@@ -67,12 +70,12 @@ const Container = styled.div<any>`
 
 const Sidepanel = () => {
   const navigate = useNavigate();
+  const windowHeight = useRecoilValue(atoms.windowHeight);
 
   const {
     refreshUser,
     quit,
     score,
-    windowHeight,
     id,
     main,
     ids,
