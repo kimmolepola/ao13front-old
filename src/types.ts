@@ -19,6 +19,7 @@ export enum Keys {
 
 export type GameObject = {
   id: string,
+  player: boolean,
   username: string,
   score: number,
   controlsUp: number,
@@ -89,6 +90,7 @@ export type UpdateObject = {
 
 export type StateObject = {
   sId: string,
+  sPlayer: boolean,
   sUsername: string,
   sScore: number,
   sRotationSpeed: number,
@@ -129,4 +131,5 @@ export type Signaling = {
 export type InitialGameObject = {
   username: string;
   score: number;
+  player: boolean;
 }

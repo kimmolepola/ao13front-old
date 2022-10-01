@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
-import { useSetRecoilValue, useRecoilValue } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 import * as networkingHooks from '../../../networking/hooks';
 import { radiansToDegrees } from '../../../utils';
@@ -146,7 +146,7 @@ const Loop = () => {
   const objects = useRecoilValue(atoms.objects);
   const ownId = useRecoilValue(atoms.ownId);
   const overlayInfotext = useRecoilValue(atoms.overlayInfotext);
-  const setScore = useSetRecoilValue(atoms.score);
+  const setScore = useSetRecoilState(atoms.score);
 
   const { sendUnordered: sendUnorderedFromClient } = networkingHooks.useSendFromClient();
   const { sendUnordered: sendUnorderedFromMain } = networkingHooks.useSendFromMain();

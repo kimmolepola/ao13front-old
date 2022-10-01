@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { logError } from '../utils';
+import { logError } from '../../utils';
 
 import * as types from '../../types';
 import * as atoms from '../../atoms';

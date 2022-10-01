@@ -1,7 +1,5 @@
 import { useCallback } from 'react';
-import { useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil';
-
-import { saveGameState } from '../services/gameObject.service';
+import { useSetRecoilState, useRecoilState } from 'recoil';
 
 import * as hooks from '.';
 import * as atoms from '../../atoms';
@@ -9,20 +7,11 @@ import * as types from '../../types';
 
 export const useConnections = () => {
   const setOwnId = useSetRecoilState(atoms.ownId);
-  const objects = useRecoilValue(atoms.objects);
-  const main = useRecoilValue(atoms.main);
   const [peerConnections, setPeerConnections] = useRecoilState(atoms.peerConnections);
 
   const { onReceiveMain } = hooks.useMain();
   const connectToSignaler = hooks.useSignaler();
   const connectToPeer = hooks.usePeerConnection();
-
-  const handleDeleteId = useCallback((delId: string) => {
-    // delete objects.current?.[delId];
-    // const newPeerConnections = { ...peerConnections };
-    // delete newPeerConnections[delId];
-    // setPeerConnections(newPeerConnections);
-  }, [objects, peerConnections, setPeerConnections]);
 
   const onReceiveInit = useCallback((id: string) => {
     setOwnId(id);
