@@ -1,7 +1,9 @@
-import React, { useContext } from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
+import { useRecoilValue } from "recoil";
 import theme from '../../../../../themets.js';
-import appContext from '../../../../../context/appContext';
+
+import * as atoms from "../../../../../atoms"
 
 const Avatar = styled.img`
   margin-left: auto;
@@ -54,24 +56,25 @@ const Container = styled.div`
 `;
 
 const Chat = () => {
-  const { chatMessages, id }: any = useContext(appContext);
+  const chatMessages = useRecoilValue(atoms.chatMessages)
+  const ownId = useRecoilValue(atoms.ownId)
 
   return (
     <Container>
-      {chatMessages.map((x: any, index: any) => (
-        <div key={x.chatMessageId}>
+      {chatMessages.map((x, i) => (
+        <div key={x.messageId}>
           <Divider
-            style={{ display: index !== chatMessages.length - 1 ? '' : 'none' }}
+            style={{ display: i !== chatMessages.length - 1 ? '' : 'none' }}
           />
           <Message
             style={{
-              background: x.userId === id ? 'DarkKhaki' : 'none',
+              background: x.userId === ownId ? 'DarkKhaki' : 'none',
             }}
           >
             <Text>
               {x.username}
               :
-              {x.chatMessage}
+              {x.message}
             </Text>
             <Avatar src="avatar.jpg" alt="Avatar" />
           </Message>
@@ -81,4 +84,4 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default memo(Chat);

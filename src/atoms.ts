@@ -5,6 +5,11 @@ import {
 
 import * as types from './types';
 
+export const score = atom<number>({
+  key: "score",
+  default: 0,
+})
+
 export const windowHeight = atom<number>({
   key: "windowHeight",
   default: window.innerHeight,

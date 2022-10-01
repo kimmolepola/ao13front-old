@@ -1,4 +1,5 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
+import * as THREE from 'three';
 
 import { chatMessageTimeToLive } from '../../parameters';
 
@@ -7,13 +8,14 @@ import * as types from '../../types';
 
 export const useReceiveOnClient = () => {
   const objects = useRecoilValue(atoms.objects);
+  const setObjectIds = useSetRecoilState(atoms.objectIds);
   const [chatMessages, setChatMessages] = useRecoilState(atoms.chatMessages);
 
   const onReceive = (
     data: types.NetData,
   ) => {
     switch (data.type) {
-      case types.NetDataType.State: {
+      case types.NetDataType.STATE: {
         const deleteIndexes = [];
         for (let i = (objects.current || []).length - 1; i > -1; i--) {
           const o = (objects.current || [])[i];
@@ -27,7 +29,6 @@ export const useReceiveOnClient = () => {
         deleteIndexes.forEach((i) => {
           objects.current?.splice(i, 1);
         });
-
         Object.values(data.data).forEach((s) => {
           if (objects.current) {
             if (!objects.current.some((x) => x.id === s.sId)) {
@@ -45,27 +46,21 @@ export const useReceiveOnClient = () => {
                 controlsOverChannelsRight: 0,
                 rotationSpeed: s.sRotationSpeed,
                 speed: s.sSpeed,
-                positionX: s.sPositionX,
-                positionY: s.sPositionY,
-                positionZ: s.sPositionZ,
-                quaternionX: s.sQuaternionX,
-                quaternionY: s.sQuaternionY,
-                quaternionZ: s.sQuaternionY,
-                quaternionW: s.sQuaternionW,
-                backendPositionX: s.sPositionX,
-                backendPositionY: s.sPositionY,
-                backendPositionZ: s.sPositionZ,
-                backendQuaternionX: s.sQuaternionX,
-                backendQuaternionY: s.sQuaternionY,
-                backendQuaternionZ: s.sQuaternionZ,
-                backendQuaternionW: s.sQuaternionW,
+                position: new THREE.Vector3(s.sPositionX, s.sPositionY, s.sPositionZ),
+                quaternion: new THREE.Quaternion(s.sQuaternionX, s.sQuaternionY, s.sQuaternionZ, s.sQuaternionW),
+                backendPosition: new THREE.Vector3(s.sPositionX, s.sPositionY, s.sPositionZ),
+                backendQuaternion: new THREE.Quaternion(s.sQuaternionX, s.sQuaternionY, s.sQuaternionZ, s.sQuaternionW),
+                keyDowns: [],
+                infoRef: undefined,
+                object3D: undefined,
               });
             }
           }
         });
+
         break;
       }
-      case types.NetDataType.Update: {
+      case types.NetDataType.UPDATE: {
         if (objects.current) {
           for (let i = (objects.current).length; i > 0; i--) {
             const o = (objects.current)[i];
@@ -90,7 +85,7 @@ export const useReceiveOnClient = () => {
         }
         break;
       }
-      case types.NetDataType.ChatMessageFromMain: {
+      case types.NetDataType.CHATMESSAGE_MAIN: {
         const message = {
           ...data,
           username: (objects.current || []).find((x) => x.id === data.userId)?.username || '',

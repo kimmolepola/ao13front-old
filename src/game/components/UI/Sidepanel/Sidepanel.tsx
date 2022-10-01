@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
+import { memo, useCallback, useContext } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from "recoil";
 
-import ChatContainer from './Sidepanel/ChatContainer';
-import appContext from '../../../context/appContext';
-import theme from '../../../themets.js';
+import ChatContainer from './ChatContainer';
+import appContext from '../../../../context/appContext';
+import theme from '../../../../themets.js';
 
-import * as atoms from "../../../atoms";
+import * as atoms from "../../../../atoms";
 
 const Text = styled.div`
   margin: ${theme.margins.basic};
@@ -68,42 +68,34 @@ const Container = styled.div<any>`
   background: ${theme.colors.bgMain};
 `;
 
-const Sidepanel = () => {
+const Sidepanel = ({ quit }: { quit: Function }) => {
   const navigate = useNavigate();
   const windowHeight = useRecoilValue(atoms.windowHeight);
+  const main = useRecoilValue(atoms.main)
+  const connectedIds = useRecoilValue(atoms.connectedIds)
+  const connectionMessage = useRecoilValue(atoms.connectionMessage)
+  const score = useRecoilValue(atoms.score);
 
   const {
     refreshUser,
-    quit,
-    score,
-    id,
-    main,
-    ids,
-    connectionMessage,
   }: any = useContext(appContext);
 
-  const handleQuit = () => {
+  const handleQuit = useCallback(() => {
     quit();
     navigate('/');
     setTimeout(refreshUser, 2500);
-  };
+  }, [quit, navigate, refreshUser]);
 
   return (
     <Container windowHeight={windowHeight}>
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <div
-          style={{
-            display: 'flex',
-            width: '100%',
-            justifyContent: 'space-between',
-          }}
-        >
+      <div className="flex flex-col">
+        <div className="flex w-full justify-between">
           <Text>AO13</Text>
           <Button onClick={handleQuit}>Quit</Button>
         </div>
         <InfoBox>
-          <div>{main && main === id ? 'you are the game host' : null}</div>
-          <div>{`players: ${ids.length}`}</div>
+          <div>{main ? 'You are the game host' : null}</div>
+          <div>{`Players: ${connectedIds.length}`}</div>
           <div>
             {connectionMessage}
           </div>
@@ -111,7 +103,7 @@ const Sidepanel = () => {
         <InfoBox>
           <p />
           <p />
-          <div ref={score} />
+          {score}
           <p />
           <p />
         </InfoBox>
@@ -121,4 +113,4 @@ const Sidepanel = () => {
   );
 };
 
-export default Sidepanel;
+export default memo(Sidepanel);

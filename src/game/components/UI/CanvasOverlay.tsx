@@ -1,12 +1,12 @@
-import React, { useContext } from 'react';
+import { memo, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from "recoil";
 
 import theme from '../../../themets.js';
-import appContext from '../../../context/appContext';
 import { handlePressed, handleReleased } from '../../controls';
 
 import * as atoms from "../../../atoms";
+import * as types from "../../../types";
 
 const Connecting = styled.div<any>`
   position: absolute;
@@ -99,20 +99,19 @@ const ObjectInfo = styled.div`
   font-size: 11px;
 `;
 
-const ObjectInfos = ({ id, objects }: any) => {
-  console.log('objectInfos');
+const ObjectInfos = () => {
+  const ownId = useRecoilValue(atoms.ownId)
+  const objects = useRecoilValue(atoms.objects)
+
   return (
     <>
-      {Object.keys(objects.current).reduce((acc: any, cur) => {
-        if (cur !== id) {
+      {Object.entries(objects.current || []).reduce((acc: any, [id, object]) => {
+        if (id !== ownId) {
           acc.push(
             <ObjectInfo
-              key={cur}
+              key={id}
               ref={(ref) => {
-                if (objects.current[cur]) {
-                  const obj = objects.current[cur];
-                  obj.objectInfoRef = ref;
-                }
+                object.infoRef = ref;
               }}
             />,
           );
@@ -123,56 +122,67 @@ const ObjectInfos = ({ id, objects }: any) => {
   );
 };
 
-const ControlButton = ({ control, id, objects }: any) => (
-  <Button
-    onTouchStart={() => handlePressed(control, id, objects)}
-    onTouchEnd={() => handleReleased(control, id, objects)}
-    onMouseDown={() => handlePressed(control, id, objects)}
-    onMouseUp={() => handleReleased(control, id, objects)}
-  >
-    {(() => {
-      switch (control) {
-        case 'up':
-          return '\u2191';
-        case 'down':
-          return '\u2193';
-        case 'left':
-          return '\u2190';
-        case 'right':
-          return '\u2192';
-        default:
-          return null;
-      }
-    })()}
-  </Button>
-);
+const ControlButton = ({ control }: { control: types.Keys }) => {
+  const ownId = useRecoilValue(atoms.ownId);
+  const objects = useRecoilValue(atoms.objects);
+
+  const onPressed = useCallback(() => {
+    handlePressed(control, ownId, objects);
+  }, [control, ownId, objects]);
+
+  const onReleased = useCallback(() => {
+    handleReleased(control, ownId, objects);
+  }, [control, ownId, objects]);
+
+  const symbol = useMemo(() => {
+    switch (control) {
+      case types.Keys.UP:
+        return '\u2191';
+      case types.Keys.DOWN:
+        return '\u2193';
+      case types.Keys.LEFT:
+        return '\u2190';
+      case types.Keys.RIGHT:
+        return '\u2192';
+      default:
+        return null;
+    }
+  }, [control])
+
+  return (
+    <Button
+      onTouchStart={onPressed}
+      onTouchEnd={onReleased}
+      onMouseDown={onPressed}
+      onMouseUp={onReleased}
+    >
+      {symbol}
+    </Button>
+  )
+};
 
 const CanvasOverlay = () => {
   const windowHeight = useRecoilValue(atoms.windowHeight);
-
-  const {
-    ids, id, objects, text,
-  }: any = useContext(appContext);
+  const connectedIds = useRecoilValue(atoms.connectedIds)
+  const overlayInfotext = useRecoilValue(atoms.overlayInfotext)
 
   return (
     <Container windowHeight={windowHeight}>
-      <ObjectInfos id={id} objects={objects} />
-      <Connecting show={!ids.length}>Connecting...</Connecting>
-      <Infotext show={ids.length} ref={text} />
+      <ObjectInfos />
+      <Connecting show={!connectedIds.length}>Connecting...</Connecting>
+      <Infotext show={connectedIds.length} ref={overlayInfotext} />
       <ControlsContainer>
         <Controls>
-          <ControlButton control="left" id={id} objects={objects} />
+          <ControlButton control={types.Keys.LEFT} />
           <ButtonGroup>
-            <ControlButton control="up" id={id} objects={objects} />
-            <ControlButton control="down" id={id} objects={objects} />
+            <ControlButton control={types.Keys.UP} />
+            <ControlButton control={types.Keys.DOWN} />
           </ButtonGroup>
-          <ControlButton control="right" id={id} objects={objects} />
+          <ControlButton control={types.Keys.RIGHT} />
         </Controls>
       </ControlsContainer>
     </Container>
   );
 };
 
-export default CanvasOverlay;
-
-// return '\u21E6';
+export default memo(CanvasOverlay);

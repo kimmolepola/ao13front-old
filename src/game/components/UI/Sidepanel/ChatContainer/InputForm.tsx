@@ -1,9 +1,11 @@
-import React, { useContext, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import styled from 'styled-components';
+import { useSetRecoilState, useRecoilValue } from "recoil";
+
 import theme from '../../../../../themets.js';
-import appContext from '../../../../../context/appContext';
-import { sendDataOnOrderedChannelsAndRelay } from '../../../../../networking/services/game.service';
-import Chat from './Chat';
+import * as networkingHooks from "../../../../../networking/hooks"
+import * as atoms from "../../../../../atoms"
+import * as types from "../../../../../types"
 
 const Button = styled.button`
   width: 12%;
@@ -25,44 +27,67 @@ const InputForm = styled.form`
 const Container = styled.div``;
 
 const ChatInputForm = () => {
-  const [inputValue, setInputValue] = useState('');
-  const {
-    connection, username, main, setChatMessages, id,
-  }: any = useContext(appContext);
+  const setChatMessages = useSetRecoilState(atoms.chatMessages);
+  const { sendOrdered: sendOrderedFromMain } = networkingHooks.useSendFromMain();
+  const { sendOrdered: sendOrderedFromClient } = networkingHooks.useSendFromClient();
+  const main = useRecoilValue(atoms.main);
+  const ownId = useRecoilValue(atoms.ownId)
+  const [value, setValue] = useState('');
+  const objectsRef = useRecoilValue(atoms.objects)
+
+  const onSubmit = useCallback((e: any) => {
+    e.preventDefault();
+    if (main) {
+      if (ownId) {
+        const chatMessageFromMain = {
+          type: types.NetDataType.CHATMESSAGE_MAIN as types.NetDataType.CHATMESSAGE_MAIN,
+          userId: ownId,
+          messageId: ownId + Date.now().toString(),
+          message: value
+        }
+        sendOrderedFromMain(chatMessageFromMain)
+        setChatMessages((x) => [
+          {
+            userId: ownId,
+            username: objectsRef.current?.find((xx) => xx.id === ownId)?.username || "",
+            messageId: chatMessageFromMain.messageId,
+            message: value,
+          },
+          ...x])
+      }
+    } else {
+      sendOrderedFromClient({
+        type: types.NetDataType.CHATMESSAGE_CLIENT,
+        message: value,
+      })
+    }
+    setValue("")
+  }, []);
+
+  const onChange = useCallback((e: any) => { setValue(e.target.value) }, []);
+
+  const onFocus = useCallback((e: any) => {
+    e.target.placeholder = '';
+  }, []);
+
+  const onBlur = useCallback((e: any) => {
+    e.target.placeholder = 'Input';
+  }, []);
 
   return (
     <Container>
       <InputForm
-        onSubmit={(e) => {
-          e.preventDefault();
-          sendDataOnOrderedChannelsAndRelay(
-            {
-              username,
-              main,
-              id,
-              setChatMessages,
-              chatMessageId: Math.random().toString(),
-              chatMessage: inputValue,
-              type: 'chatMessage',
-            },
-            connection,
-          );
-          setInputValue('');
-        }}
+        onSubmit={onSubmit}
         noValidate
         autoComplete="off"
       >
         <InputField
           type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          value={value}
+          onChange={onChange}
           placeholder="Input"
-          onFocus={(e) => {
-            e.target.placeholder = '';
-          }}
-          onBlur={(e) => {
-            e.target.placeholder = 'Input';
-          }}
+          onFocus={onFocus}
+          onBlur={onBlur}
         />
         <Button>&#9166;</Button>
       </InputForm>
@@ -70,4 +95,4 @@ const ChatInputForm = () => {
   );
 };
 
-export default ChatInputForm;
+export default memo(ChatInputForm);

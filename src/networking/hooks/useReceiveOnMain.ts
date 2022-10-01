@@ -1,6 +1,6 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 
-import { chatMessageTimeToLive } from '../../game/parameters';
+import { chatMessageTimeToLive } from '../../parameters';
 
 import * as atoms from '../../atoms';
 import * as types from '../../types';
@@ -9,7 +9,7 @@ import * as hooks from '.';
 export const useReceiveOnMain = () => {
   const { sendOrdered } = hooks.useSendFromMain();
   const objects = useRecoilValue(atoms.objects);
-  const [chatMessages, setChatMessages] = useRecoilState(atoms.chatMessages);
+  const setChatMessages = useSetRecoilState(atoms.chatMessages);
 
   const onReceive = (
     data: types.NetData,
@@ -33,12 +33,12 @@ export const useReceiveOnMain = () => {
       case types.NetDataType.CHATMESSAGE_CLIENT: {
         const message = {
           message: data.message,
-          id: Date.now().toString(),
           userId: remoteId,
+          messageId: remoteId + Date.now().toString(),
           username: objects.current?.find((x) => x.id === remoteId)?.username || '',
         };
         sendOrdered({ ...message, type: types.NetDataType.CHATMESSAGE_MAIN });
-        setChatMessages([message, ...chatMessages]);
+        setChatMessages((x) => [message, ...x]);
         setTimeout(
           () => setChatMessages((x) => x.filter((xx) => xx !== message)),
           chatMessageTimeToLive,

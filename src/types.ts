@@ -4,9 +4,9 @@ import * as THREE from 'three';
 export type OverlayInfotextRef = RefObject<HTMLDivElement>
 
 export type ChatMessage = {
-  id: string,
   userId: string,
   username: string,
+  messageId: string,
   message: string,
 }
 
@@ -36,7 +36,7 @@ export type GameObject = {
   backendPosition: THREE.Vector3,
   backendQuaternion: THREE.Quaternion,
   keyDowns: Keys[],
-  infoRef: HTMLDivElement | undefined,
+  infoRef: HTMLDivElement | null | undefined,
   object3D: THREE.Object3D | undefined,
 }
 
@@ -55,8 +55,8 @@ export type ChatMessageFromClient = {
 
 export type ChatMessageFromMain = {
   type: NetDataType.CHATMESSAGE_MAIN,
-  id: string,
   userId: string,
+  messageId: string,
   message: string,
 }
 
