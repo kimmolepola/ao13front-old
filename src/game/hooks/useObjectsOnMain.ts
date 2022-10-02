@@ -93,6 +93,14 @@ export const useObjectsOnMain = () => {
   const setObjectIds = useSetRecoilState(atoms.objectIds);
   const { sendOrdered } = networkingHooks.useSendFromMain();
 
+  const savePlayerDataOnMain = useCallback(() => {
+    const data = objectsRef.current?.reduce((acc: types.PlayerState[], cur) => {
+      cur.player && acc.push({ remoteId: cur.id, score: cur.score })
+      return acc
+    }, []) || []
+    savePlayerData(data);
+  }, [savePlayerData]);
+
   const handlePossiblyNewIdOnMain = useCallback(async (id: string) => {
     if (objectsRef.current && !objectsRef.current.some((x) => x.id === id)) {
       const ids = await handleNewIds([id], objectsRef.current)
@@ -116,14 +124,26 @@ export const useObjectsOnMain = () => {
 
   useEffect(() => {
     // main change
-    let intervalId = 0;
+    let sendMainStateIntervalId = 0;
+    let savePlayerDataIntervalId = 0;
     if (main) {
-      intervalId = window.setInterval(() => {
+      sendMainStateIntervalId = window.setInterval(() => {
         objectsRef.current && handleSendState(sendOrdered, objectsRef.current)
       }, parameters.sendIntervalMainState);
+      savePlayerDataIntervalId = window.setInterval(() => {
+        savePlayerDataOnMain()
+      }, parameters.savePlayerDataInterval);
     }
-    return () => clearInterval(intervalId);
-  }, [main, objectsRef, sendOrdered]);
+    return () => {
+      clearInterval(sendMainStateIntervalId);
+      clearInterval(savePlayerDataIntervalId)
+    };
+  }, [main, objectsRef, sendOrdered, savePlayerDataOnMain]);
 
-  return { handlePossiblyNewIdOnMain, handleNewIdsOnMain, handleRemoveIdsOnMain }
+  return {
+    handlePossiblyNewIdOnMain,
+    handleNewIdsOnMain,
+    handleRemoveIdsOnMain,
+    savePlayerDataOnMain
+  }
 };

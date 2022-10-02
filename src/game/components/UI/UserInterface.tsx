@@ -2,10 +2,10 @@ import { memo } from "react";
 import CanvasOverlay from './CanvasOverlay';
 import Sidepanel from './Sidepanel';
 
-const UserInterface = ({ quit }: { quit: Function }) => (
+const UserInterface = ({ refreshUser, quit }: { refreshUser: Function, quit: Function }) => (
   <>
     <CanvasOverlay />
-    <Sidepanel quit={quit} />
+    <Sidepanel refreshUser={refreshUser} quit={quit} />
   </>
 );
 

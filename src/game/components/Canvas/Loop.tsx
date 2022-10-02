@@ -1,3 +1,4 @@
+import { memo } from "react";
 import * as THREE from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
@@ -213,4 +214,4 @@ const Loop = () => {
   });
   return (<></>); // eslint-disable-line
 };
-export default Loop;
+export default memo(Loop);

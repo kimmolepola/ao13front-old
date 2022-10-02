@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { io } from 'socket.io-client';
+import { useState, useCallback } from 'react';
+import { io, Socket } from 'socket.io-client';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 import * as atoms from '../../atoms';
@@ -8,21 +8,16 @@ import * as types from '../../types';
 export const useSignaler = () => {
   const user = useRecoilValue(atoms.user);
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
+  const [signaler, setSignaler] = useState<Socket | undefined>();
 
   const connectToSignaler = useCallback((
     onReceiveInit: (id: string) => void,
-    onReceiveSignaling: (
-      x: types.Signaling,
-      sendSignaling: (x: types.Signaling) => void,
-    ) => void,
-    onReceiveConnectToMain: (
-      remoteId: string,
-      sendSignaling: (x: types.Signaling) => void,
-    ) => void,
+    onReceiveSignaling: (x: types.Signaling) => void,
+    onReceiveConnectToMain: (remoteId: string) => void,
     onReceiveMain: (id: string) => void,
     onReceivePeerDisconnected: (remoteId: string) => void,
   ) => {
-    const signaler = io(
+    const socket = io(
       process.env.NODE_ENV === 'production'
         ? `wss://${process.env.REACT_APP_BACKEND}`
         : `ws://${process.env.REACT_APP_BACKEND}`,
@@ -33,73 +28,73 @@ export const useSignaler = () => {
       },
     );
 
-    const sendSignaling = useCallback(({ remoteId, description, candidate }: types.Signaling) => {
-      signaler.emit('signaling', { remoteId, candidate, description });
-    }, [signaler]);
+    setSignaler(socket);
 
-    const disconnectFromSignaler = useCallback(() => {
-      signaler.disconnect();
-    }, [signaler]);
-
-    signaler.on('connect_error', (err: any) => {
+    socket.on('connect_error', (err: any) => {
       console.error(err);
     });
 
-    signaler.on('connect', () => {
+    socket.on('connect', () => {
       setConnectionMessage('signaling socket connected');
       console.log('signaling socket connected');
     });
 
-    signaler.on('disconnect', () => {
+    socket.on('disconnect', () => {
       setConnectionMessage('signaling socket disconnected');
       console.log('signaling socket disconnected');
     });
 
-    signaler.on('nomain', () => {
+    socket.on('nomain', () => {
       setConnectionMessage(
         'game host disconnected, no other available hosts found, please try again later',
       );
       console.log('game host disconnected');
     });
 
-    signaler.on('fail', (reason: any) => {
+    socket.on('fail', (reason: any) => {
       console.log('signaling socket fail, reason:', reason);
     });
 
-    signaler.on('init', (id: string) => {
+    socket.on('init', (id: string) => {
       onReceiveInit(id);
       console.log('own id:', id);
     });
 
-    signaler.on('signaling', ({
+    socket.on('signaling', ({
       id: remoteId,
       description,
       candidate,
     }: {
       id: string,
-      description?: any,
-      candidate?: any
+      description?: RTCSessionDescription,
+      candidate?: RTCIceCandidate,
     }) => {
-      onReceiveSignaling({ remoteId, description, candidate }, sendSignaling);
+      onReceiveSignaling({ remoteId, description, candidate });
     });
 
-    signaler.on('connectToMain', (remoteId: string) => {
-      onReceiveConnectToMain(remoteId, sendSignaling);
+    socket.on('connectToMain', (remoteId: string) => {
+      onReceiveConnectToMain(remoteId);
     });
 
-    signaler.on('main', (id: string) => {
+    socket.on('main', (id: string) => {
       onReceiveMain(id);
       console.log('you are main');
     });
 
-    signaler.on('peerDisconnected', (remoteId: any) => {
-      // onReceivePeerDisconnected(remoteId);
+    socket.on('peerDisconnected', (remoteId: any) => {
+      onReceivePeerDisconnected(remoteId);
       setConnectionMessage(`peer ${remoteId} disconnected`);
       console.log('peer', remoteId, 'disconnected');
     });
-
-    return { disconnectFromSignaler };
   }, [setConnectionMessage, user]);
 
-  return connectToSignaler;
+  const sendSignaling = useCallback(({ remoteId, description, candidate }: types.Signaling) => {
+    signaler?.emit('signaling', { remoteId, candidate, description });
+  }, [signaler]);
+
+  const disconnectFromSignaler = useCallback(() => {
+    signaler?.disconnect();
+  }, [signaler]);
+
+  return { connectToSignaler, disconnectFromSignaler, sendSignaling };
 };

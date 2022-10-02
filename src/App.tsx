@@ -8,7 +8,7 @@ import {
 } from 'recoil';
 
 import Game from './game/Game';
-import Frontpage from './Frontpage/Frontpage';
+import Frontpage from './frontpage';
 import { setToken } from './networking/services/auth.service';
 import { getUser } from './networking/services/user.service';
 

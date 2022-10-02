@@ -9,14 +9,14 @@ import * as types from '../../types';
 export const useRTCPeerConnection = () => {
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
 
-  const create = useCallback((
+  const createRTCPeerConnection = useCallback((
     remoteId: string,
     sendSignaling: (x: types.Signaling) => void,
   ) => {
-    const pc = new RTCPeerConnection({ iceServers });
+    const peerConnection = new RTCPeerConnection({ iceServers });
 
-    pc.onconnectionstatechange = () => {
-      switch (pc.connectionState) {
+    peerConnection.onconnectionstatechange = () => {
+      switch (peerConnection.connectionState) {
         case 'failed':
           setConnectionMessage(`peer ${remoteId}, connection failed`);
           console.log('peer', remoteId, 'peer connection failed');
@@ -34,17 +34,17 @@ export const useRTCPeerConnection = () => {
       }
     };
 
-    pc.onicecandidate = ({ candidate }) => {
+    peerConnection.onicecandidate = ({ candidate }) => {
       sendSignaling({ remoteId, candidate });
     };
 
-    pc.onnegotiationneeded = async () => {
+    peerConnection.onnegotiationneeded = async () => {
       try {
-        await pc.setLocalDescription();
+        await peerConnection.setLocalDescription();
         sendSignaling(
           {
             remoteId,
-            description: pc.localDescription,
+            description: peerConnection.localDescription,
           },
         );
       } catch (err) {
@@ -52,8 +52,31 @@ export const useRTCPeerConnection = () => {
       }
     };
 
-    return pc;
+    const handleSignaling = async (
+      description: RTCSessionDescription | null | undefined,
+      candidate: RTCIceCandidate | null | undefined
+    ) => {
+      try {
+        if (description) {
+          await peerConnection.setRemoteDescription(description);
+          if (description.type === 'offer') {
+            await peerConnection.setLocalDescription();
+            sendSignaling({
+              remoteId,
+              description: peerConnection.localDescription,
+            });
+          }
+        } else if (candidate) {
+          await peerConnection.addIceCandidate(candidate);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    return { peerConnection, handleSignaling };
+
   }, [setConnectionMessage]);
 
-  return create;
+  return createRTCPeerConnection;
 };

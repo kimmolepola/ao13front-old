@@ -10,78 +10,53 @@ export const useConnections = () => {
   const [peerConnections, setPeerConnections] = useRecoilState(atoms.peerConnections);
 
   const { onReceiveMain } = hooks.useMain();
-  const connectToSignaler = hooks.useSignaler();
+  const { connectToSignaler, disconnectFromSignaler, sendSignaling } = hooks.useSignaler();
   const connectToPeer = hooks.usePeerConnection();
 
   const onReceiveInit = useCallback((id: string) => {
     setOwnId(id);
   }, [setOwnId]);
 
-  const onReceiveConnectToMain = useCallback((remoteId: string, sendSignaling: (x: types.Signaling) => void) => {
-    const peerConnection = connectToPeer(remoteId, sendSignaling);
-    setPeerConnections((x) => ({ ...x, [remoteId]: peerConnection }));
+  const onReceiveConnectToMain = useCallback((remoteId: string) => {
+    const { peerConnection, handleSignaling } = connectToPeer(remoteId, sendSignaling);
+    setPeerConnections((x) => ({ ...x, [remoteId]: { peerConnection, handleSignaling } }));
   }, [connectToPeer, setPeerConnections]);
 
-  const onReceiveSignaling = useCallback(async (
-    { remoteId, description, candidate }: types.Signaling,
-    sendSignaling: (x: types.Signaling) => void,
-  ) => {
-    let peerConnection = peerConnections[remoteId];
-    if (!peerConnection) {
-      peerConnection = connectToPeer(remoteId, sendSignaling);
-      setPeerConnections((x) => ({ ...x, [remoteId]: peerConnection }));
-    }
-    try {
-      if (description) {
-        await peerConnection.setRemoteDescription(description);
-        if (description.type === 'offer') {
-          await peerConnection.setLocalDescription();
-          sendSignaling({
-            remoteId,
-            description: peerConnection.localDescription,
-          });
-        }
-      } else if (candidate) {
-        await peerConnection.addIceCandidate(candidate);
-      }
-    } catch (err) {
-      console.error(err);
-    }
+  const onReceiveSignaling = useCallback(async ({ remoteId, description, candidate }: types.Signaling) => {
+    const { peerConnection, handleSignaling } = peerConnections[remoteId] || connectToPeer(remoteId, sendSignaling);
+    setPeerConnections((x) => ({ ...x, [remoteId]: { peerConnection, handleSignaling } }));
+    handleSignaling(description, candidate);
   }, [connectToPeer, peerConnections, setPeerConnections]);
 
   const onReceivePeerDisconnected = useCallback((remoteId: string) => {
-    peerConnections[remoteId]?.close();
+    peerConnections[remoteId]?.peerConnection.close();
     const newPeerConnections = { ...peerConnections };
     delete newPeerConnections[remoteId];
     setPeerConnections(newPeerConnections);
   }, [peerConnections]);
 
   const connect = useCallback(() => {
-    const { disconnectFromSignaler } = connectToSignaler(
+    connectToSignaler(
       onReceiveInit,
       onReceiveSignaling,
       onReceiveConnectToMain,
       onReceiveMain,
       onReceivePeerDisconnected,
     );
-
-    const disconnect = () => {
-      Object.values(peerConnections).forEach((x) => x.close());
-      disconnectFromSignaler();
-      setPeerConnections({});
-    };
-
-    return disconnect;
   }, [
     connectToSignaler,
-    onReceiveConnectToMain,
     onReceiveInit,
+    onReceiveSignaling,
+    onReceiveConnectToMain,
     onReceiveMain,
     onReceivePeerDisconnected,
-    onReceiveSignaling,
-    peerConnections,
-    setPeerConnections,
   ]);
 
-  return connect;
+  const disconnect = useCallback(() => {
+    Object.values(peerConnections).forEach((x) => x.peerConnection.close());
+    disconnectFromSignaler();
+    setPeerConnections({});
+  }, [peerConnections, setPeerConnections, disconnectFromSignaler]);
+
+  return { connect, disconnect };
 };

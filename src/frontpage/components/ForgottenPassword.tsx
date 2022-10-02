@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState } from 'react';
+import { memo, useMemo, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { requestPasswordReset } from '../../networking/services/auth.service';
 
@@ -88,4 +88,4 @@ const ForgottenPassword = () => {
   );
 };
 
-export default ForgottenPassword;
+export default memo(ForgottenPassword);

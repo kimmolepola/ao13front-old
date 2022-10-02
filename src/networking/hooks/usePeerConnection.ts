@@ -42,7 +42,7 @@ export const usePeerConnection = () => {
   ) => {
     setConnectionMessage(`connecting with peer ${remoteId}`);
     console.log('peer', remoteId, 'connecting');
-    const peerConnection = createRTCPeerConnection(remoteId, sendSignaling);
+    const { peerConnection, handleSignaling } = createRTCPeerConnection(remoteId, sendSignaling);
     if (main) {
       createOrderedChannel(remoteId, peerConnection, onReceiveOnMain, onChannelOrderedOpen, onChannelOrderedClosed);
       createUnorderedChannel(remoteId, peerConnection, onReceiveOnMain, onChannelUnorderedOpen, onChannelUnorderedClosed);
@@ -50,7 +50,7 @@ export const usePeerConnection = () => {
       createOrderedChannel(remoteId, peerConnection, onReceiveOnClient, onChannelOrderedOpen, onChannelOrderedClosed);
       createUnorderedChannel(remoteId, peerConnection, onReceiveOnClient, onChannelUnorderedOpen, onChannelUnorderedClosed);
     }
-    return (peerConnection);
+    return { peerConnection, handleSignaling };
   }, [
     main,
     setConnectionMessage,

@@ -1,8 +1,10 @@
-import React from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
+
+import theme from '../../../../../themets.js';
+
 import Chat from './Chat';
 import InputForm from './InputForm';
-import theme from '../../../../../themets.js';
 
 const Container = styled.div`
   background: ${theme.colors.bgVerylight};
@@ -21,4 +23,4 @@ const ChatContainer = () => (
   </Container>
 );
 
-export default ChatContainer;
+export default memo(ChatContainer);

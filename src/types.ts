@@ -1,6 +1,11 @@
 import { RefObject } from 'react';
 import * as THREE from 'three';
 
+export type PlayerState = {
+  remoteId: string,
+  score: number,
+}
+
 export type OverlayInfotextRef = RefObject<HTMLDivElement>
 
 export type ChatMessage = {
@@ -124,8 +129,8 @@ export type Channel = {
 
 export type Signaling = {
   remoteId: string,
-  description?: any,
-  candidate?: any,
+  description?: RTCSessionDescription | null,
+  candidate?: RTCIceCandidate | null,
 }
 
 export type InitialGameObject = {

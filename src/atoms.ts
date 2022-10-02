@@ -52,7 +52,15 @@ export const main = atom<boolean>({
   default: false,
 });
 
-export const peerConnections = atom<{ [id: string]: RTCPeerConnection }>({
+export const peerConnections = atom<{
+  [id: string]: {
+    peerConnection: RTCPeerConnection,
+    handleSignaling: (
+      description: RTCSessionDescription | null | undefined,
+      candidate: RTCIceCandidate | null | undefined
+    ) => void
+  }
+}>({
   key: 'peerConnections',
   default: {},
 });

@@ -8,10 +8,10 @@ import * as atoms from '../../atoms';
 export const useMain = () => {
   const channelsOrdered = useRecoilValue(atoms.channelsOrdered);
   const channelsUnordered = useRecoilValue(atoms.channelsUnordered);
-  const objects = useRecoilValue(atoms.objects);
   const [main, setMain] = useRecoilState(atoms.main);
   const connectedIds = useRecoilValue(atoms.connectedIds);
   const {
+    savePlayerDataOnMain,
     handlePossiblyNewIdOnMain,
     handleNewIdsOnMain,
     handleRemoveIdsOnMain

@@ -68,17 +68,13 @@ const Container = styled.div<any>`
   background: ${theme.colors.bgMain};
 `;
 
-const Sidepanel = ({ quit }: { quit: Function }) => {
+const Sidepanel = ({ refreshUser, quit }: { refreshUser: Function, quit: Function }) => {
   const navigate = useNavigate();
   const windowHeight = useRecoilValue(atoms.windowHeight);
   const main = useRecoilValue(atoms.main)
   const connectedIds = useRecoilValue(atoms.connectedIds)
   const connectionMessage = useRecoilValue(atoms.connectionMessage)
   const score = useRecoilValue(atoms.score);
-
-  const {
-    refreshUser,
-  }: any = useContext(appContext);
 
   const handleQuit = useCallback(() => {
     quit();
