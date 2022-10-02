@@ -26,6 +26,9 @@
     }
   },
   "rules": {
+    "no-restricted-exports": [
+      "off"
+    ],
     "react/jsx-first-prop-new-line": [
       2,
       "multiline"
@@ -44,22 +47,6 @@
     "react/jsx-closing-bracket-location": [
       2,
       "tag-aligned"
-    ],
-    "no-restricted-exports": [
-      "error",
-      {
-        "restrictedNamedExports": [
-          "then"
-          // no "default" here
-        ],
-        "restrictDefaultExports": {
-          "direct": false, // 1. export default foo; export default 42; export default function foo() {}
-          "named": true, // 2. export { foo as default };
-          "defaultFrom": false, // 3. export { default } from "mod"; export { default as default } from "mod";
-          "namedFrom": false, // 4. export { foo as default } from "mod";
-          "namespaceFrom": true // 5. export * as default from "mod"
-        }
-      }
     ],
     "max-len": "off",
     "jsx-a11y/label-has-associated-control": [

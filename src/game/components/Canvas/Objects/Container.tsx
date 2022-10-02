@@ -1,12 +1,12 @@
 import { memo } from 'react';
 import { useLoader } from '@react-three/fiber';
-import { useRecoilValue } from "recoil";
-import * as THREE from "three";
+import { useRecoilValue } from 'recoil';
+import * as THREE from 'three';
 
 import GameObject from './GameObject';
 import Background from './Background';
 
-import * as atoms from "../../../../atoms"
+import * as atoms from '../../../../atoms';
 
 const Container = () => {
   const objectIds = useRecoilValue(atoms.objectIds);

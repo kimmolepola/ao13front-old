@@ -1,12 +1,12 @@
 import { memo, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
-import { useRecoilValue } from "recoil";
+import { useRecoilValue } from 'recoil';
 
 import theme from '../../../themets.js';
 import { handlePressed, handleReleased } from '../../controls';
 
-import * as atoms from "../../../atoms";
-import * as types from "../../../types";
+import * as atoms from '../../../atoms';
+import * as types from '../../../types';
 
 const Connecting = styled.div<any>`
   position: absolute;
@@ -100,18 +100,19 @@ const ObjectInfo = styled.div`
 `;
 
 const ObjectInfos = () => {
-  const ownId = useRecoilValue(atoms.ownId)
-  const objects = useRecoilValue(atoms.objects)
+  const ownId = useRecoilValue(atoms.ownId);
+  const objects = useRecoilValue(atoms.objects);
 
   return (
     <>
       {Object.entries(objects.current || []).reduce((acc: any, [id, object]) => {
+        const o = object;
         if (id !== ownId) {
           acc.push(
             <ObjectInfo
               key={id}
               ref={(ref) => {
-                object.infoRef = ref;
+                o.infoRef = ref;
               }}
             />,
           );
@@ -147,7 +148,7 @@ const ControlButton = ({ control }: { control: types.Keys }) => {
       default:
         return null;
     }
-  }, [control])
+  }, [control]);
 
   return (
     <Button
@@ -158,13 +159,13 @@ const ControlButton = ({ control }: { control: types.Keys }) => {
     >
       {symbol}
     </Button>
-  )
+  );
 };
 
 const CanvasOverlay = () => {
   const windowHeight = useRecoilValue(atoms.windowHeight);
-  const connectedIds = useRecoilValue(atoms.connectedIds)
-  const overlayInfotext = useRecoilValue(atoms.overlayInfotext)
+  const connectedIds = useRecoilValue(atoms.connectedIds);
+  const overlayInfotext = useRecoilValue(atoms.overlayInfotext);
 
   return (
     <Container windowHeight={windowHeight}>

@@ -4,7 +4,7 @@ import { chatMessageTimeToLive } from '../../parameters';
 
 import * as atoms from '../../atoms';
 import * as types from '../../types';
-import * as gameHooks from "../../game/hooks"
+import * as gameHooks from '../../game/hooks';
 
 export const useReceiveOnClient = () => {
   const objectsRef = useRecoilValue(atoms.objects);

@@ -1,13 +1,8 @@
 import { useCallback, useEffect } from 'react';
-import {
-  Routes,
-  Route,
-} from 'react-router-dom';
-import {
-  useSetRecoilState,
-} from 'recoil';
+import { Routes, Route } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
 
-import Game from './game/Game';
+import Game from './game';
 import Frontpage from './frontpage';
 import { setToken } from './networking/services/auth.service';
 import { getUser } from './networking/services/user.service';

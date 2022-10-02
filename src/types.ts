@@ -1,6 +1,16 @@
 import { RefObject } from 'react';
 import * as THREE from 'three';
 
+export type PeerConnectionsDictionary = {
+  [id: string]: {
+    peerConnection: RTCPeerConnection,
+    handleSignaling: (
+      description: RTCSessionDescription | null | undefined,
+      candidate: RTCIceCandidate | null | undefined
+    ) => void
+  }
+}
+
 export type PlayerState = {
   remoteId: string,
   score: number,

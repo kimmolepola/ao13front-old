@@ -1,13 +1,13 @@
 import { memo, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import styled from 'styled-components';
+import { useRecoilValue } from 'recoil';
 import theme from '../../../themets.js';
-import { useRecoilValue } from "recoil";
 
-import Loop from "./Loop";
-import Objects from "./Objects";
+import Loop from './Loop';
+import Objects from './Objects';
 
-import * as atoms from "../../../atoms";
+import * as atoms from '../../../atoms';
 
 const Container = styled.div<any>`
   position: absolute;
@@ -44,7 +44,7 @@ const CanvasContainer = () => {
         </Suspense>
       </Canvas>
     </Container>
-  )
+  );
 };
 
 export default memo(CanvasContainer);

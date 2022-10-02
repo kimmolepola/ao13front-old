@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 
-import * as gameHooks from "../../game/hooks"
+import * as gameHooks from '../../game/hooks';
 
 import * as atoms from '../../atoms';
 
@@ -11,10 +11,9 @@ export const useMain = () => {
   const [main, setMain] = useRecoilState(atoms.main);
   const connectedIds = useRecoilValue(atoms.connectedIds);
   const {
-    savePlayerDataOnMain,
     handlePossiblyNewIdOnMain,
     handleNewIdsOnMain,
-    handleRemoveIdsOnMain
+    handleRemoveIdsOnMain,
   } = gameHooks.useObjectsOnMain();
 
   const onChannelsChanged = useCallback(() => {
@@ -38,7 +37,7 @@ export const useMain = () => {
     }, []);
     handleRemoveIdsOnMain(disconnectedIds);
     handleNewIdsOnMain(newIds);
-  }, [channelsOrdered, channelsUnordered, connectedIds]);
+  }, [channelsOrdered, channelsUnordered, connectedIds, handleRemoveIdsOnMain, handleNewIdsOnMain]);
 
   useEffect(() => {
     // channels change

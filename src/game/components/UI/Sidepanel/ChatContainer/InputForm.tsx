@@ -1,11 +1,11 @@
 import { memo, useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { useSetRecoilState, useRecoilValue } from "recoil";
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 import theme from '../../../../../themets.js';
-import * as networkingHooks from "../../../../../networking/hooks"
-import * as atoms from "../../../../../atoms"
-import * as types from "../../../../../types"
+import * as networkingHooks from '../../../../../networking/hooks';
+import * as atoms from '../../../../../atoms';
+import * as types from '../../../../../types';
 
 const Button = styled.button`
   width: 12%;
@@ -31,9 +31,9 @@ const ChatInputForm = () => {
   const { sendOrdered: sendOrderedFromMain } = networkingHooks.useSendFromMain();
   const { sendOrdered: sendOrderedFromClient } = networkingHooks.useSendFromClient();
   const main = useRecoilValue(atoms.main);
-  const ownId = useRecoilValue(atoms.ownId)
+  const ownId = useRecoilValue(atoms.ownId);
   const [value, setValue] = useState('');
-  const objectsRef = useRecoilValue(atoms.objects)
+  const objectsRef = useRecoilValue(atoms.objects);
 
   const onSubmit = useCallback((e: any) => {
     e.preventDefault();
@@ -43,28 +43,36 @@ const ChatInputForm = () => {
           type: types.NetDataType.CHATMESSAGE_MAIN as types.NetDataType.CHATMESSAGE_MAIN,
           userId: ownId,
           messageId: ownId + Date.now().toString(),
-          message: value
-        }
-        sendOrderedFromMain(chatMessageFromMain)
+          message: value,
+        };
+        sendOrderedFromMain(chatMessageFromMain);
         setChatMessages((x) => [
           {
             userId: ownId,
-            username: objectsRef.current?.find((xx) => xx.id === ownId)?.username || "",
+            username: objectsRef.current?.find((xx) => xx.id === ownId)?.username || '',
             messageId: chatMessageFromMain.messageId,
             message: value,
           },
-          ...x])
+          ...x]);
       }
     } else {
       sendOrderedFromClient({
         type: types.NetDataType.CHATMESSAGE_CLIENT,
         message: value,
-      })
+      });
     }
-    setValue("")
-  }, []);
+    setValue('');
+  }, [
+    main,
+    objectsRef,
+    ownId,
+    sendOrderedFromClient,
+    sendOrderedFromMain,
+    setChatMessages,
+    value,
+  ]);
 
-  const onChange = useCallback((e: any) => { setValue(e.target.value) }, []);
+  const onChange = useCallback((e: any) => { setValue(e.target.value); }, []);
 
   const onFocus = useCallback((e: any) => {
     e.target.placeholder = '';

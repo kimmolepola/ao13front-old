@@ -6,14 +6,14 @@ import {
 import * as types from './types';
 
 export const score = atom<number>({
-  key: "score",
+  key: 'score',
   default: 0,
-})
+});
 
 export const windowHeight = atom<number>({
-  key: "windowHeight",
+  key: 'windowHeight',
   default: window.innerHeight,
-})
+});
 
 export const overlayInfotext = atom<RefObject<HTMLDivElement>>({
   key: 'overlayInfotext',
@@ -27,13 +27,13 @@ export const chatMessages = atom<types.ChatMessage[]>({
 });
 
 export const objectIds = atom<string[]>({
-  key: "objectIds",
+  key: 'objectIds',
   default: [],
-})
+});
 
 export const objects = atom<RefObject<types.GameObject[]>>({
   key: 'objects',
-  default: undefined,
+  default: { current: [] },
   dangerouslyAllowMutability: true,
 });
 
@@ -50,19 +50,6 @@ export const ownId = atom<string | undefined>({
 export const main = atom<boolean>({
   key: 'main',
   default: false,
-});
-
-export const peerConnections = atom<{
-  [id: string]: {
-    peerConnection: RTCPeerConnection,
-    handleSignaling: (
-      description: RTCSessionDescription | null | undefined,
-      candidate: RTCIceCandidate | null | undefined
-    ) => void
-  }
-}>({
-  key: 'peerConnections',
-  default: {},
 });
 
 export const channelsOrdered = atom<{ remoteId: string, channel: RTCDataChannel }[]>({

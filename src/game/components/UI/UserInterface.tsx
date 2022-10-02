@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo } from 'react';
 import CanvasOverlay from './CanvasOverlay';
 import Sidepanel from './Sidepanel';
 

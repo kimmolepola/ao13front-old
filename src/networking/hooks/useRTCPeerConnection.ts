@@ -54,7 +54,7 @@ export const useRTCPeerConnection = () => {
 
     const handleSignaling = async (
       description: RTCSessionDescription | null | undefined,
-      candidate: RTCIceCandidate | null | undefined
+      candidate: RTCIceCandidate | null | undefined,
     ) => {
       try {
         if (description) {
@@ -75,7 +75,6 @@ export const useRTCPeerConnection = () => {
     };
 
     return { peerConnection, handleSignaling };
-
   }, [setConnectionMessage]);
 
   return createRTCPeerConnection;

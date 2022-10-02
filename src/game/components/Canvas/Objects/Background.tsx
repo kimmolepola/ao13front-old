@@ -1,7 +1,8 @@
 import { useEffect, memo } from 'react';
 import * as THREE from 'three';
 
-const Background = ({ map }: { map: THREE.Texture }) => {
+const Background = ({ map: threeMap }: { map: THREE.Texture }) => {
+  const map = threeMap;
   useEffect(() => {
     map.wrapS = THREE.MirroredRepeatWrapping;
     map.wrapT = THREE.MirroredRepeatWrapping;
@@ -13,7 +14,7 @@ const Background = ({ map }: { map: THREE.Texture }) => {
       <planeGeometry args={[map.image.width, map.image.height]} />
       <meshBasicMaterial color="#e5e4e2" map={map} />
     </mesh>
-  )
+  );
 };
 
 export default memo(Background);

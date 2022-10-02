@@ -1,13 +1,13 @@
-import { useCallback } from "react";
-import { useSetRecoilState, useRecoilValue } from "recoil";
-import * as THREE from "three"
+import { useCallback } from 'react';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
+import * as THREE from 'three';
 
-import * as atoms from "../../atoms";
-import * as types from "../../types";
+import * as atoms from '../../atoms';
+import * as types from '../../types';
 
 export const useObjectsOnClient = () => {
   const objectsRef = useRecoilValue(atoms.objects);
-  const setObjectIds = useSetRecoilState(atoms.objectIds)
+  const setObjectIds = useSetRecoilState(atoms.objectIds);
 
   const handleUpdateData = useCallback((data: types.Update) => {
     if (objectsRef.current) {
@@ -22,12 +22,12 @@ export const useObjectsOnClient = () => {
           o.controlsUp += u.uControlsUp || 0;
           o.rotationSpeed = u.uRotationSpeed || 0;
           o.speed = u.uSpeed || 0;
-          o.backendPosition.set(u.uPositionX, u.uPositionY, u.uPositionZ)
-          o.backendQuaternion.set(u.uQuaternionX, u.uQuaternionY, u.uQuaternionZ, u.uQuaternionW)
+          o.backendPosition.set(u.uPositionX, u.uPositionY, u.uPositionZ);
+          o.backendQuaternion.set(u.uQuaternionX, u.uQuaternionY, u.uQuaternionZ, u.uQuaternionW);
         }
       }
     }
-  }, [objectsRef])
+  }, [objectsRef]);
 
   const handleStateData = useCallback((data: types.State) => {
     let objectIdsChanged = false;
@@ -75,7 +75,7 @@ export const useObjectsOnClient = () => {
       const ids = Object.keys(data.data);
       setObjectIds(ids);
     }
-  }, [objectsRef]);
+  }, [objectsRef, setObjectIds]);
 
-  return { handleUpdateData, handleStateData }
+  return { handleUpdateData, handleStateData };
 };

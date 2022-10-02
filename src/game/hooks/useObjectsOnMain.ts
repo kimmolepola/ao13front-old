@@ -1,15 +1,16 @@
-import { useEffect, useCallback } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import * as THREE from "three"
+import { useEffect, useCallback } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import * as THREE from 'three';
 
 import { savePlayerData, getGameObject } from '../../networking/services/gameObject.service';
-import * as networkingHooks from "../../networking/hooks"
+import * as networkingHooks from '../../networking/hooks';
 
-import * as parameters from "../../parameters"
-import * as atoms from "../../atoms";
-import * as types from "../../types";
+import * as parameters from '../../parameters';
+import * as atoms from '../../atoms';
+import * as types from '../../types';
 
-const handleNewIds = async (newIds: string[], objects: types.GameObject[]) => {
+const handleNewIds = async (newIds: string[], o: types.GameObject[]) => {
+  const objects = o;
   await Promise.all(newIds.map(async (id) => {
     const initialGameObject = (await getGameObject(id)).data;
     if (initialGameObject) {
@@ -47,21 +48,24 @@ const handleNewIds = async (newIds: string[], objects: types.GameObject[]) => {
   return objects.map((x) => x.id);
 };
 
-const handleRemoveIds = (idsToRemove: string[], objects: types.GameObject[]) => {
+const handleRemoveIds = (idsToRemove: string[], o: types.GameObject[]) => {
+  const objects = o;
   const playerStateToSave = [];
 
   for (let i = objects.length - 1; i > -1; i--) {
     if (idsToRemove.includes(objects[i].id)) {
-      objects[i].player && playerStateToSave.push({
-        remoteId: objects[i].id,
-        score: objects[i].score
-      })
+      if (objects[i].player) {
+        playerStateToSave.push({
+          remoteId: objects[i].id,
+          score: objects[i].score,
+        });
+      }
       objects.splice(i, 1);
     }
   }
   savePlayerData(playerStateToSave);
   return objects.map((x) => x.id);
-}
+};
 
 const handleSendState = (sendOrdered: (data: types.State) => void, objects: types.GameObject[]) => {
   sendOrdered({
@@ -95,32 +99,34 @@ export const useObjectsOnMain = () => {
 
   const savePlayerDataOnMain = useCallback(() => {
     const data = objectsRef.current?.reduce((acc: types.PlayerState[], cur) => {
-      cur.player && acc.push({ remoteId: cur.id, score: cur.score })
-      return acc
-    }, []) || []
+      if (cur.player) {
+        acc.push({ remoteId: cur.id, score: cur.score });
+      }
+      return acc;
+    }, []) || [];
     savePlayerData(data);
-  }, [savePlayerData]);
+  }, [objectsRef]);
 
   const handlePossiblyNewIdOnMain = useCallback(async (id: string) => {
     if (objectsRef.current && !objectsRef.current.some((x) => x.id === id)) {
-      const ids = await handleNewIds([id], objectsRef.current)
-      setObjectIds(ids)
+      const ids = await handleNewIds([id], objectsRef.current);
+      setObjectIds(ids);
     }
-  }, [objectsRef]);
+  }, [objectsRef, setObjectIds]);
 
   const handleNewIdsOnMain = useCallback(async (newIds: string[]) => {
     if (objectsRef.current) {
-      const ids = await handleNewIds(newIds, objectsRef.current)
-      setObjectIds(ids)
+      const ids = await handleNewIds(newIds, objectsRef.current);
+      setObjectIds(ids);
     }
-  }, [objectsRef]);
+  }, [objectsRef, setObjectIds]);
 
   const handleRemoveIdsOnMain = useCallback((idsToRemove: string[]) => {
     if (objectsRef.current) {
-      const ids = handleRemoveIds(idsToRemove, objectsRef.current)
-      setObjectIds(ids)
+      const ids = handleRemoveIds(idsToRemove, objectsRef.current);
+      setObjectIds(ids);
     }
-  }, [objectsRef]);
+  }, [objectsRef, setObjectIds]);
 
   useEffect(() => {
     // main change
@@ -128,15 +134,17 @@ export const useObjectsOnMain = () => {
     let savePlayerDataIntervalId = 0;
     if (main) {
       sendMainStateIntervalId = window.setInterval(() => {
-        objectsRef.current && handleSendState(sendOrdered, objectsRef.current)
+        if (objectsRef.current) {
+          handleSendState(sendOrdered, objectsRef.current);
+        }
       }, parameters.sendIntervalMainState);
       savePlayerDataIntervalId = window.setInterval(() => {
-        savePlayerDataOnMain()
+        savePlayerDataOnMain();
       }, parameters.savePlayerDataInterval);
     }
     return () => {
       clearInterval(sendMainStateIntervalId);
-      clearInterval(savePlayerDataIntervalId)
+      clearInterval(savePlayerDataIntervalId);
     };
   }, [main, objectsRef, sendOrdered, savePlayerDataOnMain]);
 
@@ -144,6 +152,5 @@ export const useObjectsOnMain = () => {
     handlePossiblyNewIdOnMain,
     handleNewIdsOnMain,
     handleRemoveIdsOnMain,
-    savePlayerDataOnMain
-  }
+  };
 };

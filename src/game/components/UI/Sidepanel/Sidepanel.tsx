@@ -1,13 +1,12 @@
-import { memo, useCallback, useContext } from 'react';
+import { memo, useCallback } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from "recoil";
+import { useRecoilValue } from 'recoil';
 
 import ChatContainer from './ChatContainer';
-import appContext from '../../../../context/appContext';
 import theme from '../../../../themets.js';
 
-import * as atoms from "../../../../atoms";
+import * as atoms from '../../../../atoms';
 
 const Text = styled.div`
   margin: ${theme.margins.basic};
@@ -71,9 +70,9 @@ const Container = styled.div<any>`
 const Sidepanel = ({ refreshUser, quit }: { refreshUser: Function, quit: Function }) => {
   const navigate = useNavigate();
   const windowHeight = useRecoilValue(atoms.windowHeight);
-  const main = useRecoilValue(atoms.main)
-  const connectedIds = useRecoilValue(atoms.connectedIds)
-  const connectionMessage = useRecoilValue(atoms.connectionMessage)
+  const main = useRecoilValue(atoms.main);
+  const connectedIds = useRecoilValue(atoms.connectedIds);
+  const connectionMessage = useRecoilValue(atoms.connectionMessage);
   const score = useRecoilValue(atoms.score);
 
   const handleQuit = useCallback(() => {

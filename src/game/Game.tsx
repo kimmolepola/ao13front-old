@@ -1,27 +1,31 @@
-import { memo, useCallback, useMemo, useEffect } from 'react';
+import {
+  useRef, memo, useCallback, useMemo, useEffect,
+} from 'react';
 import { debounce } from 'lodash';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
-import * as networkingHooks from "../networking/hooks"
+import * as networkingHooks from '../networking/hooks';
 
 import Canvas from './components/Canvas';
 import UserInterface from './components/UI';
 
 import * as atoms from '../atoms';
-import * as hooks from "./hooks";
+import * as hooks from './hooks';
 
-const Container = ({ refreshUser }: { refreshUser: Function }) => {
+const Game = ({ refreshUser }: { refreshUser: Function }) => {
+  const objectsRef = useRef([]);
+  const setObjectsRef = useSetRecoilState(atoms.objects);
   const { connect, disconnect } = networkingHooks.useConnections();
-  hooks.useControls();
 
+  hooks.useControls();
 
   const setWindowHeight = useSetRecoilState(atoms.windowHeight);
 
-  const resizeHandler = () => {
+  const resizeHandler = useCallback(() => {
     setWindowHeight(window.innerHeight);
-  };
+  }, [setWindowHeight]);
 
-  const debounceResizeHandler = useMemo(() => debounce(resizeHandler, 300), [debounce]);
+  const debounceResizeHandler = useMemo(() => debounce(resizeHandler, 300), [resizeHandler]);
   window.onresize = debounceResizeHandler;
 
   const quit = useCallback(() => {
@@ -29,12 +33,12 @@ const Container = ({ refreshUser }: { refreshUser: Function }) => {
   }, [disconnect]);
 
   useEffect(() => {
+    setObjectsRef(objectsRef);
     connect();
     return () => {
       quit();
     };
-  }, [connect, quit]);
-
+  }, [connect, quit, setObjectsRef]);
 
   return (
     <>
@@ -44,4 +48,4 @@ const Container = ({ refreshUser }: { refreshUser: Function }) => {
   );
 };
 
-export default memo(Container);
+export default memo(Game);

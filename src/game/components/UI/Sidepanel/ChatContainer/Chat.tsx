@@ -1,9 +1,9 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-import { useRecoilValue } from "recoil";
+import { useRecoilValue } from 'recoil';
 import theme from '../../../../../themets.js';
 
-import * as atoms from "../../../../../atoms"
+import * as atoms from '../../../../../atoms';
 
 const Avatar = styled.img`
   margin-left: auto;
@@ -56,8 +56,8 @@ const Container = styled.div`
 `;
 
 const Chat = () => {
-  const chatMessages = useRecoilValue(atoms.chatMessages)
-  const ownId = useRecoilValue(atoms.ownId)
+  const chatMessages = useRecoilValue(atoms.chatMessages);
+  const ownId = useRecoilValue(atoms.ownId);
 
   return (
     <Container>

@@ -1,15 +1,15 @@
 import { memo, useMemo } from 'react';
-import * as THREE from "three";
-import { useRecoilValue } from "recoil";
+import * as THREE from 'three';
+import { useRecoilValue } from 'recoil';
 
-import * as atoms from "../../../../atoms";
+import * as atoms from '../../../../atoms';
 
 const GameObject = ({ id, map }: { id: string, map: THREE.Texture }) => {
-  const ownId = useRecoilValue(atoms.ownId)
-  const gameObjectsRef = useRecoilValue(atoms.objects)
+  const ownId = useRecoilValue(atoms.ownId);
+  const gameObjectsRef = useRecoilValue(atoms.objects);
   const o = gameObjectsRef.current?.find((x) => x.id === id);
 
-  const meshColor = useMemo(() => ownId === id ? 'orange' : undefined, [ownId, id])
+  const meshColor = useMemo(() => (ownId === id ? 'orange' : undefined), [ownId, id]);
 
   const boxGeometryArgs = useMemo(() => ({
     width: Math.min(1, map.image.width / map.image.height),
@@ -18,11 +18,11 @@ const GameObject = ({ id, map }: { id: string, map: THREE.Texture }) => {
   }), [map]);
 
   if (!o) {
-    return <></>
+    return <></>; // eslint-disable-line
   }
 
   return (
-    <mesh ref={(ref) => o.object3D = ref as THREE.Object3D}>
+    <mesh ref={(ref) => { o.object3D = ref as THREE.Object3D; }}>
       <meshBasicMaterial
         attach="material-4"
         color={meshColor}
@@ -37,7 +37,7 @@ const GameObject = ({ id, map }: { id: string, map: THREE.Texture }) => {
         ]}
       />
     </mesh>
-  )
+  );
 };
 
 export default memo(GameObject);
