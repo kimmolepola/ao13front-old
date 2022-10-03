@@ -5,6 +5,11 @@ import {
 
 import * as types from './types';
 
+export const signalerInitialized = atom<boolean>({
+  key: 'signalerInitialized',
+  default: false,
+});
+
 export const score = atom<number>({
   key: 'score',
   default: 0,

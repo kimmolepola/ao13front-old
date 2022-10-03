@@ -1,7 +1,8 @@
 import { memo, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
+// eslint-disable-next-line
+import { useRecoilBridgeAcrossReactRoots_UNSTABLE, useRecoilValue } from 'recoil';
 import theme from '../../../themets.js';
 
 import Loop from './Loop';
@@ -25,6 +26,7 @@ const Container = styled.div<any>`
 `;
 
 const CanvasContainer = () => {
+  const RecoilBridge = useRecoilBridgeAcrossReactRoots_UNSTABLE();
   const windowHeight = useRecoilValue(atoms.windowHeight);
 
   return (
@@ -37,11 +39,13 @@ const CanvasContainer = () => {
           position: [0, 0, 10],
         }}
       >
-        <color attach="background" args={['bisque']} />
-        <Loop />
-        <Suspense fallback={null}>
-          <Objects />
-        </Suspense>
+        <RecoilBridge>
+          <color attach="background" args={['bisque']} />
+          <Loop />
+          <Suspense fallback={null}>
+            <Objects />
+          </Suspense>
+        </RecoilBridge>
       </Canvas>
     </Container>
   );

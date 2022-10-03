@@ -8,9 +8,9 @@ export const setToken = (token: string) => {
   axios.defaults.headers.common = { Authorization: `Bearer ${token}` };
 };
 
-export const guestLogin = async () => {
+export const logout = async () => {
   try {
-    const response = await axios.post(`${server}/api/v1/auth/guestLogin`);
+    const response = await axios.post(`${server}/api/v1/auth/logout`);
     return { data: response.data };
   } catch (err: any) {
     const error = err.response ? err.response.data.error : err.toString();

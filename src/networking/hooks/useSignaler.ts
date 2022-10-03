@@ -8,7 +8,8 @@ import * as types from '../../types';
 export const useSignaler = () => {
   const user = useRecoilValue(atoms.user);
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
-  const [signaler, setSignaler] = useState<Socket | undefined>();
+  const [signaler, setSignaler] = useState<Socket>();
+  const setSignalerInitialized = useSetRecoilState(atoms.signalerInitialized);
 
   const connectToSignaler = useCallback((
     onReceiveInit: (id: string) => void,
@@ -27,7 +28,7 @@ export const useSignaler = () => {
         },
       },
     );
-
+    setSignalerInitialized(true);
     setSignaler(socket);
 
     socket.on('connect_error', (err: any) => {
@@ -86,7 +87,7 @@ export const useSignaler = () => {
       setConnectionMessage(`peer ${remoteId} disconnected`);
       console.log('peer', remoteId, 'disconnected');
     });
-  }, [setConnectionMessage, user]);
+  }, [setConnectionMessage, user, setSignalerInitialized]);
 
   const sendSignaling = useCallback(({ remoteId, description, candidate }: types.Signaling) => {
     signaler?.emit('signaling', { remoteId, candidate, description });
