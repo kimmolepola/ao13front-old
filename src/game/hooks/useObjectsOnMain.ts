@@ -13,6 +13,7 @@ const handleNewIds = async (newIds: string[], o: types.GameObject[]) => {
   const objects = o;
   await Promise.all(newIds.map(async (id) => {
     const initialGameObject = (await getGameObject(id)).data;
+    console.log('--initial:', initialGameObject);
     if (initialGameObject) {
       const gameObject = {
         ...initialGameObject,
@@ -45,6 +46,7 @@ const handleNewIds = async (newIds: string[], o: types.GameObject[]) => {
       console.error('Failed to add new object, no initialGameObject');
     }
   }));
+  console.log('--objects:', o, objects);
   return objects.map((x) => x.id);
 };
 
@@ -63,6 +65,7 @@ const handleRemoveIds = (idsToRemove: string[], o: types.GameObject[]) => {
       objects.splice(i, 1);
     }
   }
+  console.log('--handleRemoveIds, save');
   savePlayerData(playerStateToSave);
   return objects.map((x) => x.id);
 };
@@ -104,13 +107,20 @@ export const useObjectsOnMain = () => {
       }
       return acc;
     }, []) || [];
+    console.log('--savePlayerDataOnMain');
     savePlayerData(data);
   }, [objectsRef]);
 
   const handlePossiblyNewIdOnMain = useCallback(async (id: string) => {
+    console.log('--handle possi');
     if (objectsRef.current && !objectsRef.current.some((x) => x.id === id)) {
+      console.log('--if yes');
       const ids = await handleNewIds([id], objectsRef.current);
-      setObjectIds(ids);
+      setTimeout(() => {
+        console.log('--setobjectids:', ids, objectsRef);
+
+        setObjectIds(ids);
+      }, 3000);
     }
   }, [objectsRef, setObjectIds]);
 

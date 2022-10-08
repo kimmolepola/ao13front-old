@@ -9,7 +9,7 @@ export const useMain = () => {
   const channelsOrdered = useRecoilValue(atoms.channelsOrdered);
   const channelsUnordered = useRecoilValue(atoms.channelsUnordered);
   const [main, setMain] = useRecoilState(atoms.main);
-  const connectedIds = useRecoilValue(atoms.connectedIds);
+  const [connectedIds, setConnectedIds] = useRecoilState(atoms.connectedIds);
   const {
     handlePossiblyNewIdOnMain,
     handleNewIdsOnMain,
@@ -35,9 +35,19 @@ export const useMain = () => {
       }
       return prev;
     }, []);
-    handleRemoveIdsOnMain(disconnectedIds);
-    handleNewIdsOnMain(newIds);
-  }, [channelsOrdered, channelsUnordered, connectedIds, handleRemoveIdsOnMain, handleNewIdsOnMain]);
+    if (newIds.length || disconnectedIds.length) {
+      setConnectedIds(actuallyConnectedIds);
+      handleRemoveIdsOnMain(disconnectedIds);
+      handleNewIdsOnMain(newIds);
+    }
+  }, [
+    channelsOrdered,
+    channelsUnordered,
+    connectedIds,
+    setConnectedIds,
+    handleRemoveIdsOnMain,
+    handleNewIdsOnMain,
+  ]);
 
   useEffect(() => {
     // channels change

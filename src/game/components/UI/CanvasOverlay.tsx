@@ -166,11 +166,12 @@ const CanvasOverlay = () => {
   const windowHeight = useRecoilValue(atoms.windowHeight);
   const connectedIds = useRecoilValue(atoms.connectedIds);
   const overlayInfotext = useRecoilValue(atoms.overlayInfotext);
+  const main = useRecoilValue(atoms.main);
 
   return (
     <Container windowHeight={windowHeight}>
       <ObjectInfos />
-      <Connecting show={!connectedIds.length}>Connecting...</Connecting>
+      <Connecting show={!main && !connectedIds.length}>Connecting...</Connecting>
       <Infotext show={connectedIds.length} ref={overlayInfotext} />
       <ControlsContainer>
         <Controls>

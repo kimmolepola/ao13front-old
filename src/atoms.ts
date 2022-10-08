@@ -5,11 +5,6 @@ import {
 
 import * as types from './types';
 
-export const signalerInitialized = atom<boolean>({
-  key: 'signalerInitialized',
-  default: false,
-});
-
 export const score = atom<number>({
   key: 'score',
   default: 0,
@@ -20,7 +15,7 @@ export const windowHeight = atom<number>({
   default: window.innerHeight,
 });
 
-export const overlayInfotext = atom<RefObject<HTMLDivElement>>({
+export const overlayInfotext = atom<RefObject<HTMLDivElement> | undefined>({
   key: 'overlayInfotext',
   default: undefined,
   dangerouslyAllowMutability: true,

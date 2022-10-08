@@ -49,12 +49,12 @@ const handleCamera = (camera: THREE.Camera, gameObject: types.GameObject, object
 };
 
 const handleOverlayInfotext = (
-  overlayInfotextRef: types.OverlayInfotextRef,
+  overlayInfotextRef: types.OverlayInfotextRef | undefined,
   gameObject: types.GameObject,
   object3D: THREE.Object3D,
 ) => {
   const overlayInfotext = overlayInfotextRef;
-  if (overlayInfotext.current) {
+  if (overlayInfotext?.current) {
     const degree = Math.round(radiansToDegrees(-object3D.rotation.z));
     const heading = degree < 0 ? degree + 360 : degree;
     overlayInfotext.current.textContent = `x: ${object3D.position.x.toFixed(0)}

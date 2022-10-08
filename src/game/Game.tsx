@@ -2,7 +2,7 @@ import {
   useRef, memo, useCallback, useMemo, useEffect,
 } from 'react';
 import { debounce } from 'lodash';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import * as networkingHooks from '../networking/hooks';
 
@@ -13,9 +13,9 @@ import * as atoms from '../atoms';
 import * as hooks from './hooks';
 
 const Game = ({ refreshUser }: { refreshUser: Function }) => {
+  const stateRef = useRef({ initialized: false });
   const objectsRef = useRef([]);
   const setObjectsRef = useSetRecoilState(atoms.objects);
-  const signalerInitialized = useRecoilValue(atoms.signalerInitialized);
   const { connect, disconnect } = networkingHooks.useConnections();
 
   hooks.useControls();
@@ -33,12 +33,17 @@ const Game = ({ refreshUser }: { refreshUser: Function }) => {
     disconnect();
   }, [disconnect]);
 
-  useEffect(() => {
-    if (!signalerInitialized) {
-      connect();
-    }
+  const initialize = useCallback(() => {
     setObjectsRef(objectsRef);
-  }, [connect, setObjectsRef, signalerInitialized]);
+    connect();
+  }, [setObjectsRef, connect]);
+
+  useEffect(() => {
+    if (stateRef.current && !stateRef.current.initialized) {
+      stateRef.current.initialized = true;
+      initialize();
+    }
+  }, [stateRef, initialize]);
 
   return (
     <>

@@ -9,7 +9,6 @@ export const useSignaler = () => {
   const user = useRecoilValue(atoms.user);
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
   const [signaler, setSignaler] = useState<Socket>();
-  const setSignalerInitialized = useSetRecoilState(atoms.signalerInitialized);
 
   const connectToSignaler = useCallback((
     onReceiveInit: (id: string) => void,
@@ -18,6 +17,7 @@ export const useSignaler = () => {
     onReceiveMain: (id: string) => void,
     onReceivePeerDisconnected: (remoteId: string) => void,
   ) => {
+    console.log('--socket function');
     const socket = io(
       process.env.NODE_ENV === 'production'
         ? `wss://${process.env.REACT_APP_BACKEND}`
@@ -28,7 +28,6 @@ export const useSignaler = () => {
         },
       },
     );
-    setSignalerInitialized(true);
     setSignaler(socket);
 
     socket.on('connect_error', (err: any) => {
@@ -87,7 +86,7 @@ export const useSignaler = () => {
       setConnectionMessage(`peer ${remoteId} disconnected`);
       console.log('peer', remoteId, 'disconnected');
     });
-  }, [setConnectionMessage, user, setSignalerInitialized]);
+  }, [setConnectionMessage, user]);
 
   const sendSignaling = useCallback(({ remoteId, description, candidate }: types.Signaling) => {
     signaler?.emit('signaling', { remoteId, candidate, description });
