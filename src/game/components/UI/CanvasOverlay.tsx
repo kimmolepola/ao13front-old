@@ -23,7 +23,7 @@ const Connecting = styled.div<any>`
   transition: transform 3s;
 `;
 
-const InfoBox = styled.div<{ show: boolean, ref: (ref: HTMLDivElement) => void }>`
+const InfoBoxElement = styled.div<{ show: boolean, ref: (ref: HTMLDivElement) => void }>`
   display: ${(props) => (props.show ? '' : 'none')};
   padding: 5px;
   background: rgba(255, 255, 255, 0.75);
@@ -93,15 +93,16 @@ const Container = styled.div<any>`
   display: flex;
 `;
 
-const ObjectInfo = styled.div`
+const InfoElement = styled.div`
   position: absolute;
   transform: translate(-50%, -50%);
   transition: all 0.02s;
   font-family: ${theme.fontFamily};
   font-size: 11px;
+  color: white;
 `;
 
-const ObjectInfos = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
+const InfoElements = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
   const ownId = useRecoilValue(atoms.ownId);
 
   return (
@@ -110,7 +111,7 @@ const ObjectInfos = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]>
         const o = object;
         if (id !== ownId) {
           acc.push(
-            <ObjectInfo
+            <InfoElement
               key={id}
               ref={(element) => {
                 o.infoElement = element;
@@ -181,9 +182,9 @@ const CanvasOverlay = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[
 
   return (
     <Container windowHeight={windowHeight}>
-      <ObjectInfos objectsRef={objectsRef} />
+      <InfoElements objectsRef={objectsRef} />
       <Connecting show={!main && !connectedIds.length}>Connecting...</Connecting>
-      <InfoBox
+      <InfoBoxElement
         show={Boolean(main || connectedIds.length)}
         ref={(element: HTMLDivElement) => {
           const ownObject = objectsRef.current?.find((x) => x.id === ownId);

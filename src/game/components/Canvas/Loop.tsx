@@ -62,7 +62,6 @@ const handleInfoBoxElement = (
     heading: ${heading}
     speed: ${gameObject.speed.toFixed(1)}`;
   }
-  console.log('--o:', o.infoBoxElement);
 };
 
 const handleMovement = (delta: number, gameObject: types.GameObject, object3D: THREE.Object3D) => {
