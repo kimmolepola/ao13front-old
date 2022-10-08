@@ -1,4 +1,4 @@
-import { memo, useCallback } from 'react';
+import { memo, useCallback, RefObject } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -7,6 +7,7 @@ import ChatContainer from './ChatContainer';
 import theme from '../../../../themets.js';
 
 import * as atoms from '../../../../atoms';
+import * as types from '../../../../types';
 
 const Text = styled.div`
   margin: ${theme.margins.basic};
@@ -67,7 +68,15 @@ const Container = styled.div<any>`
   background: ${theme.colors.bgMain};
 `;
 
-const Sidepanel = ({ refreshUser, quit }: { refreshUser: Function, quit: Function }) => {
+const Sidepanel = ({
+  refreshUser,
+  quit,
+  objectsRef,
+}: {
+  refreshUser: Function,
+  quit: Function,
+  objectsRef: RefObject<types.GameObject[]>
+}) => {
   const navigate = useNavigate();
   const windowHeight = useRecoilValue(atoms.windowHeight);
   const main = useRecoilValue(atoms.main);
@@ -103,7 +112,7 @@ const Sidepanel = ({ refreshUser, quit }: { refreshUser: Function, quit: Functio
           <p />
         </InfoBox>
       </div>
-      <ChatContainer />
+      <ChatContainer objectsRef={objectsRef} />
     </Container>
   );
 };

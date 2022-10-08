@@ -15,10 +15,9 @@ import * as hooks from './hooks';
 const Game = ({ refreshUser }: { refreshUser: Function }) => {
   const stateRef = useRef({ initialized: false });
   const objectsRef = useRef([]);
-  const setObjectsRef = useSetRecoilState(atoms.objects);
-  const { connect, disconnect } = networkingHooks.useConnections();
+  const { connect, disconnect } = networkingHooks.useConnections(objectsRef);
 
-  hooks.useControls();
+  hooks.useControls(objectsRef);
 
   const setWindowHeight = useSetRecoilState(atoms.windowHeight);
 
@@ -33,22 +32,17 @@ const Game = ({ refreshUser }: { refreshUser: Function }) => {
     disconnect();
   }, [disconnect]);
 
-  const initialize = useCallback(() => {
-    setObjectsRef(objectsRef);
-    connect();
-  }, [setObjectsRef, connect]);
-
   useEffect(() => {
     if (stateRef.current && !stateRef.current.initialized) {
       stateRef.current.initialized = true;
-      initialize();
+      connect();
     }
-  }, [stateRef, initialize]);
+  }, [stateRef, connect]);
 
   return (
     <>
-      <Canvas />
-      <UserInterface refreshUser={refreshUser} quit={quit} />
+      <Canvas objectsRef={objectsRef} />
+      <UserInterface refreshUser={refreshUser} quit={quit} objectsRef={objectsRef} />
     </>
   );
 };

@@ -1,17 +1,17 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, RefObject } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import * as hooks from '.';
 import * as atoms from '../../atoms';
 import * as types from '../../types';
 
-export const useConnections = () => {
+export const useConnections = (objectsRef: RefObject<types.GameObject[]>) => {
   const setOwnId = useSetRecoilState(atoms.ownId);
   const [peerConnections, setPeerConnections] = useState<types.PeerConnectionsDictionary>({});
 
-  const { onReceiveMain } = hooks.useMain();
+  const { onReceiveMain } = hooks.useMain(objectsRef);
   const { connectToSignaler, disconnectFromSignaler, sendSignaling } = hooks.useSignaler();
-  const connectToPeer = hooks.usePeerConnection();
+  const connectToPeer = hooks.usePeerConnection(objectsRef);
 
   const onReceiveInit = useCallback((id: string) => {
     setOwnId(id);

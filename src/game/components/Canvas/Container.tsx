@@ -1,4 +1,4 @@
-import { memo, Suspense } from 'react';
+import { memo, Suspense, RefObject } from 'react';
 import { Canvas } from '@react-three/fiber';
 import styled from 'styled-components';
 // eslint-disable-next-line
@@ -9,6 +9,7 @@ import Loop from './Loop';
 import Objects from './Objects';
 
 import * as atoms from '../../../atoms';
+import * as types from '../../../types';
 
 const Container = styled.div<any>`
   position: absolute;
@@ -25,7 +26,7 @@ const Container = styled.div<any>`
   }
 `;
 
-const CanvasContainer = () => {
+const CanvasContainer = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
   const RecoilBridge = useRecoilBridgeAcrossReactRoots_UNSTABLE();
   const windowHeight = useRecoilValue(atoms.windowHeight);
 
@@ -41,9 +42,9 @@ const CanvasContainer = () => {
       >
         <RecoilBridge>
           <color attach="background" args={['bisque']} />
-          <Loop />
+          <Loop objectsRef={objectsRef} />
           <Suspense fallback={null}>
-            <Objects />
+            <Objects objectsRef={objectsRef} />
           </Suspense>
         </RecoilBridge>
       </Canvas>

@@ -1,11 +1,12 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, RefObject } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 
 import * as gameHooks from '../../game/hooks';
 
 import * as atoms from '../../atoms';
+import * as types from '../../types';
 
-export const useMain = () => {
+export const useMain = (objectsRef: RefObject<types.GameObject[]>) => {
   const channelsOrdered = useRecoilValue(atoms.channelsOrdered);
   const channelsUnordered = useRecoilValue(atoms.channelsUnordered);
   const [main, setMain] = useRecoilState(atoms.main);
@@ -14,7 +15,7 @@ export const useMain = () => {
     handlePossiblyNewIdOnMain,
     handleNewIdsOnMain,
     handleRemoveIdsOnMain,
-  } = gameHooks.useObjectsOnMain();
+  } = gameHooks.useObjectsOnMain(objectsRef);
 
   const onChannelsChanged = useCallback(() => {
     const actuallyConnectedIds = channelsOrdered.reduce((prev: string[], cur) => {

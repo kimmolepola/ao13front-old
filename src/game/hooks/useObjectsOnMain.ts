@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, RefObject } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import * as THREE from 'three';
 
@@ -13,7 +13,6 @@ const handleNewIds = async (newIds: string[], o: types.GameObject[]) => {
   const objects = o;
   await Promise.all(newIds.map(async (id) => {
     const initialGameObject = (await getGameObject(id)).data;
-    console.log('--initial:', initialGameObject);
     if (initialGameObject) {
       const gameObject = {
         ...initialGameObject,
@@ -26,14 +25,13 @@ const handleNewIds = async (newIds: string[], o: types.GameObject[]) => {
         controlsOverChannelsDown: 0,
         controlsOverChannelsLeft: 0,
         controlsOverChannelsRight: 0,
-        rotationSpeed: 0,
-        speed: 1,
-        position: new THREE.Vector3(),
-        quaternion: new THREE.Quaternion(),
+        rotationSpeed: parameters.rotationSpeed,
+        speed: parameters.speed,
         backendPosition: new THREE.Vector3(),
         backendQuaternion: new THREE.Quaternion(),
         keyDowns: [],
-        infoRef: undefined,
+        infoElement: undefined,
+        infoBoxElement: undefined,
         object3D: undefined,
       };
       const oldInstanceIndex = objects.findIndex((x) => x.id === id);
@@ -46,7 +44,6 @@ const handleNewIds = async (newIds: string[], o: types.GameObject[]) => {
       console.error('Failed to add new object, no initialGameObject');
     }
   }));
-  console.log('--objects:', o, objects);
   return objects.map((x) => x.id);
 };
 
@@ -65,7 +62,6 @@ const handleRemoveIds = (idsToRemove: string[], o: types.GameObject[]) => {
       objects.splice(i, 1);
     }
   }
-  console.log('--handleRemoveIds, save');
   savePlayerData(playerStateToSave);
   return objects.map((x) => x.id);
 };
@@ -81,21 +77,20 @@ const handleSendState = (sendOrdered: (data: types.State) => void, objects: type
         sScore: cur.score,
         sRotationSpeed: cur.rotationSpeed,
         sSpeed: cur.speed,
-        sPositionX: cur.position.x,
-        sPositionY: cur.position.y,
-        sPositionZ: cur.position.z,
-        sQuaternionX: cur.quaternion.x,
-        sQuaternionY: cur.quaternion.y,
-        sQuaternionZ: cur.quaternion.z,
-        sQuaternionW: cur.quaternion.w,
+        sPositionX: cur.object3D?.position.x || 0,
+        sPositionY: cur.object3D?.position.y || 0,
+        sPositionZ: cur.object3D?.position.z || 0,
+        sQuaternionX: cur.object3D?.quaternion.x || 0,
+        sQuaternionY: cur.object3D?.quaternion.y || 0,
+        sQuaternionZ: cur.object3D?.quaternion.z || 0,
+        sQuaternionW: cur.object3D?.quaternion.w || 0,
       };
       return acc;
     }, {}),
   });
 };
 
-export const useObjectsOnMain = () => {
-  const objectsRef = useRecoilValue(atoms.objects);
+export const useObjectsOnMain = (objectsRef: RefObject<types.GameObject[]>) => {
   const main = useRecoilValue(atoms.main);
   const setObjectIds = useSetRecoilState(atoms.objectIds);
   const { sendOrdered } = networkingHooks.useSendFromMain();
@@ -107,20 +102,13 @@ export const useObjectsOnMain = () => {
       }
       return acc;
     }, []) || [];
-    console.log('--savePlayerDataOnMain');
     savePlayerData(data);
   }, [objectsRef]);
 
   const handlePossiblyNewIdOnMain = useCallback(async (id: string) => {
-    console.log('--handle possi');
     if (objectsRef.current && !objectsRef.current.some((x) => x.id === id)) {
-      console.log('--if yes');
       const ids = await handleNewIds([id], objectsRef.current);
-      setTimeout(() => {
-        console.log('--setobjectids:', ids, objectsRef);
-
-        setObjectIds(ids);
-      }, 3000);
+      setObjectIds(ids);
     }
   }, [objectsRef, setObjectIds]);
 

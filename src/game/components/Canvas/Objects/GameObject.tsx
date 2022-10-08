@@ -1,13 +1,13 @@
-import { memo, useMemo } from 'react';
+import { memo, useMemo, RefObject } from 'react';
 import * as THREE from 'three';
 import { useRecoilValue } from 'recoil';
 
 import * as atoms from '../../../../atoms';
+import * as types from '../../../../types';
 
-const GameObject = ({ id, map }: { id: string, map: THREE.Texture }) => {
+const GameObject = ({ id, map, objectsRef }: { id: string, map: THREE.Texture, objectsRef: RefObject<types.GameObject[]> }) => {
   const ownId = useRecoilValue(atoms.ownId);
-  const gameObjectsRef = useRecoilValue(atoms.objects);
-  const o = gameObjectsRef.current?.find((x) => x.id === id);
+  const o = objectsRef.current?.find((x) => x.id === id);
 
   const meshColor = useMemo(() => (ownId === id ? 'orange' : undefined), [ownId, id]);
 

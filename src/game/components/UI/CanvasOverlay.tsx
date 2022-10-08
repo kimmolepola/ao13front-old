@@ -1,4 +1,6 @@
-import { memo, useMemo, useCallback } from 'react';
+import {
+  memo, useMemo, useCallback, RefObject, useEffect,
+} from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 
@@ -21,7 +23,7 @@ const Connecting = styled.div<any>`
   transition: transform 3s;
 `;
 
-const Infotext = styled.div<any>`
+const InfoBox = styled.div<{ show: boolean, ref: (ref: HTMLDivElement) => void }>`
   display: ${(props) => (props.show ? '' : 'none')};
   padding: 5px;
   background: rgba(255, 255, 255, 0.75);
@@ -99,20 +101,19 @@ const ObjectInfo = styled.div`
   font-size: 11px;
 `;
 
-const ObjectInfos = () => {
+const ObjectInfos = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
   const ownId = useRecoilValue(atoms.ownId);
-  const objects = useRecoilValue(atoms.objects);
 
   return (
     <>
-      {Object.entries(objects.current || []).reduce((acc: any, [id, object]) => {
+      {Object.entries(objectsRef.current || []).reduce((acc: any, [id, object]) => {
         const o = object;
         if (id !== ownId) {
           acc.push(
             <ObjectInfo
               key={id}
-              ref={(ref) => {
-                o.infoRef = ref;
+              ref={(element) => {
+                o.infoElement = element;
               }}
             />,
           );
@@ -123,17 +124,22 @@ const ObjectInfos = () => {
   );
 };
 
-const ControlButton = ({ control }: { control: types.Keys }) => {
+const ControlButton = ({
+  control,
+  objectsRef,
+}: {
+  control: types.Keys,
+  objectsRef: RefObject<types.GameObject[]>,
+}) => {
   const ownId = useRecoilValue(atoms.ownId);
-  const objects = useRecoilValue(atoms.objects);
 
   const onPressed = useCallback(() => {
-    handlePressed(control, ownId, objects);
-  }, [control, ownId, objects]);
+    handlePressed(control, ownId, objectsRef);
+  }, [control, ownId, objectsRef]);
 
   const onReleased = useCallback(() => {
-    handleReleased(control, ownId, objects);
-  }, [control, ownId, objects]);
+    handleReleased(control, ownId, objectsRef);
+  }, [control, ownId, objectsRef]);
 
   const symbol = useMemo(() => {
     switch (control) {
@@ -162,25 +168,38 @@ const ControlButton = ({ control }: { control: types.Keys }) => {
   );
 };
 
-const CanvasOverlay = () => {
+const CanvasOverlay = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
   const windowHeight = useRecoilValue(atoms.windowHeight);
   const connectedIds = useRecoilValue(atoms.connectedIds);
-  const overlayInfotext = useRecoilValue(atoms.overlayInfotext);
+  const objectIds = useRecoilValue(atoms.objectIds);
   const main = useRecoilValue(atoms.main);
+  const ownId = useRecoilValue(atoms.ownId);
+
+  useEffect(() => {
+    // re-render after updated objectsRef.current
+  }, [objectIds]);
 
   return (
     <Container windowHeight={windowHeight}>
-      <ObjectInfos />
+      <ObjectInfos objectsRef={objectsRef} />
       <Connecting show={!main && !connectedIds.length}>Connecting...</Connecting>
-      <Infotext show={connectedIds.length} ref={overlayInfotext} />
+      <InfoBox
+        show={Boolean(main || connectedIds.length)}
+        ref={(element: HTMLDivElement) => {
+          const ownObject = objectsRef.current?.find((x) => x.id === ownId);
+          if (ownObject) {
+            ownObject.infoBoxElement = element;
+          }
+        }}
+      />
       <ControlsContainer>
         <Controls>
-          <ControlButton control={types.Keys.LEFT} />
+          <ControlButton control={types.Keys.LEFT} objectsRef={objectsRef} />
           <ButtonGroup>
-            <ControlButton control={types.Keys.UP} />
-            <ControlButton control={types.Keys.DOWN} />
+            <ControlButton control={types.Keys.UP} objectsRef={objectsRef} />
+            <ControlButton control={types.Keys.DOWN} objectsRef={objectsRef} />
           </ButtonGroup>
-          <ControlButton control={types.Keys.RIGHT} />
+          <ControlButton control={types.Keys.RIGHT} objectsRef={objectsRef} />
         </Controls>
       </ControlsContainer>
     </Container>

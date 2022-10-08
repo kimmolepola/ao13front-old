@@ -1,11 +1,21 @@
-import { memo } from 'react';
+import { memo, RefObject } from 'react';
 import CanvasOverlay from './CanvasOverlay';
 import Sidepanel from './Sidepanel';
 
-const UserInterface = ({ refreshUser, quit }: { refreshUser: Function, quit: Function }) => (
+import * as types from '../../../types';
+
+const UserInterface = ({
+  refreshUser,
+  quit,
+  objectsRef,
+}: {
+  refreshUser: Function,
+  quit: Function,
+  objectsRef: RefObject<types.GameObject[]>
+}) => (
   <>
-    <CanvasOverlay />
-    <Sidepanel refreshUser={refreshUser} quit={quit} />
+    <CanvasOverlay objectsRef={objectsRef} />
+    <Sidepanel refreshUser={refreshUser} quit={quit} objectsRef={objectsRef} />
   </>
 );
 

@@ -1,11 +1,11 @@
-import { useCallback } from 'react';
+import { useCallback, RefObject } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import * as atoms from '../../atoms';
 import * as types from '../../types';
 import * as hooks from '.';
 
-export const usePeerConnection = () => {
+export const usePeerConnection = (objectsRef: RefObject<types.GameObject[]>) => {
   const main = useRecoilValue(atoms.main);
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
   const setChannelsOrdered = useSetRecoilState(atoms.channelsOrdered);
@@ -13,8 +13,8 @@ export const usePeerConnection = () => {
   const createRTCPeerConnection = hooks.useRTCPeerConnection();
   const createOrderedChannel = hooks.useChannelOrdered();
   const createUnorderedChannel = hooks.useChannelUnordered();
-  const { onReceive: onReceiveOnMain } = hooks.useReceiveOnMain();
-  const { onReceive: onReceiveOnClient } = hooks.useReceiveOnClient();
+  const { onReceive: onReceiveOnMain } = hooks.useReceiveOnMain(objectsRef);
+  const { onReceive: onReceiveOnClient } = hooks.useReceiveOnClient(objectsRef);
 
   const onChannelOrderedOpen = useCallback((remoteId: string, channel: RTCDataChannel) => {
     setChannelsOrdered((x) => [...x, { remoteId, channel }]);

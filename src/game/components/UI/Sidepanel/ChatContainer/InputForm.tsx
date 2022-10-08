@@ -1,4 +1,6 @@
-import { memo, useCallback, useState } from 'react';
+import {
+  memo, useCallback, useState, RefObject,
+} from 'react';
 import styled from 'styled-components';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 
@@ -26,14 +28,13 @@ const InputForm = styled.form`
 
 const Container = styled.div``;
 
-const ChatInputForm = () => {
+const ChatInputForm = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
   const setChatMessages = useSetRecoilState(atoms.chatMessages);
   const { sendOrdered: sendOrderedFromMain } = networkingHooks.useSendFromMain();
   const { sendOrdered: sendOrderedFromClient } = networkingHooks.useSendFromClient();
   const main = useRecoilValue(atoms.main);
   const ownId = useRecoilValue(atoms.ownId);
   const [value, setValue] = useState('');
-  const objectsRef = useRecoilValue(atoms.objects);
 
   const onSubmit = useCallback((e: any) => {
     e.preventDefault();

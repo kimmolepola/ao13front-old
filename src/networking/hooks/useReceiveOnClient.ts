@@ -1,4 +1,5 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { RefObject } from 'react';
+import { useRecoilState } from 'recoil';
 
 import { chatMessageTimeToLive } from '../../parameters';
 
@@ -6,10 +7,9 @@ import * as atoms from '../../atoms';
 import * as types from '../../types';
 import * as gameHooks from '../../game/hooks';
 
-export const useReceiveOnClient = () => {
-  const objectsRef = useRecoilValue(atoms.objects);
+export const useReceiveOnClient = (objectsRef: RefObject<types.GameObject[]>) => {
   const [chatMessages, setChatMessages] = useRecoilState(atoms.chatMessages);
-  const { handleUpdateData, handleStateData } = gameHooks.useObjectsOnClient();
+  const { handleUpdateData, handleStateData } = gameHooks.useObjectsOnClient(objectsRef);
 
   const onReceive = (
     data: types.NetData,

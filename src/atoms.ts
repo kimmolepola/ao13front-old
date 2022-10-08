@@ -31,12 +31,6 @@ export const objectIds = atom<string[]>({
   default: [],
 });
 
-export const objects = atom<RefObject<types.GameObject[]>>({
-  key: 'objects',
-  default: { current: [] },
-  dangerouslyAllowMutability: true,
-});
-
 export const connectedIds = atom<string[]>({
   key: 'connectedIds',
   default: [],

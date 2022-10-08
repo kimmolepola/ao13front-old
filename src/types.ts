@@ -47,12 +47,11 @@ export type GameObject = {
   controlsOverChannelsRight: number,
   rotationSpeed: number,
   speed: number,
-  position: THREE.Vector3,
-  quaternion: THREE.Quaternion,
   backendPosition: THREE.Vector3,
   backendQuaternion: THREE.Quaternion,
   keyDowns: Keys[],
-  infoRef: HTMLDivElement | null | undefined,
+  infoElement: HTMLDivElement | null | undefined,
+  infoBoxElement: HTMLDivElement | null | undefined,
   object3D: THREE.Object3D | undefined,
 }
 

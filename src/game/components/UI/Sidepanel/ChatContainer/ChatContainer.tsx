@@ -1,10 +1,12 @@
-import { memo } from 'react';
+import { memo, RefObject } from 'react';
 import styled from 'styled-components';
 
 import theme from '../../../../../themets.js';
 
 import Chat from './Chat';
 import InputForm from './InputForm';
+
+import * as types from '../../../../../types';
 
 const Container = styled.div`
   background: ${theme.colors.bgVerylight};
@@ -16,9 +18,9 @@ const Container = styled.div`
   height: 65%;
 `;
 
-const ChatContainer = () => (
+const ChatContainer = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => (
   <Container>
-    <InputForm />
+    <InputForm objectsRef={objectsRef} />
     <Chat />
   </Container>
 );

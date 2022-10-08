@@ -17,7 +17,6 @@ export const useSignaler = () => {
     onReceiveMain: (id: string) => void,
     onReceivePeerDisconnected: (remoteId: string) => void,
   ) => {
-    console.log('--socket function');
     const socket = io(
       process.env.NODE_ENV === 'production'
         ? `wss://${process.env.REACT_APP_BACKEND}`

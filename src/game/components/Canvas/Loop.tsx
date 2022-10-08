@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, RefObject } from 'react';
 import * as THREE from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
@@ -42,27 +42,27 @@ const handleKeys = (delta: number, gameObject: types.GameObject) => {
 
 const handleCamera = (camera: THREE.Camera, gameObject: types.GameObject, object3D: THREE.Object3D) => {
   const c = camera;
-  c.position.x = gameObject.position.x;
-  c.position.y = gameObject.position.y;
+  c.position.x = gameObject.object3D?.position.x || 0;
+  c.position.y = gameObject.object3D?.position.y || 0;
   c.rotation.z = object3D.rotation.z;
   c.translateY(2);
 };
 
-const handleOverlayInfotext = (
-  overlayInfotextRef: types.OverlayInfotextRef | undefined,
+const handleInfoBoxElement = (
   gameObject: types.GameObject,
   object3D: THREE.Object3D,
 ) => {
-  const overlayInfotext = overlayInfotextRef;
-  if (overlayInfotext?.current) {
+  const o = gameObject;
+  if (o.infoBoxElement) {
     const degree = Math.round(radiansToDegrees(-object3D.rotation.z));
     const heading = degree < 0 ? degree + 360 : degree;
-    overlayInfotext.current.textContent = `x: ${object3D.position.x.toFixed(0)}
+    o.infoBoxElement.textContent = `x: ${object3D.position.x.toFixed(0)}
     y: ${object3D.position.y.toFixed(0)}
     z: ${object3D.position.z.toFixed(0)}
     heading: ${heading}
     speed: ${gameObject.speed.toFixed(1)}`;
   }
+  console.log('--o:', o.infoBoxElement);
 };
 
 const handleMovement = (delta: number, gameObject: types.GameObject, object3D: THREE.Object3D) => {
@@ -94,13 +94,13 @@ const gatherUpdateData = (updateData: { [id: string]: types.UpdateObject }, o: t
     uControlsRight: o.controlsOverChannelsRight,
     uRotationSpeed: o.rotationSpeed,
     uSpeed: o.speed,
-    uPositionX: o.position.x,
-    uPositionY: o.position.y,
-    uPositionZ: o.position.z,
-    uQuaternionX: o.quaternion.x,
-    uQuaternionY: o.quaternion.y,
-    uQuaternionZ: o.quaternion.z,
-    uQuaternionW: o.quaternion.w,
+    uPositionX: o.object3D?.position.x || 0,
+    uPositionY: o.object3D?.position.y || 0,
+    uPositionZ: o.object3D?.position.z || 0,
+    uQuaternionX: o.object3D?.quaternion.x || 0,
+    uQuaternionY: o.object3D?.quaternion.y || 0,
+    uQuaternionZ: o.object3D?.quaternion.z || 0,
+    uQuaternionW: o.object3D?.quaternion.w || 0,
   };
 };
 
@@ -112,7 +112,7 @@ const resetControlValues = (gameObject: types.GameObject) => {
   o.controlsOverChannelsRight = 0;
 };
 
-const handleInfoRef = (
+const handleInfoElement = (
   gameObject: types.GameObject,
   v: THREE.Vector3,
   h: number,
@@ -121,12 +121,12 @@ const handleInfoRef = (
   camera: THREE.Camera,
 ) => {
   const o = gameObject;
-  if (o.infoRef) {
-    o.infoRef.textContent = o.username;
+  if (o.infoElement) {
+    o.infoElement.textContent = o.username;
     v.copy(object3D.position);
     v.project(camera);
-    o.infoRef.style.top = `calc(${h * -v.y + h}px + 10%)`;
-    o.infoRef.style.left = `${w * v.x + w}px`;
+    o.infoElement.style.top = `calc(${h * -v.y + h}px + 10%)`;
+    o.infoElement.style.left = `${w * v.x + w}px`;
   }
 };
 
@@ -142,11 +142,9 @@ const interpolatePosition = (o: types.GameObject, object3D: THREE.Object3D) => {
   object3D.quaternion.slerp(o.backendQuaternion, interpolationAlpha);
 };
 
-const Loop = () => {
+const Loop = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
   const main = useRecoilValue(atoms.main);
-  const objects = useRecoilValue(atoms.objects);
   const ownId = useRecoilValue(atoms.ownId);
-  const overlayInfotext = useRecoilValue(atoms.overlayInfotext);
   const setScore = useSetRecoilState(atoms.score);
 
   const { sendUnordered: sendUnorderedFromClient } = networkingHooks.useSendFromClient();
@@ -165,20 +163,20 @@ const Loop = () => {
   useFrame((state, delta) => {
     if (main) { // main
       const updateData: { [id: string]: types.UpdateObject } = {};
-      for (let i = (objects.current || []).length; i > -1; i--) {
-        const o = objects.current?.[i];
+      for (let i = (objectsRef.current || []).length; i > -1; i--) {
+        const o = objectsRef.current?.[i];
         if (o && o.object3D) {
           if (o.id === ownId) {
             handleKeys(delta, o);
             handleCamera(camera, o, o.object3D);
-            handleOverlayInfotext(overlayInfotext, o, o.object3D);
+            handleInfoBoxElement(o, o.object3D);
           }
           handleMovement(delta, o, o.object3D);
           if (Date.now() > nextSendTime) {
             gatherUpdateData(updateData, o);
             resetControlValues(o);
           }
-          handleInfoRef(o, v, h, w, o.object3D, camera);
+          handleInfoElement(o, v, h, w, o.object3D, camera);
           // mock
           if (Date.now() > nextScoreTime) {
             nextScoreTime = Date.now() + scoreTimeInteval;
@@ -192,13 +190,13 @@ const Loop = () => {
         sendUnorderedFromMain({ type: types.NetDataType.UPDATE, data: updateData });
       }
     } else { // client
-      for (let i = (objects.current || []).length; i > -1; i--) {
-        const o = objects.current?.[i];
+      for (let i = (objectsRef.current || []).length; i > -1; i--) {
+        const o = objectsRef.current?.[i];
         if (o && o.object3D) {
           if (o.id === ownId) {
             handleKeys(delta, o);
             handleCamera(camera, o, o.object3D);
-            handleOverlayInfotext(overlayInfotext, o, o.object3D);
+            handleInfoBoxElement(o, o.object3D);
             if (Date.now() > nextSendTime) {
               nextSendTime = Date.now() + sendIntervalClient;
               sendUnorderedFromClient({ type: types.NetDataType.CONTROLS, data: gatherControlsData(o) });
@@ -207,7 +205,7 @@ const Loop = () => {
           }
           handleMovement(delta, o, o.object3D);
           interpolatePosition(o, o.object3D);
-          handleInfoRef(o, v, h, w, o.object3D, camera);
+          handleInfoElement(o, v, h, w, o.object3D, camera);
         }
       }
     }

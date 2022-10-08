@@ -1,13 +1,11 @@
-import { useEffect, memo } from 'react';
+import { memo } from 'react';
 import * as THREE from 'three';
 
 const Background = ({ map: threeMap }: { map: THREE.Texture }) => {
   const map = threeMap;
-  useEffect(() => {
-    map.wrapS = THREE.MirroredRepeatWrapping;
-    map.wrapT = THREE.MirroredRepeatWrapping;
-    map.repeat.set(120, 120);
-  }, [map]);
+  map.wrapS = THREE.MirroredRepeatWrapping;
+  map.wrapT = THREE.MirroredRepeatWrapping;
+  map.repeat.set(120, 120);
 
   return (
     <mesh>

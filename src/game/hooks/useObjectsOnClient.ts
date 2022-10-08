@@ -1,12 +1,11 @@
-import { useCallback } from 'react';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { useCallback, RefObject } from 'react';
+import { useSetRecoilState } from 'recoil';
 import * as THREE from 'three';
 
 import * as atoms from '../../atoms';
 import * as types from '../../types';
 
-export const useObjectsOnClient = () => {
-  const objectsRef = useRecoilValue(atoms.objects);
+export const useObjectsOnClient = (objectsRef: RefObject<types.GameObject[]>) => {
   const setObjectIds = useSetRecoilState(atoms.objectIds);
 
   const handleUpdateData = useCallback((data: types.Update) => {
@@ -60,12 +59,11 @@ export const useObjectsOnClient = () => {
             controlsOverChannelsRight: 0,
             rotationSpeed: s.sRotationSpeed,
             speed: s.sSpeed,
-            position: new THREE.Vector3(s.sPositionX, s.sPositionY, s.sPositionZ),
-            quaternion: new THREE.Quaternion(s.sQuaternionX, s.sQuaternionY, s.sQuaternionZ, s.sQuaternionW),
             backendPosition: new THREE.Vector3(s.sPositionX, s.sPositionY, s.sPositionZ),
             backendQuaternion: new THREE.Quaternion(s.sQuaternionX, s.sQuaternionY, s.sQuaternionZ, s.sQuaternionW),
             keyDowns: [],
-            infoRef: undefined,
+            infoElement: undefined,
+            infoBoxElement: undefined,
             object3D: undefined,
           });
         }
