@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import ChatContainer from './ChatContainer';
 import theme from '../../../../themets.js';
+import * as networkingHooks from '../../../../networking/hooks';
 
 import * as atoms from '../../../../atoms';
 import * as types from '../../../../types';
@@ -69,15 +70,14 @@ const Container = styled.div<any>`
 `;
 
 const Sidepanel = ({
-  refreshUser,
   quit,
   objectsRef,
 }: {
-  refreshUser: Function,
   quit: Function,
   objectsRef: RefObject<types.GameObject[]>
 }) => {
   const navigate = useNavigate();
+  const { refreshUser } = networkingHooks.useUser();
   const windowHeight = useRecoilValue(atoms.windowHeight);
   const main = useRecoilValue(atoms.main);
   const connectedIds = useRecoilValue(atoms.connectedIds);

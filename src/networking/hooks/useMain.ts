@@ -15,6 +15,7 @@ export const useMain = (objectsRef: RefObject<types.GameObject[]>) => {
     handlePossiblyNewIdOnMain,
     handleNewIdsOnMain,
     handleRemoveIdsOnMain,
+    handleQuitForObjectsOnMain,
   } = gameHooks.useObjectsOnMain(objectsRef);
 
   const onChannelsChanged = useCallback(() => {
@@ -62,5 +63,5 @@ export const useMain = (objectsRef: RefObject<types.GameObject[]>) => {
     handlePossiblyNewIdOnMain(id);
   }, [setMain, handlePossiblyNewIdOnMain]);
 
-  return { onReceiveMain };
+  return { onReceiveMain, handleQuitForObjectsOnMain };
 };

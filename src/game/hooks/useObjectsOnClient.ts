@@ -1,11 +1,12 @@
 import { useCallback, RefObject } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import * as THREE from 'three';
 
 import * as atoms from '../../atoms';
 import * as types from '../../types';
 
 export const useObjectsOnClient = (objectsRef: RefObject<types.GameObject[]>) => {
+  const main = useRecoilValue(atoms.main);
   const setObjectIds = useSetRecoilState(atoms.objectIds);
 
   const handleUpdateData = useCallback((data: types.Update) => {
@@ -75,5 +76,12 @@ export const useObjectsOnClient = (objectsRef: RefObject<types.GameObject[]>) =>
     }
   }, [objectsRef, setObjectIds]);
 
-  return { handleUpdateData, handleStateData };
+  const handleQuitForObjectsOnClient = useCallback(() => {
+    if (!main) {
+      objectsRef.current?.splice(0, objectsRef.current.length);
+      setObjectIds([]);
+    }
+  }, [objectsRef, setObjectIds, main]);
+
+  return { handleUpdateData, handleStateData, handleQuitForObjectsOnClient };
 };

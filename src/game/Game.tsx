@@ -12,7 +12,7 @@ import UserInterface from './components/UI';
 import * as atoms from '../atoms';
 import * as hooks from './hooks';
 
-const Game = ({ refreshUser }: { refreshUser: Function }) => {
+const Game = () => {
   const stateRef = useRef({ initialized: false });
   const objectsRef = useRef([]);
   const { connect, disconnect } = networkingHooks.useConnections(objectsRef);
@@ -42,7 +42,7 @@ const Game = ({ refreshUser }: { refreshUser: Function }) => {
   return (
     <>
       <Canvas objectsRef={objectsRef} />
-      <UserInterface refreshUser={refreshUser} quit={quit} objectsRef={objectsRef} />
+      <UserInterface quit={quit} objectsRef={objectsRef} />
     </>
   );
 };

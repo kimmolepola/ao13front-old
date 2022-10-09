@@ -1,6 +1,7 @@
 import { useState, useCallback, RefObject } from 'react';
 import { useSetRecoilState } from 'recoil';
 
+import * as gameHooks from '../../game/hooks';
 import * as hooks from '.';
 import * as atoms from '../../atoms';
 import * as types from '../../types';
@@ -9,7 +10,8 @@ export const useConnections = (objectsRef: RefObject<types.GameObject[]>) => {
   const setOwnId = useSetRecoilState(atoms.ownId);
   const [peerConnections, setPeerConnections] = useState<types.PeerConnectionsDictionary>({});
 
-  const { onReceiveMain } = hooks.useMain(objectsRef);
+  const { handleQuitForObjectsOnClient } = gameHooks.useObjectsOnClient(objectsRef);
+  const { onReceiveMain, handleQuitForObjectsOnMain } = hooks.useMain(objectsRef);
   const { connectToSignaler, disconnectFromSignaler, sendSignaling } = hooks.useSignaler();
   const connectToPeer = hooks.usePeerConnection(objectsRef);
 
@@ -52,11 +54,19 @@ export const useConnections = (objectsRef: RefObject<types.GameObject[]>) => {
     onReceivePeerDisconnected,
   ]);
 
-  const disconnect = useCallback(() => {
+  const disconnect = useCallback(async () => {
+    handleQuitForObjectsOnClient();
+    await handleQuitForObjectsOnMain();
     Object.values(peerConnections).forEach((x) => x.peerConnection.close());
     disconnectFromSignaler();
     setPeerConnections({});
-  }, [peerConnections, setPeerConnections, disconnectFromSignaler]);
+  }, [
+    peerConnections,
+    setPeerConnections,
+    disconnectFromSignaler,
+    handleQuitForObjectsOnClient,
+    handleQuitForObjectsOnMain,
+  ]);
 
   return { connect, disconnect };
 };

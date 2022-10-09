@@ -5,16 +5,18 @@ import { useNavigate, Routes, Route } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 import { checkOkToStart } from '../../networking/services/user.service';
+import * as networkingHooks from '../../networking/hooks';
+
 import Settings from './Settings';
 
 import * as theme from '../../theme';
 import * as atoms from '../../atoms';
 
-const LoggedIn = ({
-  refreshUser,
-}: { refreshUser: () => Promise<void> }) => {
-  const user = useRecoilValue(atoms.user);
+const LoggedIn = () => {
   const navigate = useNavigate();
+  const user = useRecoilValue(atoms.user);
+  const { refreshUser } = networkingHooks.useUser();
+
   const [errorText, setErrorText] = useState<string>();
   const [loading, setLoading] = useState(false);
 

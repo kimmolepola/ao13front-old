@@ -13,9 +13,7 @@ import AppBar from './components/AppBar';
 
 import * as atoms from '../atoms';
 
-const Frontpage = ({
-  refreshUser,
-}: { refreshUser: () => Promise<void> }) => {
+const Frontpage = () => {
   const user = useRecoilValue(atoms.user);
   const location = useLocation();
 
@@ -27,20 +25,8 @@ const Frontpage = ({
         <Routes>
           <Route path="/resetpassword" element={<ResetPassword />} />
           <Route path="/forgottenpassword" element={<ForgottenPassword />} />
-          <Route
-            path="/signup"
-            element={<SignUp />}
-          />
-          <Route
-            path="*"
-            element={!user
-              ? <Login />
-              : (
-                <LoggedIn
-                  refreshUser={refreshUser}
-                />
-              )}
-          />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="*" element={!user ? <Login /> : (<LoggedIn />)} />
         </Routes>
       </div>
     </>

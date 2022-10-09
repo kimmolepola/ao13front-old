@@ -9,3 +9,4 @@ export { useReceiveOnMain } from './useReceiveOnMain';
 export { useMain } from './useMain';
 export { useSendFromClient } from './useSendFromClient';
 export { useSendFromMain } from './useSendFromMain';
+export { useUser } from './useUser';
