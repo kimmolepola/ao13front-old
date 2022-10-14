@@ -37,7 +37,7 @@ const Login = () => {
         setToken(data.token);
         setUsername('');
         if (rememberMe) {
-          localStorage.setItem('loggedAo13User', JSON.stringify(data));
+          localStorage.setItem('user', JSON.stringify(data));
         }
       }
     }

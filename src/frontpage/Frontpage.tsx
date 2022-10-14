@@ -17,6 +17,8 @@ const Frontpage = () => {
   const user = useRecoilValue(atoms.user);
   const location = useLocation();
 
+  console.log('--FRONTPAGE USER:', user);
+
   return (
     <>
       {Boolean(user) && <AppBar />}

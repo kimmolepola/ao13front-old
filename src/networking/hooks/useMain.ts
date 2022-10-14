@@ -63,5 +63,10 @@ export const useMain = (objectsRef: RefObject<types.GameObject[]>) => {
     handlePossiblyNewIdOnMain(id);
   }, [setMain, handlePossiblyNewIdOnMain]);
 
-  return { onReceiveMain, handleQuitForObjectsOnMain };
+  const handleQuitOnMain = useCallback(async () => {
+    await handleQuitForObjectsOnMain();
+    setMain(false);
+  }, [handleQuitForObjectsOnMain, setMain]);
+
+  return { onReceiveMain, handleQuitOnMain };
 };

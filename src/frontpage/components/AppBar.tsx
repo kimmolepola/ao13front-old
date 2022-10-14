@@ -1,5 +1,5 @@
 import { memo, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
 import { logout } from '../../networking/services/auth.service';
@@ -8,14 +8,12 @@ import * as atoms from '../../atoms';
 
 const AppBar = () => {
   const [user, setUser] = useRecoilState(atoms.user);
-  const navigate = useNavigate();
 
   const onClickLogout = useCallback(async () => {
     await logout();
+    localStorage.removeItem('user');
     setUser(undefined);
-    localStorage.removeItem('loggedAo13User');
-    navigate('/');
-  }, [navigate, setUser]);
+  }, [setUser]);
 
   return (
     <>

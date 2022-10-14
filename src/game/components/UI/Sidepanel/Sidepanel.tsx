@@ -1,11 +1,9 @@
 import { memo, useCallback, RefObject } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 import ChatContainer from './ChatContainer';
 import theme from '../../../../themets.js';
-import * as networkingHooks from '../../../../networking/hooks';
 
 import * as atoms from '../../../../atoms';
 import * as types from '../../../../types';
@@ -76,26 +74,22 @@ const Sidepanel = ({
   quit: Function,
   objectsRef: RefObject<types.GameObject[]>
 }) => {
-  const navigate = useNavigate();
-  const { refreshUser } = networkingHooks.useUser();
   const windowHeight = useRecoilValue(atoms.windowHeight);
   const main = useRecoilValue(atoms.main);
   const connectedIds = useRecoilValue(atoms.connectedIds);
   const connectionMessage = useRecoilValue(atoms.connectionMessage);
   const score = useRecoilValue(atoms.score);
 
-  const handleQuit = useCallback(() => {
+  const onClickQuit = useCallback(() => {
     quit();
-    navigate('/');
-    setTimeout(refreshUser, 2500);
-  }, [quit, navigate, refreshUser]);
+  }, [quit]);
 
   return (
     <Container windowHeight={windowHeight}>
       <div className="flex flex-col">
         <div className="flex w-full justify-between">
           <Text>AO13</Text>
-          <Button onClick={handleQuit}>Quit</Button>
+          <Button onClick={onClickQuit}>Quit</Button>
         </div>
         <InfoBox>
           <div>{main ? 'You are the game host' : null}</div>

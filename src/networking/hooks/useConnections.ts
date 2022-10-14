@@ -11,7 +11,7 @@ export const useConnections = (objectsRef: RefObject<types.GameObject[]>) => {
   const [peerConnections, setPeerConnections] = useState<types.PeerConnectionsDictionary>({});
 
   const { handleQuitForObjectsOnClient } = gameHooks.useObjectsOnClient(objectsRef);
-  const { onReceiveMain, handleQuitForObjectsOnMain } = hooks.useMain(objectsRef);
+  const { onReceiveMain, handleQuitOnMain } = hooks.useMain(objectsRef);
   const { connectToSignaler, disconnectFromSignaler, sendSignaling } = hooks.useSignaler();
   const connectToPeer = hooks.usePeerConnection(objectsRef);
 
@@ -56,16 +56,18 @@ export const useConnections = (objectsRef: RefObject<types.GameObject[]>) => {
 
   const disconnect = useCallback(async () => {
     handleQuitForObjectsOnClient();
-    await handleQuitForObjectsOnMain();
+    await handleQuitOnMain();
     Object.values(peerConnections).forEach((x) => x.peerConnection.close());
     disconnectFromSignaler();
     setPeerConnections({});
+    setOwnId(undefined);
   }, [
     peerConnections,
     setPeerConnections,
     disconnectFromSignaler,
     handleQuitForObjectsOnClient,
-    handleQuitForObjectsOnMain,
+    handleQuitOnMain,
+    setOwnId,
   ]);
 
   return { connect, disconnect };
