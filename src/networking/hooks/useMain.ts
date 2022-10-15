@@ -59,9 +59,10 @@ export const useMain = (objectsRef: RefObject<types.GameObject[]>) => {
   }, [main, channelsOrdered, channelsUnordered, onChannelsChanged]);
 
   const onReceiveMain = useCallback((id: string) => {
+    console.log('--receive main, main:', main);
     setMain(true);
     handlePossiblyNewIdOnMain(id);
-  }, [setMain, handlePossiblyNewIdOnMain]);
+  }, [setMain, handlePossiblyNewIdOnMain, main]);
 
   const handleQuitOnMain = useCallback(async () => {
     await handleQuitForObjectsOnMain();

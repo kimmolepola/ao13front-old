@@ -20,11 +20,14 @@ export const useConnections = (objectsRef: RefObject<types.GameObject[]>) => {
   }, [setOwnId]);
 
   const onReceiveConnectToMain = useCallback((remoteId: string) => {
+    console.log('--onreceiveconnecttomain, remoteId:', remoteId);
     const { peerConnection, handleSignaling } = connectToPeer(remoteId, sendSignaling);
     setPeerConnections((x) => ({ ...x, [remoteId]: { peerConnection, handleSignaling } }));
   }, [connectToPeer, setPeerConnections, sendSignaling]);
 
   const onReceiveSignaling = useCallback(async ({ remoteId, description, candidate }: types.Signaling) => {
+    console.log('--onreceivesignaling:', remoteId, description, candidate);
+    console.log('--signaling:', remoteId, description, candidate);
     const { peerConnection, handleSignaling } = peerConnections[remoteId] || connectToPeer(remoteId, sendSignaling);
     setPeerConnections((x) => ({ ...x, [remoteId]: { peerConnection, handleSignaling } }));
     handleSignaling(description, candidate);

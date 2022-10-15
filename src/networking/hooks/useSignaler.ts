@@ -1,33 +1,37 @@
-import { useState, useCallback } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { useEffect, useState, useCallback } from 'react';
+import { io } from 'socket.io-client';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 import * as atoms from '../../atoms';
 import * as types from '../../types';
 
+const emptyFn = () => { console.log('--empty function'); };
+
 export const useSignaler = () => {
   const user = useRecoilValue(atoms.user);
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
-  const [signaler, setSignaler] = useState<Socket>();
 
-  const connectToSignaler = useCallback((
-    onReceiveInit: (id: string) => void,
-    onReceiveSignaling: (x: types.Signaling) => void,
-    onReceiveConnectToMain: (remoteId: string) => void,
-    onReceiveMain: (id: string) => void,
-    onReceivePeerDisconnected: (remoteId: string) => void,
-  ) => {
+  const [onReceiveInitFn, setOnReceiveInitFn] = useState<(id: string) => void>(() => emptyFn);
+  const [onReceiveSignalingFn, setOnReceiveSignalingFn] = useState<(x: types.Signaling) => void>(() => emptyFn);
+  const [onReceiveConnectToMainFn, setOnReceiveConnectToMainFn] = useState<(remoteId: string) => void>(() => emptyFn);
+  const [onReceiveMainFn, setOnReceiveMainFn] = useState<(id: string) => void>(() => emptyFn);
+  const [onReceivePeerDisconnectedFn, setOnReceivePeerDisconnectedFn] = useState<(remoteId: string) => void>(() => emptyFn);
+  const [sendSignalingFn, setSendSignalingFn] = useState<({ remoteId, description, candidate }: types.Signaling) => void>(
+    () => () => { console.log('--empty function sendSignaling'); });
+  const [disconnectFromSignalerFn, setDisconnectFromSignalerFn] = useState<() => void>(() => emptyFn);
+
+  useEffect(() => {
     const socket = io(
       process.env.NODE_ENV === 'production'
         ? `wss://${process.env.REACT_APP_BACKEND}`
         : `ws://${process.env.REACT_APP_BACKEND}`,
       {
         auth: {
-          token: user ? user.token : null,
+          token: user?.token,
         },
       },
     );
-    setSignaler(socket);
+    console.log('--socket:', socket);
 
     socket.on('connect_error', (err: any) => {
       console.error(err);
@@ -55,7 +59,7 @@ export const useSignaler = () => {
     });
 
     socket.on('init', (id: string) => {
-      onReceiveInit(id);
+      onReceiveInitFn(id);
       console.log('own id:', id);
     });
 
@@ -68,32 +72,74 @@ export const useSignaler = () => {
       description?: RTCSessionDescription,
       candidate?: RTCIceCandidate,
     }) => {
-      onReceiveSignaling({ remoteId, description, candidate });
+      onReceiveSignalingFn({ remoteId, description, candidate });
+      console.log('--on receive signaling');
     });
 
     socket.on('connectToMain', (remoteId: string) => {
-      onReceiveConnectToMain(remoteId);
+      onReceiveConnectToMainFn(remoteId);
+      console.log('--conect to main');
     });
 
     socket.on('main', (id: string) => {
-      onReceiveMain(id);
+      onReceiveMainFn(id);
       console.log('you are main');
     });
 
     socket.on('peerDisconnected', (remoteId: any) => {
-      onReceivePeerDisconnected(remoteId);
+      onReceivePeerDisconnectedFn(remoteId);
       setConnectionMessage(`peer ${remoteId} disconnected`);
       console.log('peer', remoteId, 'disconnected');
     });
-  }, [setConnectionMessage, user]);
 
-  const sendSignaling = useCallback(({ remoteId, description, candidate }: types.Signaling) => {
-    signaler?.emit('signaling', { remoteId, candidate, description });
-  }, [signaler]);
+    const sendSignaling = ({ remoteId, description, candidate }: types.Signaling) => {
+      console.log('--send signaling:', socket, remoteId, description, candidate);
+      socket?.emit('signaling', { remoteId, candidate, description });
+    };
 
-  const disconnectFromSignaler = useCallback(() => {
-    signaler?.disconnect();
-  }, [signaler]);
+    const disconnectFromSignaler = () => {
+      socket?.disconnect();
+    };
 
-  return { connectToSignaler, disconnectFromSignaler, sendSignaling };
+    setSendSignalingFn(() => sendSignaling);
+    setDisconnectFromSignalerFn(() => disconnectFromSignaler);
+
+    return () => {
+      socket.off('connect_error');
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('nomain');
+      socket.off('fail');
+      socket.off('init');
+      socket.off('signaling');
+      socket.off('connectToMain');
+      socket.off('main');
+      socket.off('peerDisconnected');
+      socket.disconnect();
+    };
+  }, [
+    onReceiveConnectToMainFn,
+    onReceiveInitFn,
+    onReceiveMainFn,
+    onReceivePeerDisconnectedFn,
+    onReceiveSignalingFn,
+    setConnectionMessage,
+    user?.token,
+  ]);
+
+  const connectToSignaler = useCallback((
+    onReceiveInit: (id: string) => void,
+    onReceiveSignaling: (x: types.Signaling) => void,
+    onReceiveConnectToMain: (remoteId: string) => void,
+    onReceiveMain: (id: string) => void,
+    onReceivePeerDisconnected: (remoteId: string) => void,
+  ) => {
+    setOnReceiveInitFn(() => onReceiveInit);
+    setOnReceiveSignalingFn(() => onReceiveSignaling);
+    setOnReceiveConnectToMainFn(() => onReceiveConnectToMain);
+    setOnReceiveMainFn(() => onReceiveMain);
+    setOnReceivePeerDisconnectedFn(() => onReceivePeerDisconnected);
+  }, []);
+
+  return { connectToSignaler, disconnectFromSignaler: disconnectFromSignalerFn, sendSignaling: sendSignalingFn };
 };

@@ -18,7 +18,6 @@ const Game = () => {
   const stateRef = useRef({ initialized: false });
   const objectsRef = useRef([]);
   const { connect, disconnect } = networkingHooks.useConnections(objectsRef);
-  const { refreshUser } = networkingHooks.useUser();
 
   hooks.useControls(objectsRef);
 
@@ -32,12 +31,27 @@ const Game = () => {
   const debounceResizeHandler = useMemo(() => debounce(resizeHandler, 300), [resizeHandler]);
   window.onresize = debounceResizeHandler;
 
+  useEffect(() => { console.log('--navigate:', navigate); }, [navigate]);
+
+  useEffect(() => { console.log('--stateRef:', stateRef); }, [stateRef]);
+
+  useEffect(() => { console.log('--objectsRef', objectsRef); }, [objectsRef]);
+
+  useEffect(() => { console.log('--connect:', connect); }, [connect]);
+
+  useEffect(() => { console.log('--disconnect:', disconnect); }, [disconnect]);
+
+  useEffect(() => { console.log('--user:', user); }, [user]);
+
+  useEffect(() => { console.log('--resizeHandler:', resizeHandler); }, [resizeHandler]);
+
+  useEffect(() => { console.log('--debounceResizeHandler:', debounceResizeHandler); }, [debounceResizeHandler]);
+
   const quit = useCallback(async () => {
     await disconnect();
     console.log('--QUIT USER:', user);
     navigate('/');
-    setTimeout(refreshUser, 2500);
-  }, [disconnect, navigate, refreshUser, user]);
+  }, [disconnect, navigate, user]);
 
   useEffect(() => {
     if (stateRef.current && !stateRef.current.initialized) {

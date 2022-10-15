@@ -13,7 +13,7 @@ export const logout = async () => {
     const response = await axios.post(`${server}/api/v1/auth/logout`);
     return { data: response.data };
   } catch (err: any) {
-    const error = err.response ? err.response.data.error : err.toString();
+    const error = err.response?.data ? err.response.data.error : err.toString();
     return { error };
   }
 };
@@ -27,7 +27,7 @@ export const resetPassword = async ({ token, userId, password }: { token: string
     });
     return { data: response.data, error: null };
   } catch (err: any) {
-    const error = err.response ? err.response.data.error : err.toString();
+    const error = err.response?.data ? err.response.data.error : err.toString();
     return { data: null, error };
   }
 };
@@ -42,7 +42,7 @@ export const requestPasswordReset = async ({ username }: { username: string }) =
     );
     return { data: response.data };
   } catch (err: any) {
-    const error = err.response ? err.response.data.error : err.toString();
+    const error = err.response?.data ? err.response.data.error : err.toString();
     return { error };
   }
 };
@@ -55,7 +55,7 @@ export const login = async ({ username, password }: { username: string, password
     });
     return { data: response.data };
   } catch (err: any) {
-    const error = err.response ? err.response.data.error : err.toString();
+    const error = err.response?.data ? err.response.data.error : err.toString();
     return { error };
   }
 };
@@ -68,7 +68,7 @@ export const signup = async ({ email, password }: { email: string, password: str
     });
     return { data: response.data };
   } catch (err: any) {
-    const error = err.response ? err.response.data.error : err.toString();
+    const error = err.response?.data ? err.response.data.error : err.toString();
     return { error };
   }
 };

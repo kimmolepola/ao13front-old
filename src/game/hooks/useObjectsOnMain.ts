@@ -99,11 +99,11 @@ export const useObjectsOnMain = (objectsRef: RefObject<types.GameObject[]>) => {
   const { sendOrdered } = networkingHooks.useSendFromMain();
 
   const handlePossiblyNewIdOnMain = useCallback(async (id: string) => {
-    if (main && objectsRef.current && !objectsRef.current.some((x) => x.id === id)) {
+    if (objectsRef.current && !objectsRef.current.some((x) => x.id === id)) {
       const ids = await handleNewIds([id], objectsRef.current);
       setObjectIds(ids);
     }
-  }, [objectsRef, setObjectIds, main]);
+  }, [objectsRef, setObjectIds]);
 
   const handleNewIdsOnMain = useCallback(async (newIds: string[]) => {
     if (main && objectsRef.current) {

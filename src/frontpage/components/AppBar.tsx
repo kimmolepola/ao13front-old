@@ -2,7 +2,7 @@ import { memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
-import { logout } from '../../networking/services/auth.service';
+import { logout, setToken } from '../../networking/services/auth.service';
 
 import * as atoms from '../../atoms';
 
@@ -10,9 +10,10 @@ const AppBar = () => {
   const [user, setUser] = useRecoilState(atoms.user);
 
   const onClickLogout = useCallback(async () => {
-    await logout();
+    logout();
     localStorage.removeItem('user');
     setUser(undefined);
+    setToken('');
   }, [setUser]);
 
   return (

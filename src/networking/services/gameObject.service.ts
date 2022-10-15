@@ -12,7 +12,7 @@ export const getGameObject = async (id: any) => {
     const response = await axios.get(`${server}/api/v1/gameObject/${id}`);
     return { data: response.data as types.InitialGameObject | undefined };
   } catch (err: any) {
-    const error = err.response ? err.response.data.error : err.toString();
+    const error = err.response?.data ? err.response.data.error : err.toString();
     console.error('gameobject fetch error:', error);
     return { error };
   }
@@ -26,7 +26,7 @@ export const savePlayerData = async (data: { remoteId: string, score: number }[]
     );
     return { data: response.data, error: null };
   } catch (err: any) {
-    const error = err.response ? err.response.data.error : err.toString();
+    const error = err.response?.data ? err.response.data.error : err.toString();
     return { data: null, error };
   }
 };

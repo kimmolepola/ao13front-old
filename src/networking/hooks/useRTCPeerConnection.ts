@@ -35,12 +35,14 @@ export const useRTCPeerConnection = () => {
     };
 
     peerConnection.onicecandidate = ({ candidate }) => {
+      console.log('--onicecandidate:', candidate);
       sendSignaling({ remoteId, candidate });
     };
 
     peerConnection.onnegotiationneeded = async () => {
       try {
         await peerConnection.setLocalDescription();
+        console.log('--onegotiationneeded', peerConnection.localDescription);
         sendSignaling(
           {
             remoteId,
