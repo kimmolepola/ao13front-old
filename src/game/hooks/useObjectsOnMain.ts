@@ -54,7 +54,6 @@ const savePlayerDataOnMain = async (objects: types.GameObject[]) => {
     }
     return acc;
   }, []) || [];
-  console.log('--save:', data);
   await savePlayerData(data);
 };
 
@@ -116,6 +115,7 @@ export const useObjectsOnMain = (objectsRef: RefObject<types.GameObject[]>) => {
 
   const handleRemoveIdsOnMain = useCallback((idsToRemove: string[]) => {
     if (main && objectsRef.current) {
+      console.log('--remove ids:', idsToRemove);
       const ids = handleRemoveIds(idsToRemove, objectsRef.current);
       setObjectIds(ids);
       handleSendState(sendOrdered, objectsRef.current);
@@ -129,7 +129,6 @@ export const useObjectsOnMain = (objectsRef: RefObject<types.GameObject[]>) => {
     if (main) {
       sendMainStateIntervalId = window.setInterval(() => {
         if (objectsRef.current) {
-          console.log('--send state:', objectsRef.current);
           handleSendState(sendOrdered, objectsRef.current);
         }
       }, parameters.sendIntervalMainState);
@@ -147,17 +146,34 @@ export const useObjectsOnMain = (objectsRef: RefObject<types.GameObject[]>) => {
 
   const handleQuitForObjectsOnMain = useCallback(async () => {
     if (main && objectsRef.current) {
-      console.log('--quit:', objectsRef.current);
       await savePlayerDataOnMain(objectsRef.current);
       objectsRef.current.splice(0, objectsRef.current.length);
     }
     setObjectIds([]);
   }, [objectsRef, setObjectIds, main]);
 
+  const handleReceiveControlsData = useCallback((
+    data: types.Controls,
+    remoteId: string,
+  ) => {
+    const o = objectsRef.current?.find((x) => x.id === remoteId);
+    if (o) {
+      o.controlsUp += data.data.up || 0;
+      o.controlsDown += data.data.down || 0;
+      o.controlsLeft += data.data.left || 0;
+      o.controlsRight += data.data.right || 0;
+      o.controlsOverChannelsUp += data.data.up || 0;
+      o.controlsOverChannelsDown += data.data.down || 0;
+      o.controlsOverChannelsLeft += data.data.left || 0;
+      o.controlsOverChannelsRight += data.data.right || 0;
+    }
+  }, [objectsRef]);
+
   return {
     handlePossiblyNewIdOnMain,
     handleNewIdsOnMain,
     handleRemoveIdsOnMain,
     handleQuitForObjectsOnMain,
+    handleReceiveControlsData,
   };
 };

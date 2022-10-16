@@ -3,7 +3,7 @@ import {
 } from 'react';
 import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import * as networkingHooks from '../networking/hooks';
 
@@ -22,7 +22,6 @@ const Game = () => {
   hooks.useControls(objectsRef);
 
   const setWindowHeight = useSetRecoilState(atoms.windowHeight);
-  const user = useRecoilValue(atoms.user);
 
   const resizeHandler = useCallback(() => {
     setWindowHeight(window.innerHeight);
@@ -31,27 +30,10 @@ const Game = () => {
   const debounceResizeHandler = useMemo(() => debounce(resizeHandler, 300), [resizeHandler]);
   window.onresize = debounceResizeHandler;
 
-  // useEffect(() => { console.log('--navigate:', navigate); }, [navigate]);
-
-  // useEffect(() => { console.log('--stateRef:', stateRef); }, [stateRef]);
-
-  // useEffect(() => { console.log('--objectsRef', objectsRef); }, [objectsRef]);
-
-  // useEffect(() => { console.log('--connect:', connect); }, [connect]);
-
-  // useEffect(() => { console.log('--disconnect:', disconnect); }, [disconnect]);
-
-  // useEffect(() => { console.log('--user:', user); }, [user]);
-
-  // useEffect(() => { console.log('--resizeHandler:', resizeHandler); }, [resizeHandler]);
-
-  // useEffect(() => { console.log('--debounceResizeHandler:', debounceResizeHandler); }, [debounceResizeHandler]);
-
   const quit = useCallback(async () => {
     await disconnect();
-    console.log('--QUIT USER:', user);
     navigate('/');
-  }, [disconnect, navigate, user]);
+  }, [disconnect, navigate]);
 
   useEffect(() => {
     if (stateRef.current && !stateRef.current.initialized) {

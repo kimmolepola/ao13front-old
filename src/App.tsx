@@ -10,7 +10,6 @@ const App = () => {
   const { loadSavedUser } = frontpageHooks.useAuth();
 
   useEffect(() => {
-    console.log('--LOAD SAVED');
     loadSavedUser();
   }, [loadSavedUser]);
 

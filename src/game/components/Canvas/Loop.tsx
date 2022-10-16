@@ -9,6 +9,8 @@ import {
   interpolationAlpha,
   sendIntervalClient,
   sendIntervalMain,
+  maxSpeed,
+  minSpeed,
 } from '../../../parameters';
 
 import * as atoms from '../../../atoms';
@@ -71,9 +73,9 @@ const handleMovement = (delta: number, gameObject: types.GameObject, object3D: T
   const forceLeft = delta > 1 ? o.controlsLeft : delta * o.controlsLeft;
   const forceRight = delta > 1 ? o.controlsRight : delta * o.controlsRight;
   o.speed += forceUp;
-  if (o.speed > 10) o.speed = 10;
+  if (o.speed > maxSpeed) o.speed = maxSpeed;
   o.speed -= forceDown;
-  if (o.speed < 0.3) o.speed = 0.3;
+  if (o.speed < minSpeed) o.speed = minSpeed;
   object3D.rotateZ(o.rotationSpeed * forceLeft);
   object3D.rotateZ(-1 * o.rotationSpeed * forceRight);
   o.controlsUp -= forceUp;
@@ -162,7 +164,7 @@ const Loop = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => 
   useFrame((state, delta) => {
     if (main) { // main
       const updateData: { [id: string]: types.UpdateObject } = {};
-      for (let i = (objectsRef.current || []).length; i > -1; i--) {
+      for (let i = (objectsRef.current || []).length - 1; i > -1; i--) {
         const o = objectsRef.current?.[i];
         if (o && o.object3D) {
           if (o.id === ownId) {
@@ -189,7 +191,7 @@ const Loop = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => 
         sendUnorderedFromMain({ type: types.NetDataType.UPDATE, data: updateData });
       }
     } else { // client
-      for (let i = (objectsRef.current || []).length; i > -1; i--) {
+      for (let i = (objectsRef.current || []).length - 1; i > -1; i--) {
         const o = objectsRef.current?.[i];
         if (o && o.object3D) {
           if (o.id === ownId) {

@@ -40,10 +40,10 @@ export const usePeerConnection = (objectsRef: RefObject<types.GameObject[]>) => 
     remoteId: string,
     sendSignaling: (x: types.Signaling) => void,
   ) => {
+    console.log('--connect to peer', remoteId);
     setConnectionMessage(`connecting with peer ${remoteId}`);
     console.log('peer', remoteId, 'connecting');
     const { peerConnection, handleSignaling } = createRTCPeerConnection(remoteId, sendSignaling);
-    console.log('--peerConnection:', peerConnection);
     if (main) {
       createOrderedChannel(remoteId, peerConnection, onReceiveOnMain, onChannelOrderedOpen, onChannelOrderedClosed);
       createUnorderedChannel(remoteId, peerConnection, onReceiveOnMain, onChannelUnorderedOpen, onChannelUnorderedClosed);

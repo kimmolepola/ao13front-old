@@ -14,7 +14,6 @@ export const useSendFromMain = () => {
     const dataString = JSON.stringify(data);
     orderedChannels.forEach((x) => {
       try {
-        console.log('--main send ordered:', x, dataString);
         x.channel.send(dataString);
       } catch (error) {
         logError(error, data);

@@ -11,12 +11,12 @@ export const useObjectsOnClient = (objectsRef: RefObject<types.GameObject[]>) =>
 
   const handleUpdateData = useCallback((data: types.Update) => {
     if (objectsRef.current) {
-      for (let i = (objectsRef.current).length; i > 0; i--) {
+      for (let i = (objectsRef.current).length - 1; i > -1; i--) {
         const o = (objectsRef.current)[i];
         const u = o && data.data[o.id];
         if (u) {
           o.score = u.uScore;
-          o.controlsOverChannelsUp += u.uControlsUp || 0;
+          o.controlsUp += u.uControlsUp || 0;
           o.controlsDown += u.uControlsDown || 0;
           o.controlsLeft += u.uControlsLeft || 0;
           o.controlsUp += u.uControlsUp || 0;
@@ -30,7 +30,6 @@ export const useObjectsOnClient = (objectsRef: RefObject<types.GameObject[]>) =>
   }, [objectsRef]);
 
   const handleStateData = useCallback((data: types.State) => {
-    console.log('--handle state data, objectsRef:', objectsRef.current);
     let objectIdsChanged = false;
     for (let i = (objectsRef.current || []).length - 1; i > -1; i--) {
       const o = (objectsRef.current || [])[i];
@@ -74,7 +73,6 @@ export const useObjectsOnClient = (objectsRef: RefObject<types.GameObject[]>) =>
     if (objectIdsChanged) {
       const ids = Object.keys(data.data);
       setObjectIds(ids);
-      console.log('--handle state on client, set object ids:', ids, objectsRef.current);
     }
   }, [objectsRef, setObjectIds]);
 

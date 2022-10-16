@@ -17,12 +17,10 @@ export const useChannelUnordered = () => {
     });
 
     channel.onclose = () => {
-      console.log('--unordered channel onClosed', remoteId);
       onChannelClosed(remoteId, channel);
     };
 
     channel.onopen = () => {
-      console.log('--unordered channel onOpen', remoteId);
       onChannelOpen(remoteId, channel);
     };
 

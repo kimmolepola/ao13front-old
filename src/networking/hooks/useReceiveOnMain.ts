@@ -2,6 +2,7 @@ import { RefObject } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { chatMessageTimeToLive } from '../../parameters';
+import * as gameHooks from '../../game/hooks';
 
 import * as atoms from '../../atoms';
 import * as types from '../../types';
@@ -10,6 +11,7 @@ import * as hooks from '.';
 export const useReceiveOnMain = (objectsRef: RefObject<types.GameObject[]>) => {
   const { sendOrdered } = hooks.useSendFromMain();
   const setChatMessages = useSetRecoilState(atoms.chatMessages);
+  const { handleReceiveControlsData } = gameHooks.useObjectsOnMain(objectsRef);
 
   const onReceive = (
     data: types.NetData,
@@ -17,17 +19,7 @@ export const useReceiveOnMain = (objectsRef: RefObject<types.GameObject[]>) => {
   ) => {
     switch (data.type) {
       case types.NetDataType.CONTROLS: {
-        const o = objectsRef.current?.find((x) => x.id === remoteId);
-        if (o) {
-          o.controlsUp += data.data.up || 0;
-          o.controlsDown += data.data.down || 0;
-          o.controlsLeft += data.data.left || 0;
-          o.controlsRight += data.data.right || 0;
-          o.controlsOverChannelsUp += data.data.up || 0;
-          o.controlsOverChannelsDown += data.data.down || 0;
-          o.controlsOverChannelsLeft += data.data.left || 0;
-          o.controlsOverChannelsRight += data.data.right || 0;
-        }
+        handleReceiveControlsData(data, remoteId);
         break;
       }
       case types.NetDataType.CHATMESSAGE_CLIENT: {

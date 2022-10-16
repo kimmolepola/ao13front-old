@@ -11,13 +11,7 @@ export const useSignaler = () => {
   const user = useRecoilValue(atoms.user);
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
 
-  const connectToSignaler = useCallback((
-    onReceiveInit: (id: string) => void,
-    onReceiveSignaling: (x: types.Signaling) => void,
-    onReceiveConnectToMain: (remoteId: string) => void,
-    onReceiveMain: (id: string) => void,
-    onReceivePeerDisconnected: (remoteId: string) => void,
-  ) => {
+  const connectToSignaler = useCallback(() => {
     socket = (() => {
       const s = io(
         process.env.NODE_ENV === 'production'
@@ -28,42 +22,49 @@ export const useSignaler = () => {
             token: user?.token,
           },
         },
-      ); console.log('--sSSSSSSSSSSSSSSSSSSSSSSSS:', s); return s;
+      );
+      return s;
     })();
+  }, [user?.token]);
 
-    console.log('--socket:', socket);
-
-    socket.on('connect_error', (err: any) => {
+  const registerListeners = useCallback((
+    onReceiveInit: (id: string) => void,
+    onReceiveSignaling: (x: types.Signaling) => void,
+    onReceiveConnectToMain: (remoteId: string) => void,
+    onReceiveMain: (id: string) => void,
+    onReceivePeerDisconnected: (remoteId: string) => void,
+  ) => {
+    socket?.on('connect_error', (err: any) => {
       console.error(err);
     });
 
-    socket.on('connect', () => {
+    socket?.on('connect', () => {
       setConnectionMessage('signaling socket connected');
       console.log('signaling socket connected');
     });
 
-    socket.on('disconnect', () => {
+    socket?.on('disconnect', () => {
       setConnectionMessage('signaling socket disconnected');
       console.log('signaling socket disconnected');
     });
 
-    socket.on('nomain', () => {
+    socket?.on('nomain', () => {
       setConnectionMessage(
         'game host disconnected, no other available hosts found, please try again later',
       );
       console.log('game host disconnected');
     });
 
-    socket.on('fail', (reason: any) => {
+    socket?.on('fail', (reason: any) => {
       console.log('signaling socket fail, reason:', reason);
     });
 
-    socket.on('init', (id: string) => {
+    socket?.on('init', (id: string) => {
       onReceiveInit(id);
       console.log('own id:', id);
     });
 
-    socket.on('signaling', ({
+    socket?.on('signaling', ({
       id: remoteId,
       description,
       candidate,
@@ -75,24 +76,23 @@ export const useSignaler = () => {
       onReceiveSignaling({ remoteId, description, candidate });
     });
 
-    socket.on('connectToMain', (remoteId: string) => {
+    socket?.on('connectToMain', (remoteId: string) => {
       onReceiveConnectToMain(remoteId);
-      console.log('--conect to main');
     });
 
-    socket.on('main', (id: string) => {
+    socket?.on('main', (id: string) => {
       onReceiveMain(id);
       console.log('you are main');
     });
 
-    socket.on('peerDisconnected', (remoteId: any) => {
+    socket?.on('peerDisconnected', (remoteId: any) => {
       onReceivePeerDisconnected(remoteId);
       setConnectionMessage(`peer ${remoteId} disconnected`);
       console.log('peer', remoteId, 'disconnected');
     });
-  }, [setConnectionMessage, user?.token]);
+  }, [setConnectionMessage]);
 
-  const disconnectFromSignaler = useCallback(() => {
+  const unregisterListeners = useCallback(() => {
     socket?.off('connect_error');
     socket?.off('connect');
     socket?.off('disconnect');
@@ -103,13 +103,18 @@ export const useSignaler = () => {
     socket?.off('connectToMain');
     socket?.off('main');
     socket?.off('peerDisconnected');
-    socket?.disconnect();
   }, []);
 
+  const disconnectFromSignaler = useCallback(() => {
+    unregisterListeners();
+    socket?.disconnect();
+  }, [unregisterListeners]);
+
   const sendSignaling = useCallback(({ remoteId, description, candidate }: types.Signaling) => {
-    console.log('--send signaling:', socket, remoteId, description, candidate);
     socket?.emit('signaling', { remoteId, candidate, description });
   }, []);
 
-  return { connectToSignaler, disconnectFromSignaler, sendSignaling };
+  return {
+    connectToSignaler, disconnectFromSignaler, registerListeners, unregisterListeners, sendSignaling,
+  };
 };

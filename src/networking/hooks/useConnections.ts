@@ -1,4 +1,4 @@
-import { useCallback, RefObject } from 'react';
+import { useEffect, useCallback, RefObject } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import * as gameHooks from '../../game/hooks';
@@ -10,10 +10,11 @@ const peerConnections: types.PeerConnectionsDictionary = {};
 
 export const useConnections = (objectsRef: RefObject<types.GameObject[]>) => {
   const setOwnId = useSetRecoilState(atoms.ownId);
-
   const { handleQuitForObjectsOnClient } = gameHooks.useObjectsOnClient(objectsRef);
   const { onReceiveMain, handleQuitOnMain } = hooks.useMain(objectsRef);
-  const { connectToSignaler, disconnectFromSignaler, sendSignaling } = hooks.useSignaler();
+  const {
+    connectToSignaler, disconnectFromSignaler, registerListeners, unregisterListeners, sendSignaling,
+  } = hooks.useSignaler();
   const connectToPeer = hooks.usePeerConnection(objectsRef);
 
   const onReceiveInit = useCallback((id: string) => {
@@ -21,12 +22,12 @@ export const useConnections = (objectsRef: RefObject<types.GameObject[]>) => {
   }, [setOwnId]);
 
   const onReceiveConnectToMain = useCallback((remoteId: string) => {
-    console.log('--onreceiveconnecttomain, remoteId:', remoteId);
+    console.log('--on receive connect to main', remoteId);
     peerConnections[remoteId] = connectToPeer(remoteId, sendSignaling);
   }, [connectToPeer, sendSignaling]);
 
   const onReceiveSignaling = useCallback(async ({ remoteId, description, candidate }: types.Signaling) => {
-    console.log('--onreceivesignaling:', remoteId, description, candidate);
+    console.log('--onreceive signaling:', peerConnections[remoteId]);
     const { peerConnection, handleSignaling } = peerConnections[remoteId] || connectToPeer(remoteId, sendSignaling);
     if (!peerConnections[remoteId]) {
       peerConnections[remoteId] = { peerConnection, handleSignaling };
@@ -40,20 +41,26 @@ export const useConnections = (objectsRef: RefObject<types.GameObject[]>) => {
   }, []);
 
   const connect = useCallback(() => {
-    connectToSignaler(
+    connectToSignaler();
+  }, [connectToSignaler]);
+
+  useEffect(() => {
+    registerListeners(
       onReceiveInit,
       onReceiveSignaling,
       onReceiveConnectToMain,
       onReceiveMain,
       onReceivePeerDisconnected,
     );
+    return () => unregisterListeners();
   }, [
-    connectToSignaler,
     onReceiveInit,
     onReceiveSignaling,
     onReceiveConnectToMain,
     onReceiveMain,
     onReceivePeerDisconnected,
+    registerListeners,
+    unregisterListeners,
   ]);
 
   const disconnect = useCallback(async () => {
