@@ -10,7 +10,7 @@ export const useMain = (objectsRef: RefObject<types.GameObject[]>) => {
   const channelsOrdered = useRecoilValue(atoms.channelsOrdered);
   const channelsUnordered = useRecoilValue(atoms.channelsUnordered);
   const [main, setMain] = useRecoilState(atoms.main);
-  const [connectedIds, setConnectedIds] = useRecoilState(atoms.connectedIds);
+  const [connectedIdsOnMain, setConnectedIdsOnMain] = useRecoilState(atoms.connectedIdsOnMain);
   const {
     handlePossiblyNewIdOnMain,
     handleNewIdsOnMain,
@@ -26,27 +26,28 @@ export const useMain = (objectsRef: RefObject<types.GameObject[]>) => {
       return prev;
     }, []);
     const newIds = actuallyConnectedIds.reduce((prev: string[], cur) => {
-      if (!connectedIds.includes(cur)) {
+      if (!connectedIdsOnMain.includes(cur)) {
         prev.push(cur);
       }
       return prev;
     }, []);
-    const disconnectedIds = connectedIds.reduce((prev: string[], cur) => {
+    const disconnectedIds = connectedIdsOnMain.reduce((prev: string[], cur) => {
       if (!actuallyConnectedIds.includes(cur)) {
         prev.push(cur);
       }
       return prev;
     }, []);
+    console.log('--on channels changed XXXXXXXXXXXXXXX:', actuallyConnectedIds, newIds, disconnectedIds);
     if (newIds.length || disconnectedIds.length) {
-      setConnectedIds(actuallyConnectedIds);
+      setConnectedIdsOnMain(actuallyConnectedIds);
       handleRemoveIdsOnMain(disconnectedIds);
       handleNewIdsOnMain(newIds);
     }
   }, [
     channelsOrdered,
     channelsUnordered,
-    connectedIds,
-    setConnectedIds,
+    connectedIdsOnMain,
+    setConnectedIdsOnMain,
     handleRemoveIdsOnMain,
     handleNewIdsOnMain,
   ]);

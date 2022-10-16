@@ -13,7 +13,7 @@ export const useObjectsOnClient = (objectsRef: RefObject<types.GameObject[]>) =>
     if (objectsRef.current) {
       for (let i = (objectsRef.current).length; i > 0; i--) {
         const o = (objectsRef.current)[i];
-        const u = data.data[o.id];
+        const u = o && data.data[o.id];
         if (u) {
           o.score = u.uScore;
           o.controlsOverChannelsUp += u.uControlsUp || 0;
@@ -30,10 +30,11 @@ export const useObjectsOnClient = (objectsRef: RefObject<types.GameObject[]>) =>
   }, [objectsRef]);
 
   const handleStateData = useCallback((data: types.State) => {
+    console.log('--handle state data, objectsRef:', objectsRef.current);
     let objectIdsChanged = false;
     for (let i = (objectsRef.current || []).length - 1; i > -1; i--) {
       const o = (objectsRef.current || [])[i];
-      const s = data.data[o.id];
+      const s = o && data.data[o.id];
       if (!s) {
         objectIdsChanged = true;
         objectsRef.current?.splice(i, 1);
@@ -73,6 +74,7 @@ export const useObjectsOnClient = (objectsRef: RefObject<types.GameObject[]>) =>
     if (objectIdsChanged) {
       const ids = Object.keys(data.data);
       setObjectIds(ids);
+      console.log('--handle state on client, set object ids:', ids, objectsRef.current);
     }
   }, [objectsRef, setObjectIds]);
 

@@ -16,6 +16,7 @@ export const useReceiveOnClient = (objectsRef: RefObject<types.GameObject[]>) =>
   ) => {
     switch (data.type) {
       case types.NetDataType.STATE: {
+        console.log('--client receive state:', data);
         handleStateData(data);
         break;
       }

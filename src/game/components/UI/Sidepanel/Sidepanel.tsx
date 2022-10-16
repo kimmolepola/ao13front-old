@@ -76,7 +76,7 @@ const Sidepanel = ({
 }) => {
   const windowHeight = useRecoilValue(atoms.windowHeight);
   const main = useRecoilValue(atoms.main);
-  const connectedIds = useRecoilValue(atoms.connectedIds);
+  const connectedIdsOnMain = useRecoilValue(atoms.connectedIdsOnMain);
   const connectionMessage = useRecoilValue(atoms.connectionMessage);
   const score = useRecoilValue(atoms.score);
 
@@ -93,7 +93,7 @@ const Sidepanel = ({
         </div>
         <InfoBox>
           <div>{main ? 'You are the game host' : null}</div>
-          <div>{`Players: ${connectedIds.length}`}</div>
+          {main && <div>{`Players: ${connectedIdsOnMain.length}`}</div>}
           <div>
             {connectionMessage}
           </div>

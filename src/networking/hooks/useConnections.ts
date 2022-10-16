@@ -1,4 +1,4 @@
-import { useState, useCallback, RefObject } from 'react';
+import { useCallback, RefObject } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import * as gameHooks from '../../game/hooks';
@@ -6,9 +6,10 @@ import * as hooks from '.';
 import * as atoms from '../../atoms';
 import * as types from '../../types';
 
+const peerConnections: types.PeerConnectionsDictionary = {};
+
 export const useConnections = (objectsRef: RefObject<types.GameObject[]>) => {
   const setOwnId = useSetRecoilState(atoms.ownId);
-  const [peerConnections, setPeerConnections] = useState<types.PeerConnectionsDictionary>({});
 
   const { handleQuitForObjectsOnClient } = gameHooks.useObjectsOnClient(objectsRef);
   const { onReceiveMain, handleQuitOnMain } = hooks.useMain(objectsRef);
@@ -21,24 +22,22 @@ export const useConnections = (objectsRef: RefObject<types.GameObject[]>) => {
 
   const onReceiveConnectToMain = useCallback((remoteId: string) => {
     console.log('--onreceiveconnecttomain, remoteId:', remoteId);
-    const { peerConnection, handleSignaling } = connectToPeer(remoteId, sendSignaling);
-    setPeerConnections((x) => ({ ...x, [remoteId]: { peerConnection, handleSignaling } }));
-  }, [connectToPeer, setPeerConnections, sendSignaling]);
+    peerConnections[remoteId] = connectToPeer(remoteId, sendSignaling);
+  }, [connectToPeer, sendSignaling]);
 
   const onReceiveSignaling = useCallback(async ({ remoteId, description, candidate }: types.Signaling) => {
     console.log('--onreceivesignaling:', remoteId, description, candidate);
-    console.log('--signaling:', remoteId, description, candidate);
     const { peerConnection, handleSignaling } = peerConnections[remoteId] || connectToPeer(remoteId, sendSignaling);
-    setPeerConnections((x) => ({ ...x, [remoteId]: { peerConnection, handleSignaling } }));
+    if (!peerConnections[remoteId]) {
+      peerConnections[remoteId] = { peerConnection, handleSignaling };
+    }
     handleSignaling(description, candidate);
-  }, [connectToPeer, peerConnections, setPeerConnections, sendSignaling]);
+  }, [connectToPeer, sendSignaling]);
 
   const onReceivePeerDisconnected = useCallback((remoteId: string) => {
     peerConnections[remoteId]?.peerConnection.close();
-    const newPeerConnections = { ...peerConnections };
-    delete newPeerConnections[remoteId];
-    setPeerConnections(newPeerConnections);
-  }, [peerConnections, setPeerConnections]);
+    delete peerConnections[remoteId];
+  }, []);
 
   const connect = useCallback(() => {
     connectToSignaler(
@@ -62,11 +61,12 @@ export const useConnections = (objectsRef: RefObject<types.GameObject[]>) => {
     await handleQuitOnMain();
     Object.values(peerConnections).forEach((x) => x.peerConnection.close());
     disconnectFromSignaler();
-    setPeerConnections({});
+    const remoteIds = Object.keys(peerConnections);
+    remoteIds.forEach((x) => {
+      delete peerConnections[x];
+    });
     setOwnId(undefined);
   }, [
-    peerConnections,
-    setPeerConnections,
     disconnectFromSignaler,
     handleQuitForObjectsOnClient,
     handleQuitOnMain,

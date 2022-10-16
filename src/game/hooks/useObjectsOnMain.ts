@@ -102,22 +102,25 @@ export const useObjectsOnMain = (objectsRef: RefObject<types.GameObject[]>) => {
     if (objectsRef.current && !objectsRef.current.some((x) => x.id === id)) {
       const ids = await handleNewIds([id], objectsRef.current);
       setObjectIds(ids);
+      handleSendState(sendOrdered, objectsRef.current);
     }
-  }, [objectsRef, setObjectIds]);
+  }, [objectsRef, setObjectIds, sendOrdered]);
 
   const handleNewIdsOnMain = useCallback(async (newIds: string[]) => {
     if (main && objectsRef.current) {
       const ids = await handleNewIds(newIds, objectsRef.current);
       setObjectIds(ids);
+      handleSendState(sendOrdered, objectsRef.current);
     }
-  }, [objectsRef, setObjectIds, main]);
+  }, [objectsRef, setObjectIds, main, sendOrdered]);
 
   const handleRemoveIdsOnMain = useCallback((idsToRemove: string[]) => {
     if (main && objectsRef.current) {
       const ids = handleRemoveIds(idsToRemove, objectsRef.current);
       setObjectIds(ids);
+      handleSendState(sendOrdered, objectsRef.current);
     }
-  }, [objectsRef, setObjectIds, main]);
+  }, [objectsRef, setObjectIds, main, sendOrdered]);
 
   useEffect(() => {
     // main change

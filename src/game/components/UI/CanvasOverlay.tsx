@@ -171,7 +171,9 @@ const ControlButton = ({
 
 const CanvasOverlay = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
   const windowHeight = useRecoilValue(atoms.windowHeight);
-  const connectedIds = useRecoilValue(atoms.connectedIds);
+  //  const connectedIds = useRecoilValue(atoms.connectedIdsOnMain);
+  const channelsOrdered = useRecoilValue(atoms.channelsOrdered);
+  const channelsUnordered = useRecoilValue(atoms.channelsUnordered);
   const objectIds = useRecoilValue(atoms.objectIds);
   const main = useRecoilValue(atoms.main);
   const ownId = useRecoilValue(atoms.ownId);
@@ -183,9 +185,9 @@ const CanvasOverlay = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[
   return (
     <Container windowHeight={windowHeight}>
       <InfoElements objectsRef={objectsRef} />
-      <Connecting show={!main && !connectedIds.length}>Connecting...</Connecting>
+      <Connecting show={!main && (!channelsOrdered.length || !channelsUnordered.length)}>Connecting...</Connecting>
       <InfoBoxElement
-        show={Boolean(main || connectedIds.length)}
+        show={Boolean(main || (channelsOrdered.length && channelsUnordered.length))}
         ref={(element: HTMLDivElement) => {
           const ownObject = objectsRef.current?.find((x) => x.id === ownId);
           if (ownObject) {

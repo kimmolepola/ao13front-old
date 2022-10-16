@@ -17,15 +17,19 @@ export const useChannelOrdered = () => {
     });
 
     channel.onclose = () => {
+      console.log('--ordered channel onClosed', remoteId);
       onChannelClosed(remoteId, channel);
     };
 
     channel.onopen = () => {
+      console.log('--ordered channel onOpen', remoteId);
       onChannelOpen(remoteId, channel);
     };
 
-    channel.onmessage = ({ data }: { data: types.NetData }) => {
-      onReceiveData(data, remoteId);
+    channel.onmessage = ({ data }: { data: string }) => {
+      console.log('--channel ordered onmessage:', data);
+      console.log('--channel ordered onmessage, fn:', onReceiveData);
+      onReceiveData(JSON.parse(data), remoteId);
     };
   }, []);
 
