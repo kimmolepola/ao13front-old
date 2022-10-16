@@ -2,6 +2,8 @@ import { useMemo, useCallback, useState } from 'react';
 import * as types from '../types';
 
 export const useValidation = () => {
+  console.log('--useValidation');
+
   const initial = useMemo(() => ({
     dirty: false,
     state: types.ValidationState.OPEN,

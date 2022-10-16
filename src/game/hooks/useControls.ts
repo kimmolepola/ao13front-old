@@ -22,6 +22,8 @@ const convertKeyToControl = (key: string) => {
 };
 
 export const useControls = (objectsRef: RefObject<types.GameObject[]>) => {
+  console.log('--useControls');
+
   const ownId = useRecoilValue(atoms.ownId);
 
   const handleKeyDown = useCallback((e: any) => {

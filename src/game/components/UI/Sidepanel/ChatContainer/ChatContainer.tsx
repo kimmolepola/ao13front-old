@@ -18,11 +18,15 @@ const Container = styled.div`
   height: 65%;
 `;
 
-const ChatContainer = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => (
-  <Container>
-    <InputForm objectsRef={objectsRef} />
-    <Chat />
-  </Container>
-);
+const ChatContainer = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
+  console.log('--ChatContainer');
+
+  return (
+    <Container>
+      <InputForm objectsRef={objectsRef} />
+      <Chat />
+    </Container>
+  );
+};
 
 export default memo(ChatContainer);

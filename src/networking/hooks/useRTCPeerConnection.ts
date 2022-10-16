@@ -7,6 +7,8 @@ import * as atoms from '../../atoms';
 import * as types from '../../types';
 
 export const useRTCPeerConnection = () => {
+  console.log('--useRTCPeerConnection');
+
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
 
   const createRTCPeerConnection = useCallback((

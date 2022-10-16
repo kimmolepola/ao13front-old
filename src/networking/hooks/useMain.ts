@@ -7,6 +7,8 @@ import * as atoms from '../../atoms';
 import * as types from '../../types';
 
 export const useMain = (objectsRef: RefObject<types.GameObject[]>) => {
+  console.log('--useMain');
+
   const channelsOrdered = useRecoilValue(atoms.channelsOrdered);
   const channelsUnordered = useRecoilValue(atoms.channelsUnordered);
   const [main, setMain] = useRecoilState(atoms.main);

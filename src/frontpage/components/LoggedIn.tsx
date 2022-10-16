@@ -13,6 +13,7 @@ import * as theme from '../../theme';
 import * as atoms from '../../atoms';
 
 const LoggedIn = () => {
+  console.log('--LoggedIn');
   const navigate = useNavigate();
   const user = useRecoilValue(atoms.user);
   const { refreshUser } = networkingHooks.useUser();

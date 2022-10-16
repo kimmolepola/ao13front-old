@@ -7,6 +7,7 @@ import Frontpage from './frontpage';
 import * as frontpageHooks from './frontpage/hooks';
 
 const App = () => {
+  console.log('--App');
   const { loadSavedUser } = frontpageHooks.useAuth();
 
   useEffect(() => {

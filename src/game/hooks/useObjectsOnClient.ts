@@ -6,6 +6,8 @@ import * as atoms from '../../atoms';
 import * as types from '../../types';
 
 export const useObjectsOnClient = (objectsRef: RefObject<types.GameObject[]>) => {
+  console.log('--useObjectsOnClient');
+
   const main = useRecoilValue(atoms.main);
   const setObjectIds = useSetRecoilState(atoms.objectIds);
 

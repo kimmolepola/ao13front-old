@@ -27,6 +27,8 @@ const Container = styled.div<any>`
 `;
 
 const CanvasContainer = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
+  console.log('--CanvasContainer');
+
   const RecoilBridge = useRecoilBridgeAcrossReactRoots_UNSTABLE();
   const windowHeight = useRecoilValue(atoms.windowHeight);
 

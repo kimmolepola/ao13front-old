@@ -5,6 +5,8 @@ import { setToken } from '../../networking/services/auth.service';
 import * as atoms from '../../atoms';
 
 export const useAuth = () => {
+  console.log('--useAuth');
+
   const setUser = useSetRecoilState(atoms.user);
   const loadSavedUser = useCallback(() => {
     const item = JSON.parse(localStorage.getItem('user') || 'null');

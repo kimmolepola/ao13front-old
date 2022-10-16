@@ -10,11 +10,15 @@ const UserInterface = ({
 }: {
   quit: Function,
   objectsRef: RefObject<types.GameObject[]>
-}) => (
-  <>
-    <CanvasOverlay objectsRef={objectsRef} />
-    <Sidepanel quit={quit} objectsRef={objectsRef} />
-  </>
-);
+}) => {
+  console.log('--UserInterface');
+
+  return (
+    <>
+      <CanvasOverlay objectsRef={objectsRef} />
+      <Sidepanel quit={quit} objectsRef={objectsRef} />
+    </>
+  );
+};
 
 export default memo(UserInterface);

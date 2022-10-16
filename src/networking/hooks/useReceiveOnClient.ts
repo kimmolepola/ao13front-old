@@ -8,6 +8,8 @@ import * as types from '../../types';
 import * as gameHooks from '../../game/hooks';
 
 export const useReceiveOnClient = (objectsRef: RefObject<types.GameObject[]>) => {
+  console.log('--useReceiveOnClient');
+
   const [chatMessages, setChatMessages] = useRecoilState(atoms.chatMessages);
   const { handleUpdateData, handleStateData } = gameHooks.useObjectsOnClient(objectsRef);
 

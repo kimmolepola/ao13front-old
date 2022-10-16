@@ -9,6 +9,8 @@ import * as types from '../../types';
 import * as hooks from '.';
 
 export const useReceiveOnMain = (objectsRef: RefObject<types.GameObject[]>) => {
+  console.log('--useReceiveOnMain');
+
   const { sendOrdered } = hooks.useSendFromMain();
   const setChatMessages = useSetRecoilState(atoms.chatMessages);
   const { handleReceiveControlsData } = gameHooks.useObjectsOnMain(objectsRef);

@@ -56,6 +56,8 @@ const Container = styled.div`
 `;
 
 const Chat = () => {
+  console.log('--Chat');
+
   const chatMessages = useRecoilValue(atoms.chatMessages);
   const ownId = useRecoilValue(atoms.ownId);
 

@@ -29,6 +29,8 @@ const InputForm = styled.form`
 const Container = styled.div``;
 
 const ChatInputForm = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
+  console.log('--InputForm');
+
   const setChatMessages = useSetRecoilState(atoms.chatMessages);
   const { sendOrdered: sendOrderedFromMain } = networkingHooks.useSendFromMain();
   const { sendOrdered: sendOrderedFromClient } = networkingHooks.useSendFromClient();

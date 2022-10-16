@@ -93,6 +93,8 @@ const handleSendState = (sendOrdered: (data: types.State) => void, objects: type
 };
 
 export const useObjectsOnMain = (objectsRef: RefObject<types.GameObject[]>) => {
+  console.log('--useObjectsOnMain');
+
   const main = useRecoilValue(atoms.main);
   const setObjectIds = useSetRecoilState(atoms.objectIds);
   const { sendOrdered } = networkingHooks.useSendFromMain();

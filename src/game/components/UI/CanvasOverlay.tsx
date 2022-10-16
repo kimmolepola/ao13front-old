@@ -67,6 +67,7 @@ const Button = styled.button`
   justify-content: center;
   font-size: 22px;
   border-radius: 50%;
+  border-width: 3px;
   margin: 2mm 7mm 4mm 7mm;
   width: 1cm;
   height: 1cm;
@@ -170,6 +171,8 @@ const ControlButton = ({
 };
 
 const CanvasOverlay = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
+  console.log('--CanvasOverlay');
+
   const windowHeight = useRecoilValue(atoms.windowHeight);
   //  const connectedIds = useRecoilValue(atoms.connectedIdsOnMain);
   const channelsOrdered = useRecoilValue(atoms.channelsOrdered);

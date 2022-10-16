@@ -10,6 +10,8 @@ import * as atoms from '../../../../atoms';
 import * as types from '../../../../types';
 
 const Container = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
+  console.log('--Container (game/components/Canvas/Objects');
+
   const objectIds = useRecoilValue(atoms.objectIds);
   const [fighterImage, backgroundImage] = useLoader(THREE.TextureLoader, [
     'fighter.png',

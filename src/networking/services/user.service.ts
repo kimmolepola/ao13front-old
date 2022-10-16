@@ -5,6 +5,8 @@ const server = process.env.NODE_ENV === 'production'
   : `http://${process.env.REACT_APP_BACKEND}`;
 
 export const checkOkToStart = async () => {
+  console.log('--checkOkToStart');
+
   try {
     const response = await axios.get(` ${server}/api/v1/user/checkOkToStart`);
     return { data: response.data, error: null };
@@ -15,6 +17,8 @@ export const checkOkToStart = async () => {
 };
 
 export const getUser = async () => {
+  console.log('--getUser');
+
   try {
     const response = await axios.get(`${server}/api/v1/user`);
     return { data: response.data, error: null };
@@ -25,6 +29,8 @@ export const getUser = async () => {
 };
 
 export const updateUsername = async (username: any) => {
+  console.log('--updateUsername');
+
   try {
     const response = await axios.post(`${server}/api/v1/user/updateUsername`, {
       username,

@@ -9,6 +9,7 @@ import * as types from '../types';
 import * as hooks from '../hooks';
 
 const ResetPassword = () => {
+  console.log('--ResetPassword');
   const query = new URLSearchParams(useLocation().search);
   const [validation, setValidation, resetValidation] = hooks.useValidation();
   const [password, setPassword] = useState('');

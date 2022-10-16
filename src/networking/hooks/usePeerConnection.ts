@@ -6,6 +6,8 @@ import * as types from '../../types';
 import * as hooks from '.';
 
 export const usePeerConnection = (objectsRef: RefObject<types.GameObject[]>) => {
+  console.log('--usePeerConnection');
+
   const main = useRecoilValue(atoms.main);
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
   const setChannelsOrdered = useSetRecoilState(atoms.channelsOrdered);

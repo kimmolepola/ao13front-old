@@ -3,6 +3,8 @@ import { useCallback } from 'react';
 import * as types from '../../types';
 
 export const useChannelOrdered = () => {
+  console.log('--useChannelOrdered');
+
   const create = useCallback((
     remoteId: string,
     peerConnection: RTCPeerConnection,

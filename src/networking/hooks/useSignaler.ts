@@ -8,6 +8,8 @@ import * as types from '../../types';
 let socket: undefined | Socket & { auth: { [key: string]: any } };
 
 export const useSignaler = () => {
+  console.log('--useSignaler');
+
   const user = useRecoilValue(atoms.user);
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
 

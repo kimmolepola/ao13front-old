@@ -7,6 +7,8 @@ import * as types from '../../types';
 import * as atoms from '../../atoms';
 
 export const useSendFromMain = () => {
+  console.log('--useSendFromMain');
+
   const orderedChannels = useRecoilValue(atoms.channelsOrdered);
   const unorderedChannels = useRecoilValue(atoms.channelsUnordered);
 

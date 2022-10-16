@@ -144,6 +144,8 @@ const interpolatePosition = (o: types.GameObject, object3D: THREE.Object3D) => {
 };
 
 const Loop = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
+  console.log('--Loop');
+
   const main = useRecoilValue(atoms.main);
   const ownId = useRecoilValue(atoms.ownId);
   const setScore = useSetRecoilState(atoms.score);

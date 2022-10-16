@@ -1,4 +1,6 @@
-import { memo, useMemo, useCallback, useState } from 'react';
+import {
+  memo, useMemo, useCallback, useState,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { requestPasswordReset } from '../../networking/services/auth.service';
 
@@ -7,6 +9,7 @@ import * as types from '../types';
 import * as hooks from '../hooks';
 
 const ForgottenPassword = () => {
+  console.log('--ForgottenPassword');
   const navigate = useNavigate();
   const [validation, setValidation, resetValidation] = hooks.useValidation();
   const [username, setUsername] = useState('');

@@ -6,6 +6,8 @@ import * as atoms from '../../../../atoms';
 import * as types from '../../../../types';
 
 const GameObject = ({ id, map, objectsRef }: { id: string, map: THREE.Texture, objectsRef: RefObject<types.GameObject[]> }) => {
+  console.log('--GameObject');
+
   const ownId = useRecoilValue(atoms.ownId);
   const o = objectsRef.current?.find((x) => x.id === id);
 

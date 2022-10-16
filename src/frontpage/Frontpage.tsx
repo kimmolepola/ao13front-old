@@ -14,6 +14,8 @@ import AppBar from './components/AppBar';
 import * as atoms from '../atoms';
 
 const Frontpage = () => {
+  console.log('--Frontpage');
+
   const user = useRecoilValue(atoms.user);
   const location = useLocation();
 

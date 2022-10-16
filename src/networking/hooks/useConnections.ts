@@ -9,6 +9,8 @@ import * as types from '../../types';
 const peerConnections: types.PeerConnectionsDictionary = {};
 
 export const useConnections = (objectsRef: RefObject<types.GameObject[]>) => {
+  console.log('--useConnections');
+
   const setOwnId = useSetRecoilState(atoms.ownId);
   const { handleQuitForObjectsOnClient } = gameHooks.useObjectsOnClient(objectsRef);
   const { onReceiveMain, handleQuitOnMain } = hooks.useMain(objectsRef);

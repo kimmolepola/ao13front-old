@@ -74,6 +74,8 @@ const Sidepanel = ({
   quit: Function,
   objectsRef: RefObject<types.GameObject[]>
 }) => {
+  console.log('--Sidepanel');
+
   const windowHeight = useRecoilValue(atoms.windowHeight);
   const main = useRecoilValue(atoms.main);
   const connectedIdsOnMain = useRecoilValue(atoms.connectedIdsOnMain);

@@ -2,6 +2,8 @@ import { memo } from 'react';
 import * as THREE from 'three';
 
 const Background = ({ map: threeMap }: { map: THREE.Texture }) => {
+  console.log('--Background');
+
   const map = threeMap;
   map.wrapS = THREE.MirroredRepeatWrapping;
   map.wrapT = THREE.MirroredRepeatWrapping;

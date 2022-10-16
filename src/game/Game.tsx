@@ -14,6 +14,8 @@ import * as atoms from '../atoms';
 import * as hooks from './hooks';
 
 const Game = () => {
+  console.log('--Game');
+
   const navigate = useNavigate();
   const stateRef = useRef({ initialized: false });
   const objectsRef = useRef([]);

@@ -8,6 +8,8 @@ const server = process.env.NODE_ENV === 'production'
 
 // eslint-disable-next-line import/prefer-default-export
 export const getGameObject = async (id: any) => {
+  console.log('--getGameObject');
+
   try {
     const response = await axios.get(`${server}/api/v1/gameObject/${id}`);
     return { data: response.data as types.InitialGameObject | undefined };
@@ -19,6 +21,8 @@ export const getGameObject = async (id: any) => {
 };
 
 export const savePlayerData = async (data: { remoteId: string, score: number }[]) => {
+  console.log('--savePlayerData');
+
   try {
     const response = await axios.post(
       `${server}/api/v1/gameObject/saveGameState`,
