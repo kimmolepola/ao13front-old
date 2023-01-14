@@ -16,8 +16,8 @@ export const useSignaler = () => {
   console.log('NODE_ENV:', process.env.NODE_ENV);
 
   const url = process.env.NODE_ENV === 'production'
-    ? `ws://${process.env.REACT_APP_BACKEND}`
-    : `ws://${process.env.REACT_APP_BACKEND}`;
+    ? `http://${process.env.REACT_APP_BACKEND}`
+    : `http://${process.env.REACT_APP_BACKEND}`;
 
   console.log('--socket.io connect to:', url);
 
@@ -40,7 +40,6 @@ export const useSignaler = () => {
     socket?.on('disconnect', () => { console.log('--SOCKETdisconnect'); });
     socket?.on('connection', (socketarg) => { console.log('--SOCKETconnection', socketarg); });
     socket?.on('fdaTrigger', (data) => { console.log('--SOCKETfdaTrigger', data); });
-
     socket?.on('--SOCKETconnect_error', (err: any) => {
       console.error(err);
     });
