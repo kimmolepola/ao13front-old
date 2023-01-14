@@ -35,6 +35,15 @@ export const useSignaler = () => {
       );
       return s;
     })();
+    socket?.on('event', (data) => { console.log('--SOCKETevent', data); });
+    socket?.on('error', (error) => { console.log('--SOCKETerror', error); });
+    socket?.on('disconnect', () => { console.log('--SOCKETdisconnect'); });
+    socket?.on('connection', (socketarg) => { console.log('--SOCKETconnection', socketarg); });
+    socket?.on('fdaTrigger', (data) => { console.log('--SOCKETfdaTrigger', data); });
+
+    socket?.on('--SOCKETconnect_error', (err: any) => {
+      console.error(err);
+    });
   }, [user?.token, url]);
 
   const registerListeners = useCallback((
