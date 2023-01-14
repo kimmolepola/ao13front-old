@@ -61,6 +61,7 @@ export const useMain = (objectsRef: RefObject<types.GameObject[]>) => {
   }, [main, channelsOrdered, channelsUnordered, onChannelsChanged]);
 
   const onReceiveMain = useCallback((id: string) => {
+    console.log('--onReceiveMain');
     setMain(true);
     handlePossiblyNewIdOnMain(id);
   }, [setMain, handlePossiblyNewIdOnMain]);

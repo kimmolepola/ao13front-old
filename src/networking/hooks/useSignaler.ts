@@ -22,6 +22,7 @@ export const useSignaler = () => {
   console.log('--socket.io connect to:', url);
 
   const connectToSignaler = useCallback(() => {
+    console.log('--connectToSignaler, auth.token:', user?.token);
     socket = (() => {
       const s = io(
         url,
