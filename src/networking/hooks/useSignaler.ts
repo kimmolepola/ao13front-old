@@ -13,21 +13,28 @@ export const useSignaler = () => {
   const user = useRecoilValue(atoms.user);
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
 
+  console.log('NODE_ENV:', process.env.NODE_ENV);
+
+  const url = process.env.NODE_ENV === 'production'
+    ? `ws://${process.env.REACT_APP_BACKEND}`
+    : `ws://${process.env.REACT_APP_BACKEND}`;
+
+  console.log('--socket.io connect to:', url);
+
   const connectToSignaler = useCallback(() => {
     socket = (() => {
       const s = io(
-        process.env.NODE_ENV === 'production'
-          ? `wss://${process.env.REACT_APP_BACKEND}`
-          : `ws://${process.env.REACT_APP_BACKEND}`,
+        url,
         {
           auth: {
             token: user?.token,
           },
+          rejectUnauthorized: false, // WARN: please do not do this in production
         },
       );
       return s;
     })();
-  }, [user?.token]);
+  }, [user?.token, url]);
 
   const registerListeners = useCallback((
     onReceiveInit: (id: string) => void,
@@ -36,6 +43,12 @@ export const useSignaler = () => {
     onReceiveMain: (id: string) => void,
     onReceivePeerDisconnected: (remoteId: string) => void,
   ) => {
+    socket?.on('event', (data) => { console.log('event', data); });
+    socket?.on('error', (error) => { console.log('error', error); });
+    socket?.on('disconnect', () => { console.log('disconnect'); });
+    socket?.on('connection', (socketarg) => { console.log('connection', socketarg); });
+    socket?.on('fdaTrigger', (data) => { console.log('fdaTrigger', data); });
+
     socket?.on('connect_error', (err: any) => {
       console.error(err);
     });
@@ -95,6 +108,7 @@ export const useSignaler = () => {
   }, [setConnectionMessage]);
 
   const unregisterListeners = useCallback(() => {
+    socket?.off('event'); socket?.off('error'); socket?.off('disconnect'); socket?.off('connection'); socket?.off('fdaTrigger');
     socket?.off('connect_error');
     socket?.off('connect');
     socket?.off('disconnect');

@@ -19,7 +19,7 @@ export const useSignaler = () => {
   ) => {
     const socket = io(
       process.env.NODE_ENV === 'production'
-        ? `wss://${process.env.REACT_APP_BACKEND}`
+        ? `ws://${process.env.REACT_APP_BACKEND}`
         : `ws://${process.env.REACT_APP_BACKEND}`,
       {
         auth: {
