@@ -24,7 +24,15 @@ export const useSignaler = () => {
   const connectToSignaler = useCallback(() => {
     console.log('--connectToSignaler, auth.token:', user?.token);
     socket = (() => {
-      const s = io();
+      const s = io(
+        url,
+        {
+          auth: {
+            token: user?.token,
+          },
+          rejectUnauthorized: false, // WARN: please do not do this in production
+        },
+      );
       return s;
     })();
     socket?.on('event', (data) => { console.log('--SOCKETevent', data); });
