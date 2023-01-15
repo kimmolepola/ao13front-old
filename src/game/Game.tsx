@@ -1,11 +1,9 @@
 import {
-  useRef, memo, useCallback, useMemo, useEffect,
+  memo, useCallback, useMemo,
 } from 'react';
 import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-
-import * as networkingHooks from '../networking/hooks';
 
 import Canvas from './components/Canvas';
 import UserInterface from './components/UI';
@@ -13,13 +11,10 @@ import UserInterface from './components/UI';
 import * as atoms from '../atoms';
 import * as hooks from './hooks';
 
-const Game = () => {
+const Game = ({ objectsRef }: { objectsRef: any }) => {
   console.log('--Game');
 
   const navigate = useNavigate();
-  const stateRef = useRef({ initialized: false });
-  const objectsRef = useRef([]);
-  const { connect, disconnect } = networkingHooks.useConnections(objectsRef);
 
   hooks.useControls(objectsRef);
 
@@ -33,16 +28,8 @@ const Game = () => {
   window.onresize = debounceResizeHandler;
 
   const quit = useCallback(async () => {
-    await disconnect();
     navigate('/');
-  }, [disconnect, navigate]);
-
-  useEffect(() => {
-    if (stateRef.current && !stateRef.current.initialized) {
-      stateRef.current.initialized = true;
-      connect();
-    }
-  }, [stateRef, connect]);
+  }, [navigate]);
 
   return (
     <>

@@ -44,9 +44,6 @@ export const useConnections = (objectsRef: RefObject<types.GameObject[]>) => {
 
   const connect = useCallback(() => {
     connectToSignaler();
-  }, [connectToSignaler]);
-
-  useEffect(() => {
     registerListeners(
       onReceiveInit,
       onReceiveSignaling,
@@ -54,15 +51,13 @@ export const useConnections = (objectsRef: RefObject<types.GameObject[]>) => {
       onReceiveMain,
       onReceivePeerDisconnected,
     );
-    return () => unregisterListeners();
-  }, [
+  }, [connectToSignaler,
+    registerListeners,
     onReceiveInit,
     onReceiveSignaling,
     onReceiveConnectToMain,
     onReceiveMain,
     onReceivePeerDisconnected,
-    registerListeners,
-    unregisterListeners,
   ]);
 
   const disconnect = useCallback(async () => {

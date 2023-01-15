@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import Game from './game';
@@ -7,6 +7,7 @@ import Frontpage from './frontpage';
 import * as frontpageHooks from './frontpage/hooks';
 
 const App = () => {
+  const objectsRef = useRef([]);
   console.log('--App');
   const { loadSavedUser } = frontpageHooks.useAuth();
 
@@ -16,8 +17,8 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path="/play" element={<Game />} />
-      <Route path="*" element={(<Frontpage />)} />
+      <Route path="/play" element={<Game objectsRef={objectsRef} />} />
+      <Route path="*" element={(<Frontpage objectsRef={objectsRef} />)} />
     </Routes>
   );
 };
