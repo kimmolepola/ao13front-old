@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as types from '../../types';
 
 const server = process.env.NODE_ENV === 'production'
-  ? `http://${process.env.REACT_APP_BACKEND}`
+  ? `https://${process.env.REACT_APP_BACKEND}`
   : `http://${process.env.REACT_APP_BACKEND}`;
 
 // eslint-disable-next-line import/prefer-default-export

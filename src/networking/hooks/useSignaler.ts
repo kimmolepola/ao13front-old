@@ -8,7 +8,7 @@ import * as types from '../../types';
 let socket: undefined | Socket & { auth: { [key: string]: any } };
 
 export const useSignaler = () => {
-  console.log('--useSignaler');
+  console.log('---useSignaler');
 
   const user = useRecoilValue(atoms.user);
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
@@ -16,31 +16,19 @@ export const useSignaler = () => {
   console.log('NODE_ENV:', process.env.NODE_ENV);
 
   const url = process.env.NODE_ENV === 'production'
-    ? `http://${process.env.REACT_APP_BACKEND}`
+    ? `https://${process.env.REACT_APP_BACKEND}`
     : `http://${process.env.REACT_APP_BACKEND}`;
 
   const connectToSignaler = useCallback(() => {
     console.log('--connectToSignaler, auth.token:', user?.token);
-    socket = (() => {
-      const s = io(
-        url,
-        {
-          auth: {
-            token: `${user?.token}`,
-          },
-          rejectUnauthorized: false, // WARN: please do not do this in production
+    socket = io(
+      url,
+      {
+        auth: {
+          token: `${user?.token}`,
         },
-      );
-      return s;
-    })();
-    socket?.on('event', (data) => { console.log('--SOCKETevent', data); });
-    socket?.on('error', (error) => { console.log('--SOCKETerror', error); });
-    socket?.on('disconnect', () => { console.log('--SOCKETdisconnect'); });
-    socket?.on('connection', (socketarg) => { console.log('--SOCKETconnection', socketarg); });
-    socket?.on('fdaTrigger', (data) => { console.log('--SOCKETfdaTrigger', data); });
-    socket?.on('--SOCKETconnect_error', (err: any) => {
-      console.error(err);
-    });
+      },
+    );
   }, [user?.token, url]);
 
   const registerListeners = useCallback((
@@ -50,12 +38,6 @@ export const useSignaler = () => {
     onReceiveMain: (id: string) => void,
     onReceivePeerDisconnected: (remoteId: string) => void,
   ) => {
-    socket?.on('event', (data) => { console.log('event', data); });
-    socket?.on('error', (error) => { console.log('error', error); });
-    socket?.on('disconnect', () => { console.log('disconnect'); });
-    socket?.on('connection', (socketarg) => { console.log('connection', socketarg); });
-    socket?.on('fdaTrigger', (data) => { console.log('fdaTrigger', data); });
-
     socket?.on('connect_error', (err: any) => {
       console.error(err);
     });
@@ -115,7 +97,6 @@ export const useSignaler = () => {
   }, [setConnectionMessage]);
 
   const unregisterListeners = useCallback(() => {
-    socket?.off('event'); socket?.off('error'); socket?.off('disconnect'); socket?.off('connection'); socket?.off('fdaTrigger');
     socket?.off('connect_error');
     socket?.off('connect');
     socket?.off('disconnect');

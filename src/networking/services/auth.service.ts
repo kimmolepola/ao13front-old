@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const server = process.env.NODE_ENV === 'production'
-  ? `http://${process.env.REACT_APP_BACKEND}`
+  ? `https://${process.env.REACT_APP_BACKEND}`
   : `http://${process.env.REACT_APP_BACKEND}`;
 
 export const setToken = (token: string) => {
