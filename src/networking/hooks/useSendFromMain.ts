@@ -13,6 +13,7 @@ export const useSendFromMain = () => {
   const unorderedChannels = useRecoilValue(atoms.channelsUnordered);
 
   const sendOrdered = useCallback((data: types.State | types.ChatMessageFromMain) => {
+    console.log('--MAIN send ordered:', data);
     const dataString = JSON.stringify(data);
     orderedChannels.forEach((x) => {
       try {
