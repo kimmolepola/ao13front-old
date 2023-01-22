@@ -37,11 +37,14 @@ export const useRTCPeerConnection = () => {
     };
 
     peerConnection.onicecandidate = ({ candidate }) => {
+      console.log('--onicecandidate sendSignaling');
       sendSignaling({ remoteId, candidate });
     };
 
     peerConnection.onnegotiationneeded = async () => {
+      console.log('--onnegotiationneeded');
       try {
+        console.log('--setLocalDescription, sendSignaling');
         await peerConnection.setLocalDescription();
         sendSignaling(
           {
@@ -49,6 +52,7 @@ export const useRTCPeerConnection = () => {
             description: peerConnection.localDescription,
           },
         );
+        console.log('--setLocalDescription, sendSignaling done');
       } catch (err) {
         console.error(err);
       }
@@ -60,15 +64,19 @@ export const useRTCPeerConnection = () => {
     ) => {
       try {
         if (description) {
+          console.log('--setRemoteDescription');
           await peerConnection.setRemoteDescription(description);
           if (description.type === 'offer') {
+            console.log('--onOffer, setLocalDescription, sendSignaling');
             await peerConnection.setLocalDescription();
             sendSignaling({
               remoteId,
               description: peerConnection.localDescription,
             });
+            console.log('--onOffer, done');
           }
         } else if (candidate) {
+          console.log('--onCandidate, addIceCandidate');
           await peerConnection.addIceCandidate(candidate);
         }
       } catch (err) {

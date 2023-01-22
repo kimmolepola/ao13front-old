@@ -19,14 +19,17 @@ export const useChannelOrdered = () => {
     });
 
     channel.onclose = () => {
+      console.log('--channelOrdered onclose');
       onChannelClosed(remoteId, channel);
     };
 
     channel.onopen = () => {
+      console.log('--channelOrdered onopen');
       onChannelOpen(remoteId, channel);
     };
 
     channel.onmessage = ({ data }: { data: string }) => {
+      console.log('--channelOrdered onmessage');
       onReceiveData(JSON.parse(data), remoteId);
     };
   }, []);
