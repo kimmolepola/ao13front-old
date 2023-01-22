@@ -1,8 +1,6 @@
 const iceServers = [
   {
-    urls: 'turn:turn.kimmolepola.com:443?transport=tcp',
-    username: 'kimmo',
-    credential: 'demo',
+    urls: 'turns:turn.kimmolepola.com:443?transport=tcp',
   },
 ];
 
