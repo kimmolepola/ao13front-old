@@ -4,9 +4,10 @@ import {
 import {
   useLocation, useNavigate, Routes, Route,
 } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { checkOkToStart } from '../../networking/services/user.service';
+import { getTurnCredentials } from '../../networking/services/auth.service';
 import * as networkingHooks from '../../networking/hooks';
 
 import Settings from './Settings';
@@ -19,6 +20,7 @@ const LoggedIn = () => {
   console.log('--LoggedIn');
   const navigate = useNavigate();
   const user = useRecoilValue(atoms.user);
+  const setTurnCredentials = useSetRecoilState(atoms.turnCredentials);
   const { refreshUser } = networkingHooks.useUser();
 
   const [errorText, setErrorText] = useState<string>();
@@ -41,13 +43,20 @@ const LoggedIn = () => {
     if (!errorText) {
       const { data, error } = await checkOkToStart();
       if (data && data.success) {
-        navigate('/play');
+        const { data: credsData, error: credsError } = await getTurnCredentials();
+        if (credsData) {
+          setTurnCredentials(credsData);
+          navigate('/play');
+        } else {
+          setErrorText(credsError);
+          setTimeout(() => setErrorText(undefined), 5000);
+        }
       } else {
         setErrorText(error || data.reason);
         setTimeout(() => setErrorText(undefined), 5000);
       }
     }
-  }, [errorText, setErrorText, navigate]);
+  }, [errorText, setErrorText, navigate, setTurnCredentials]);
 
   return (
     <Routes>

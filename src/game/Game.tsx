@@ -3,7 +3,7 @@ import {
 } from 'react';
 import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 import * as networkingHooks from '../networking/hooks';
 
@@ -25,6 +25,7 @@ const Game = () => {
   hooks.useControls(objectsRef);
 
   const setWindowHeight = useSetRecoilState(atoms.windowHeight);
+  const turnCredentials = useRecoilValue(atoms.turnCredentials);
 
   const resizeHandler = useCallback(() => {
     setWindowHeight(window.innerHeight);
@@ -41,7 +42,7 @@ const Game = () => {
 
   useEffect(() => {
     console.log('--game useEffect, initialized:', initialized);
-    if (!initialized) {
+    if (!initialized && turnCredentials) {
       console.log('--initialize');
       initialized = true;
       connect();
@@ -49,7 +50,7 @@ const Game = () => {
     return () => {
       console.log('--game useEffect return');
     };
-  }, [connect]);
+  }, [connect, turnCredentials]);
 
   return (
     <>

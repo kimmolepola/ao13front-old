@@ -1,15 +1,15 @@
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-import iceServers from '../iceServers';
-
 import * as atoms from '../../atoms';
 import * as types from '../../types';
+import * as hooks from '.';
 
 export const useRTCPeerConnection = () => {
   console.log('--useRTCPeerConnection');
 
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
+  const { iceServers } = hooks.useIceServers();
 
   const createRTCPeerConnection = useCallback((
     remoteId: string,
@@ -85,7 +85,7 @@ export const useRTCPeerConnection = () => {
     };
 
     return { peerConnection, handleSignaling };
-  }, [setConnectionMessage]);
+  }, [setConnectionMessage, iceServers]);
 
   return createRTCPeerConnection;
 };

@@ -10,6 +10,17 @@ export const setToken = (token: string) => {
   axios.defaults.headers.common = { Authorization: `Bearer ${token}` };
 };
 
+export const getTurnCredentials = async () => {
+  console.log('--getTurnCredentials');
+  try {
+    const response = await axios.post(`${server}/api/v1/auth/logout`);
+    return { data: response.data };
+  } catch (err: any) {
+    const error = err.response?.data ? err.response.data.error : err.toString();
+    return { error };
+  }
+};
+
 export const logout = async () => {
   console.log('--logout');
 

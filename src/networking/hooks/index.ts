@@ -10,3 +10,4 @@ export { useMain } from './useMain';
 export { useSendFromClient } from './useSendFromClient';
 export { useSendFromMain } from './useSendFromMain';
 export { useUser } from './useUser';
+export { useIceServers } from './useIceServers';

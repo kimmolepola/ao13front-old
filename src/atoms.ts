@@ -5,6 +5,11 @@ import {
 
 import * as types from './types';
 
+export const turnCredentials = atom<{ username: string, password: string } | undefined>({
+  key: 'turnCredentials',
+  default: undefined,
+});
+
 export const score = atom<number>({
   key: 'score',
   default: 0,
