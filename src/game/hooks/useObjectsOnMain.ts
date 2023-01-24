@@ -108,6 +108,7 @@ export const useObjectsOnMain = (objectsRef: RefObject<types.GameObject[]>) => {
   }, [objectsRef, setObjectIds, sendOrdered]);
 
   const handleNewIdsOnMain = useCallback(async (newIds: string[]) => {
+    console.log('--handleNewIdsOnMain main objectsRef newIds:', main, objectsRef, newIds);
     if (main && objectsRef.current) {
       const ids = await handleNewIds(newIds, objectsRef.current);
       setObjectIds(ids);

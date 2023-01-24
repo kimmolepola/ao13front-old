@@ -1,9 +1,11 @@
 import {
-  memo, useCallback, useMemo,
+  useEffect, useRef, memo, useCallback, useMemo,
 } from 'react';
 import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
+
+import * as networkingHooks from '../networking/hooks';
 
 import Canvas from './components/Canvas';
 import UserInterface from './components/UI';
@@ -11,10 +13,14 @@ import UserInterface from './components/UI';
 import * as atoms from '../atoms';
 import * as hooks from './hooks';
 
-const Game = ({ objectsRef }: { objectsRef: any }) => {
+let initialized = false;
+
+const Game = () => {
   console.log('--Game');
 
   const navigate = useNavigate();
+  const objectsRef = useRef([]);
+  const { connect, disconnect } = networkingHooks.useConnections(objectsRef);
 
   hooks.useControls(objectsRef);
 
@@ -29,7 +35,21 @@ const Game = ({ objectsRef }: { objectsRef: any }) => {
 
   const quit = useCallback(async () => {
     navigate('/');
-  }, [navigate]);
+    initialized = false;
+    disconnect();
+  }, [navigate, disconnect]);
+
+  useEffect(() => {
+    console.log('--game useEffect, initialized:', initialized);
+    if (!initialized) {
+      console.log('--initialize');
+      initialized = true;
+      connect();
+    }
+    return () => {
+      console.log('--game useEffect return');
+    };
+  }, [connect]);
 
   return (
     <>

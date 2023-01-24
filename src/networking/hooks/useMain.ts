@@ -39,6 +39,7 @@ export const useMain = (objectsRef: RefObject<types.GameObject[]>) => {
       }
       return prev;
     }, []);
+    console.log('--onChannelsChanged actual new ordered unordered', actuallyConnectedIds, newIds, channelsOrdered, channelsUnordered);
     if (newIds.length || disconnectedIds.length) {
       setConnectedIdsOnMain(actuallyConnectedIds);
       handleRemoveIdsOnMain(disconnectedIds);
@@ -55,6 +56,7 @@ export const useMain = (objectsRef: RefObject<types.GameObject[]>) => {
 
   useEffect(() => {
     // channels change
+    console.log('--useEffect channelsOrdered:', channelsOrdered);
     if (main) {
       onChannelsChanged();
     }

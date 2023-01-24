@@ -13,7 +13,7 @@ import AppBar from './components/AppBar';
 
 import * as atoms from '../atoms';
 
-const Frontpage = ({ objectsRef }: { objectsRef: any }) => {
+const Frontpage = () => {
   console.log('--Frontpage');
 
   const user = useRecoilValue(atoms.user);
@@ -28,7 +28,7 @@ const Frontpage = ({ objectsRef }: { objectsRef: any }) => {
           <Route path="/resetpassword" element={<ResetPassword />} />
           <Route path="/forgottenpassword" element={<ForgottenPassword />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="*" element={!user ? <Login /> : (<LoggedIn objectsRef={objectsRef} />)} />
+          <Route path="*" element={!user ? <Login /> : (<LoggedIn />)} />
         </Routes>
       </div>
     </>

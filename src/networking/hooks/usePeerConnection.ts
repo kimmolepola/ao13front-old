@@ -19,6 +19,7 @@ export const usePeerConnection = (objectsRef: RefObject<types.GameObject[]>) => 
   const { onReceive: onReceiveOnClient } = hooks.useReceiveOnClient(objectsRef);
 
   const onChannelOrderedOpen = useCallback((remoteId: string, channel: RTCDataChannel) => {
+    console.log('--onChannelOrderedOpen setChannelsOrdered:', remoteId, channel);
     setChannelsOrdered((x) => [...x, { remoteId, channel }]);
   }, [setChannelsOrdered]);
 
@@ -29,6 +30,7 @@ export const usePeerConnection = (objectsRef: RefObject<types.GameObject[]>) => 
   }, [setChannelsOrdered]);
 
   const onChannelUnorderedOpen = useCallback((remoteId: string, channel: RTCDataChannel) => {
+    console.log('--onChannelUnorderedOpen setChannelsUnordered:', remoteId, channel);
     setChannelsUnordered((x) => [...x, { remoteId, channel }]);
   }, [setChannelsUnordered]);
 

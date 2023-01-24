@@ -14,21 +14,19 @@ import Settings from './Settings';
 import * as theme from '../../theme';
 import * as atoms from '../../atoms';
 
-const LoggedIn = ({ objectsRef }: { objectsRef: any }) => {
+const LoggedIn = () => {
   const location = useLocation();
   console.log('--LoggedIn');
   const navigate = useNavigate();
   const user = useRecoilValue(atoms.user);
   const { refreshUser } = networkingHooks.useUser();
-  const { connect, disconnect } = networkingHooks.useConnections(objectsRef);
 
   const [errorText, setErrorText] = useState<string>();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setErrorText(undefined);
-    disconnect();
-  }, [user, location, disconnect]);
+  }, [user, location]);
 
   const onClickRefresh = useCallback(async () => {
     setLoading(true);
@@ -43,14 +41,13 @@ const LoggedIn = ({ objectsRef }: { objectsRef: any }) => {
     if (!errorText) {
       const { data, error } = await checkOkToStart();
       if (data && data.success) {
-        connect();
         navigate('/play');
       } else {
         setErrorText(error || data.reason);
         setTimeout(() => setErrorText(undefined), 5000);
       }
     }
-  }, [errorText, setErrorText, navigate, connect]);
+  }, [errorText, setErrorText, navigate]);
 
   return (
     <Routes>
