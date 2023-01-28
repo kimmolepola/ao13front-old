@@ -26,6 +26,9 @@
     }
   },
   "rules": {
+    "quotes": "off",
+    "no-unsafe-optional-chaining": "off",
+    "prefer-template": "off",
     "no-restricted-exports": [
       "off"
     ],

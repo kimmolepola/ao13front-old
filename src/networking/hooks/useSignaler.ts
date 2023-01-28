@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 
+import { backendUrl } from 'src/config';
 import * as atoms from '../../atoms';
 import * as types from '../../types';
 
@@ -13,23 +14,19 @@ export const useSignaler = () => {
   const user = useRecoilValue(atoms.user);
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
 
-  console.log('NODE_ENV:', process.env.NODE_ENV);
-
-  const url = process.env.NODE_ENV === 'production'
-    ? `https://${process.env.REACT_APP_BACKEND}`
-    : `http://${process.env.REACT_APP_BACKEND}`;
+  console.log('--backendUrl:', backendUrl);
 
   const connectToSignaler = useCallback(() => {
     console.log('--connectToSignaler, auth.token:', user?.token);
     socket = io(
-      url,
+      backendUrl,
       {
         auth: {
           token: `${user?.token}`,
         },
       },
     );
-  }, [user?.token, url]);
+  }, [user?.token]);
 
   const registerListeners = useCallback((
     onReceiveInit: (id: string) => void,

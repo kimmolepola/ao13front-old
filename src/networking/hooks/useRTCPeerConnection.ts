@@ -15,7 +15,8 @@ export const useRTCPeerConnection = () => {
     remoteId: string,
     sendSignaling: (x: types.Signaling) => void,
   ) => {
-    const peerConnection = new RTCPeerConnection({ iceServers });
+    console.log("--createRTCPeerConnection, iceServers:", iceServers);
+    const peerConnection = new RTCPeerConnection({ iceServers, iceTransportPolicy: 'relay' });
 
     peerConnection.onconnectionstatechange = () => {
       switch (peerConnection.connectionState) {
