@@ -119,6 +119,7 @@ export type StateObject = {
 }
 
 export type Update = {
+  timestamp: number,
   type: NetDataType.UPDATE,
   data: {
     [id: string]: UpdateObject

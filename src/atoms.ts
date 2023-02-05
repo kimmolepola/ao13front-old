@@ -16,11 +16,6 @@ export const score = atom<number>({
   default: 0,
 });
 
-export const windowHeight = atom<number>({
-  key: 'windowHeight',
-  default: window.innerHeight,
-});
-
 export const overlayInfotext = atom<RefObject<HTMLDivElement> | undefined>({
   key: 'overlayInfotext',
   default: undefined,
@@ -76,4 +71,5 @@ export const user = atom<{
 export const socket = atom<undefined | Socket & { auth: { [key: string]: any } }>({
   key: "socket",
   default: undefined,
+  dangerouslyAllowMutability: true,
 });

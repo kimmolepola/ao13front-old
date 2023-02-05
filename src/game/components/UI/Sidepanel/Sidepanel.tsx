@@ -42,31 +42,6 @@ const InfoBox = styled.div`
   cursor: default;
 `;
 
-const Container = styled.div<any>`
-  position: absolute;
-  top: calc(
-    ${(props) => props.windowHeight}px -
-      min(
-        ${theme.sidepanelMaxWidth},
-        ${(props) => (props.windowHeight / 100) * theme.sidepanelWidthPercent}px
-      )
-  );
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
-  @media (min-width: ${theme.mobileWidth}px) {
-    top: 0px;
-    left: calc(
-      100vw - min(${theme.sidepanelMaxWidth}, ${theme.sidepanelWidthPercent}vw)
-    );
-  }
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 3px;
-  background: ${theme.colors.bgMain};
-`;
-
 const Sidepanel = ({
   quit,
   objectsRef,
@@ -76,7 +51,6 @@ const Sidepanel = ({
 }) => {
   console.log('--Sidepanel');
 
-  const windowHeight = useRecoilValue(atoms.windowHeight);
   const main = useRecoilValue(atoms.main);
   const connectedIdsOnMain = useRecoilValue(atoms.connectedIdsOnMain);
   const connectionMessage = useRecoilValue(atoms.connectionMessage);
@@ -87,7 +61,7 @@ const Sidepanel = ({
   }, [quit]);
 
   return (
-    <Container windowHeight={windowHeight}>
+    <div className="absolute left-0 right-0 top-[70%] bottom-0 landscape:top-0 landscape:left-[80%]">
       <div className="flex flex-col">
         <div className="flex w-full justify-between">
           <Text>AO13</Text>
@@ -109,7 +83,7 @@ const Sidepanel = ({
         </InfoBox>
       </div>
       <ChatContainer objectsRef={objectsRef} />
-    </Container>
+    </div>
   );
 };
 

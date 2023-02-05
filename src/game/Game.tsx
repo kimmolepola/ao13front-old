@@ -1,9 +1,8 @@
 import {
-  useEffect, useRef, memo, useCallback, useMemo,
+  useEffect, useRef, memo, useCallback,
 } from 'react';
-import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import * as networkingHooks from '../networking/hooks';
 
@@ -24,15 +23,7 @@ const Game = () => {
 
   hooks.useControls(objectsRef);
 
-  const setWindowHeight = useSetRecoilState(atoms.windowHeight);
   const turnCredentials = useRecoilValue(atoms.turnCredentials);
-
-  const resizeHandler = useCallback(() => {
-    setWindowHeight(window.innerHeight);
-  }, [setWindowHeight]);
-
-  const debounceResizeHandler = useMemo(() => debounce(resizeHandler, 300), [resizeHandler]);
-  window.onresize = debounceResizeHandler;
 
   const quit = useCallback(async () => {
     navigate('/');

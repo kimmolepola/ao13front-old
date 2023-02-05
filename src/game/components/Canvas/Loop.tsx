@@ -190,7 +190,7 @@ const Loop = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => 
       }
       if (Date.now() > nextSendTime) {
         nextSendTime = Date.now() + sendIntervalMain;
-        sendUnorderedFromMain({ type: types.NetDataType.UPDATE, data: updateData });
+        sendUnorderedFromMain({ timestamp: Date.now(), type: types.NetDataType.UPDATE, data: updateData });
       }
     } else { // client
       for (let i = (objectsRef.current || []).length - 1; i > -1; i--) {

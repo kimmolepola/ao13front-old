@@ -29,7 +29,6 @@ export const useChannelUnordered = () => {
     };
 
     channel.onmessage = ({ data }: { data: string }) => {
-      console.log('--channgeUnordered onmessage');
       receiveData(JSON.parse(data), remoteId);
     };
 

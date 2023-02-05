@@ -37,6 +37,7 @@ export const useSignaler = () => {
     onReceiveMain: (id: string) => void,
     onReceivePeerDisconnected: (remoteId: string) => void,
   ) => {
+    console.log("--socket, register:", socket);
     socket?.on('connect_error', (err: any) => {
       console.error(err);
     });

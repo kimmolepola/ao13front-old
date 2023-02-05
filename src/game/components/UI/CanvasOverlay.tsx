@@ -23,40 +23,6 @@ const Connecting = styled.div<any>`
   transition: transform 3s;
 `;
 
-const InfoBoxElement = styled.div<{ show: boolean, ref: (ref: HTMLDivElement) => void }>`
-  display: ${(props) => (props.show ? '' : 'none')};
-  padding: 5px;
-  background: rgba(255, 255, 255, 0.75);
-  white-space: pre-line;
-  position: absolute;
-  left: 20px;
-  top: 20px;
-  font-family: ${theme.fontFamily};
-  font-size: 12px;
-`;
-
-const ControlsContainer = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  @media (min-width: ${theme.mobileWidth}px) {
-    display: none;
-  }
-`;
-
-const Controls = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
 const Button = styled.button`
   padding: 0px;
   display: flex;
@@ -76,22 +42,6 @@ const Button = styled.button`
   -moz-user-select: none; /* Firefox all */
   -ms-user-select: none; /* IE 10+ */
   user-select: none; /* Likely future */
-`;
-
-const Container = styled.div<any>`
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  bottom: min(
-    ${theme.sidepanelMaxWidth},
-    ${(props) => (props.windowHeight / 100) * theme.sidepanelWidthPercent}px
-  );
-  left: 0px;
-  @media (min-width: ${theme.mobileWidth}px) {
-    right: min(${theme.sidepanelMaxWidth}, ${theme.sidepanelWidthPercent}vw);
-    bottom: 0px;
-  }
-  display: flex;
 `;
 
 const InfoElement = styled.div`
@@ -170,10 +120,32 @@ const ControlButton = ({
   );
 };
 
+const InfoBox = ({ objectsRef, ownId }: { objectsRef: RefObject<types.GameObject[]>; ownId: string | undefined }) => (
+  <div
+    className="absolute left-5 top-5 w-20 bg-white opacity-80 whitespace-pre-line px-1 py-0.5 text-xs"
+    ref={(element: HTMLDivElement) => {
+      const ownObject = objectsRef.current?.find((x) => x.id === ownId);
+      if (ownObject) {
+        ownObject.infoBoxElement = element;
+      }
+    }}
+  />
+);
+
+const ControlButtons = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => (
+  <div className="landscape:hidden absolute left-0 right-0 bottom-0 flex flex-col items-center">
+    <ControlButton control={types.Keys.UP} objectsRef={objectsRef} />
+    <div className="w-full flex justify-evenly">
+      <ControlButton control={types.Keys.LEFT} objectsRef={objectsRef} />
+      <ControlButton control={types.Keys.RIGHT} objectsRef={objectsRef} />
+    </div>
+    <ControlButton control={types.Keys.DOWN} objectsRef={objectsRef} />
+  </div>
+);
+
 const CanvasOverlay = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
   console.log('--CanvasOverlay');
 
-  const windowHeight = useRecoilValue(atoms.windowHeight);
   //  const connectedIds = useRecoilValue(atoms.connectedIdsOnMain);
   const channelsOrdered = useRecoilValue(atoms.channelsOrdered);
   const channelsUnordered = useRecoilValue(atoms.channelsUnordered);
@@ -186,29 +158,14 @@ const CanvasOverlay = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[
   }, [objectIds]);
 
   return (
-    <Container windowHeight={windowHeight}>
+    <div className="absolute left-0 right-0 top-0 bottom-[30%] landscape:right-[20%] landscape:bottom-0 z-10">
       <InfoElements objectsRef={objectsRef} />
       <Connecting show={!main && (!channelsOrdered.length || !channelsUnordered.length)}>Connecting...</Connecting>
-      <InfoBoxElement
-        show={Boolean(main || (channelsOrdered.length && channelsUnordered.length))}
-        ref={(element: HTMLDivElement) => {
-          const ownObject = objectsRef.current?.find((x) => x.id === ownId);
-          if (ownObject) {
-            ownObject.infoBoxElement = element;
-          }
-        }}
-      />
-      <ControlsContainer>
-        <Controls>
-          <ControlButton control={types.Keys.LEFT} objectsRef={objectsRef} />
-          <ButtonGroup>
-            <ControlButton control={types.Keys.UP} objectsRef={objectsRef} />
-            <ControlButton control={types.Keys.DOWN} objectsRef={objectsRef} />
-          </ButtonGroup>
-          <ControlButton control={types.Keys.RIGHT} objectsRef={objectsRef} />
-        </Controls>
-      </ControlsContainer>
-    </Container>
+      {Boolean(main || (channelsOrdered.length && channelsUnordered.length)) && (
+        <InfoBox objectsRef={objectsRef} ownId={ownId} />
+      )}
+      <ControlButtons objectsRef={objectsRef} />
+    </div>
   );
 };
 

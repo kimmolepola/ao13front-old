@@ -1,39 +1,20 @@
 import { memo, Suspense, RefObject } from 'react';
 import { Canvas } from '@react-three/fiber';
-import styled from 'styled-components';
 // eslint-disable-next-line
-import { useRecoilBridgeAcrossReactRoots_UNSTABLE, useRecoilValue } from 'recoil';
-import theme from '../../../themets.js';
+import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from 'recoil';
 
 import Loop from './Loop';
 import Objects from './Objects';
 
-import * as atoms from '../../../atoms';
 import * as types from '../../../types';
-
-const Container = styled.div<any>`
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  bottom: min(
-    ${theme.sidepanelMaxWidth},
-    ${(props) => (props.windowHeight / 100) * theme.sidepanelWidthPercent}px
-  );
-  left: 0px;
-  @media (min-width: ${theme.mobileWidth}px) {
-    right: min(${theme.sidepanelMaxWidth}, ${theme.sidepanelWidthPercent}vw);
-    bottom: 0px;
-  }
-`;
 
 const CanvasContainer = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
   console.log('--CanvasContainer');
 
   const RecoilBridge = useRecoilBridgeAcrossReactRoots_UNSTABLE();
-  const windowHeight = useRecoilValue(atoms.windowHeight);
 
   return (
-    <Container windowHeight={windowHeight}>
+    <div className="absolute left-0 right-0 top-0 bottom-[30%] landscape:right-[20%] landscape:bottom-0">
       <Canvas
         camera={{
           fov: 75,
@@ -50,7 +31,7 @@ const CanvasContainer = ({ objectsRef }: { objectsRef: RefObject<types.GameObjec
           </Suspense>
         </RecoilBridge>
       </Canvas>
-    </Container>
+    </div>
   );
 };
 

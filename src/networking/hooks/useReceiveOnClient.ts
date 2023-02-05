@@ -13,17 +13,22 @@ export const useReceiveOnClient = (objectsRef: RefObject<types.GameObject[]>) =>
   const [chatMessages, setChatMessages] = useRecoilState(atoms.chatMessages);
   const { handleUpdateData, handleStateData } = gameHooks.useObjectsOnClient(objectsRef);
 
+  let mostRecentTimestamp = 0;
+
   const onReceive = (
     data: types.NetData,
   ) => {
-    console.log('--CLIENT on receive:', data);
     switch (data.type) {
       case types.NetDataType.STATE: {
+        console.log('--CLIENT on receive state:', data);
         handleStateData(data);
         break;
       }
       case types.NetDataType.UPDATE: {
-        handleUpdateData(data);
+        if (data.timestamp > mostRecentTimestamp) {
+          mostRecentTimestamp = data.timestamp;
+          handleUpdateData(data);
+        }
         break;
       }
       case types.NetDataType.CHATMESSAGE_MAIN: {
