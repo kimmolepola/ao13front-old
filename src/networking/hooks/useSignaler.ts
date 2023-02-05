@@ -1,24 +1,25 @@
 import { useCallback } from 'react';
-import { io, Socket } from 'socket.io-client';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { io } from 'socket.io-client';
+import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 
 import { backendUrl } from 'src/config';
 import * as atoms from '../../atoms';
 import * as types from '../../types';
 
-let socket: undefined | Socket & { auth: { [key: string]: any } };
+// let socket: undefined | Socket & { auth: { [key: string]: any } };
 
 export const useSignaler = () => {
   console.log('---useSignaler');
 
   const user = useRecoilValue(atoms.user);
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
+  const [socket, setSocket] = useRecoilState(atoms.socket);
 
   console.log('--backendUrl:', backendUrl);
 
   const connectToSignaler = useCallback(() => {
     console.log('--connectToSignaler, auth.token:', user?.token);
-    socket = io(
+    const s = io(
       backendUrl,
       {
         auth: {
@@ -26,7 +27,8 @@ export const useSignaler = () => {
         },
       },
     );
-  }, [user?.token]);
+    setSocket(s);
+  }, [user?.token, setSocket]);
 
   const registerListeners = useCallback((
     onReceiveInit: (id: string) => void,
@@ -91,7 +93,7 @@ export const useSignaler = () => {
       setConnectionMessage(`peer ${remoteId} disconnected`);
       console.log('peer', remoteId, 'disconnected');
     });
-  }, [setConnectionMessage]);
+  }, [setConnectionMessage, socket]);
 
   const unregisterListeners = useCallback(() => {
     socket?.off('connect_error');
@@ -104,16 +106,16 @@ export const useSignaler = () => {
     socket?.off('connectToMain');
     socket?.off('main');
     socket?.off('peerDisconnected');
-  }, []);
+  }, [socket]);
 
   const disconnectFromSignaler = useCallback(() => {
     unregisterListeners();
     socket?.disconnect();
-  }, [unregisterListeners]);
+  }, [unregisterListeners, socket]);
 
   const sendSignaling = useCallback(({ remoteId, description, candidate }: types.Signaling) => {
     socket?.emit('signaling', { remoteId, candidate, description });
-  }, []);
+  }, [socket]);
 
   return {
     connectToSignaler, disconnectFromSignaler, registerListeners, unregisterListeners, sendSignaling,

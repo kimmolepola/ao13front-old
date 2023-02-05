@@ -2,10 +2,11 @@ import { RefObject } from 'react';
 import {
   atom,
 } from 'recoil';
+import { Socket } from 'socket.io-client';
 
 import * as types from './types';
 
-export const turnCredentials = atom<{ username: string, password: string } | undefined>({
+export const turnCredentials = atom<{ urls: string, username: string, credential: string } | undefined>({
   key: 'turnCredentials',
   default: undefined,
 });
@@ -69,5 +70,10 @@ export const user = atom<{
   score: number
 } | undefined>({
   key: 'user',
+  default: undefined,
+});
+
+export const socket = atom<undefined | Socket & { auth: { [key: string]: any } }>({
+  key: "socket",
   default: undefined,
 });

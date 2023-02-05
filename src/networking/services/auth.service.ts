@@ -10,7 +10,7 @@ export const setToken = (token: string) => {
 export const getTurnCredentials = async () => {
   console.log('--getTurnCredentials');
   try {
-    const response = await axios.post(`${backendUrl}/api/v1/auth/logout`);
+    const response = await axios.post(`${backendUrl}/api/v1/auth/getTurnCredentials`);
     return { data: response.data };
   } catch (err: any) {
     const error = err.response?.data ? err.response.data.error : err.toString();

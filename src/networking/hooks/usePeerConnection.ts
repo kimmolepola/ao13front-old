@@ -9,6 +9,7 @@ export const usePeerConnection = (objectsRef: RefObject<types.GameObject[]>) => 
   console.log('--usePeerConnection');
 
   const main = useRecoilValue(atoms.main);
+
   const setConnectionMessage = useSetRecoilState(atoms.connectionMessage);
   const setChannelsOrdered = useSetRecoilState(atoms.channelsOrdered);
   const setChannelsUnordered = useSetRecoilState(atoms.channelsUnordered);
@@ -45,19 +46,21 @@ export const usePeerConnection = (objectsRef: RefObject<types.GameObject[]>) => 
     sendSignaling: (x: types.Signaling) => void,
   ) => {
     console.log('--connect to peer', remoteId);
+    console.log("--main:", main);
     setConnectionMessage(`connecting with peer ${remoteId}`);
     console.log('peer', remoteId, 'connecting');
     const { peerConnection, handleSignaling } = createRTCPeerConnection(remoteId, sendSignaling);
     if (main) {
+      console.log("--connectToPeer yes main");
       createOrderedChannel(remoteId, peerConnection, onReceiveOnMain, onChannelOrderedOpen, onChannelOrderedClosed);
       createUnorderedChannel(remoteId, peerConnection, onReceiveOnMain, onChannelUnorderedOpen, onChannelUnorderedClosed);
     } else {
+      console.log("--connectToPeer not main yes client");
       createOrderedChannel(remoteId, peerConnection, onReceiveOnClient, onChannelOrderedOpen, onChannelOrderedClosed);
       createUnorderedChannel(remoteId, peerConnection, onReceiveOnClient, onChannelUnorderedOpen, onChannelUnorderedClosed);
     }
     return { peerConnection, handleSignaling };
-  }, [
-    main,
+  }, [main,
     setConnectionMessage,
     createRTCPeerConnection,
     createOrderedChannel,

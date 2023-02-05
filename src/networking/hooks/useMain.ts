@@ -69,6 +69,7 @@ export const useMain = (objectsRef: RefObject<types.GameObject[]>) => {
   }, [setMain, handlePossiblyNewIdOnMain]);
 
   const handleQuitOnMain = useCallback(async () => {
+    console.log("--HANDLE QUIT ON MAIN");
     await handleQuitForObjectsOnMain();
     setMain(false);
   }, [handleQuitForObjectsOnMain, setMain]);
