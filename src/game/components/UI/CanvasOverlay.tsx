@@ -1,80 +1,55 @@
 import {
-  memo, useMemo, useCallback, RefObject, useEffect,
+  memo, useMemo, useCallback, RefObject,
 } from 'react';
-import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
+import {
+  TfiArrowCircleLeft, TfiArrowCircleRight, TfiArrowCircleUp, TfiArrowCircleDown,
+} from "react-icons/tfi";
 
-import theme from '../../../themets.js';
 import { handlePressed, handleReleased } from '../../controls';
 
 import * as atoms from '../../../atoms';
 import * as types from '../../../types';
 
-const Connecting = styled.div<any>`
-  position: absolute;
-  top: max(calc(50% - 75px), 0px);
-  right: max(calc(50% - 150px), 0px);
-  bottom: max(calc(50% - 75px), 0px);
-  left: max(calc(50% - 150px), 0px);
-  background: ${theme.colors.bgVerylight};
-  display: ${(props) => (props.show ? 'flex' : 'none')};
-  justify-content: center;
-  align-items: center;
-  transition: transform 3s;
-`;
+const InfoElements = ({ objectsRef, ownId }: { objectsRef: RefObject<types.GameObject[]>; ownId: string | undefined }) => (
+  Object.entries(objectsRef.current || []).reduce((acc: any, [id, object]) => {
+    const o = object;
+    if (id !== ownId) {
+      acc.push(
+        <div
+          key={id}
+          ref={(element) => {
+            o.infoElement = element;
+          }}
+          className="absolute text-white text-xs -translate-x-1/2"
+        />,
+      );
+    }
+    return acc;
+  }, [])
+);
 
-const Button = styled.button`
-  padding: 0px;
-  display: flex;
-  opacity: 85%;
-  color: ${theme.colors.highlight1};
-  border-color: ${theme.colors.highlight1};
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  border-radius: 50%;
-  border-width: 3px;
-  margin: 2mm 7mm 4mm 7mm;
-  width: 1cm;
-  height: 1cm;
-  background: transparent;
-  -webkit-user-select: none; /* Chrome all / Safari all */
-  -moz-user-select: none; /* Firefox all */
-  -ms-user-select: none; /* IE 10+ */
-  user-select: none; /* Likely future */
-`;
-
-const InfoElement = styled.div`
-  position: absolute;
-  transform: translate(-50%, -50%);
-  transition: all 0.02s;
-  font-family: ${theme.fontFamily};
-  font-size: 11px;
-  color: white;
-`;
-
-const InfoElements = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
-  const ownId = useRecoilValue(atoms.ownId);
-
-  return (
-    <>
-      {Object.entries(objectsRef.current || []).reduce((acc: any, [id, object]) => {
-        const o = object;
-        if (id !== ownId) {
-          acc.push(
-            <InfoElement
-              key={id}
-              ref={(element) => {
-                o.infoElement = element;
-              }}
-            />,
-          );
+const InfoBox = ({ visible, objectsRef, ownId }: { visible: boolean, objectsRef: RefObject<types.GameObject[]>; ownId: string | undefined }) => (
+  visible ? (
+    <div
+      className="absolute left-5 top-5 w-20 bg-white opacity-80 whitespace-pre-line px-1 py-0.5 text-xs"
+      ref={(element: HTMLDivElement) => {
+        const ownObject = objectsRef.current?.find((x) => x.id === ownId);
+        if (ownObject) {
+          ownObject.infoBoxElement = element;
         }
-        return acc;
-      }, [])}
-    </>
-  );
-};
+      }}
+    />
+  ) : null
+);
+
+const Connecting = ({ visible }: { visible: boolean }) => (
+  visible ? (
+    <div className="w-full h-full flex justify-center items-center">
+      <div className="bg-red-100 w-1/2 h-1/4 flex justify-center items-center">Connecting...</div>
+    </div>
+  ) : null
+);
 
 const ControlButton = ({
   control,
@@ -95,45 +70,35 @@ const ControlButton = ({
 
   const symbol = useMemo(() => {
     switch (control) {
-      case types.Keys.UP:
-        return '\u2191';
-      case types.Keys.DOWN:
-        return '\u2193';
       case types.Keys.LEFT:
-        return '\u2190';
+        return <TfiArrowCircleLeft />;
       case types.Keys.RIGHT:
-        return '\u2192';
+        return <TfiArrowCircleRight />;
+      case types.Keys.UP:
+        return <TfiArrowCircleUp />;
+      case types.Keys.DOWN:
+        return <TfiArrowCircleDown />;
       default:
         return null;
     }
   }, [control]);
 
   return (
-    <Button
+    <button
+      className="text-red-900 text-[40px]"
+      type="button"
       onTouchStart={onPressed}
       onTouchEnd={onReleased}
       onMouseDown={onPressed}
       onMouseUp={onReleased}
     >
       {symbol}
-    </Button>
+    </button>
   );
 };
 
-const InfoBox = ({ objectsRef, ownId }: { objectsRef: RefObject<types.GameObject[]>; ownId: string | undefined }) => (
-  <div
-    className="absolute left-5 top-5 w-20 bg-white opacity-80 whitespace-pre-line px-1 py-0.5 text-xs"
-    ref={(element: HTMLDivElement) => {
-      const ownObject = objectsRef.current?.find((x) => x.id === ownId);
-      if (ownObject) {
-        ownObject.infoBoxElement = element;
-      }
-    }}
-  />
-);
-
 const ControlButtons = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => (
-  <div className="landscape:hidden absolute left-0 right-0 bottom-0 flex flex-col items-center">
+  <div className="landscape:hidden absolute left-0 right-0 bottom-8 flex flex-col items-center">
     <ControlButton control={types.Keys.UP} objectsRef={objectsRef} />
     <div className="w-full flex justify-evenly">
       <ControlButton control={types.Keys.LEFT} objectsRef={objectsRef} />
@@ -146,24 +111,17 @@ const ControlButtons = ({ objectsRef }: { objectsRef: RefObject<types.GameObject
 const CanvasOverlay = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
   console.log('--CanvasOverlay');
 
-  //  const connectedIds = useRecoilValue(atoms.connectedIdsOnMain);
   const channelsOrdered = useRecoilValue(atoms.channelsOrdered);
   const channelsUnordered = useRecoilValue(atoms.channelsUnordered);
-  const objectIds = useRecoilValue(atoms.objectIds);
   const main = useRecoilValue(atoms.main);
   const ownId = useRecoilValue(atoms.ownId);
-
-  useEffect(() => {
-    // re-render after updated objectsRef.current
-  }, [objectIds]);
+  const connectedToMain = Boolean(main || (channelsOrdered.length && channelsUnordered.length));
 
   return (
     <div className="absolute left-0 right-0 top-0 bottom-[30%] landscape:right-[20%] landscape:bottom-0 z-10">
-      <InfoElements objectsRef={objectsRef} />
-      <Connecting show={!main && (!channelsOrdered.length || !channelsUnordered.length)}>Connecting...</Connecting>
-      {Boolean(main || (channelsOrdered.length && channelsUnordered.length)) && (
-        <InfoBox objectsRef={objectsRef} ownId={ownId} />
-      )}
+      <InfoElements objectsRef={objectsRef} ownId={ownId} />
+      <Connecting visible={!connectedToMain} />
+      <InfoBox visible={connectedToMain} objectsRef={objectsRef} ownId={ownId} />
       <ControlButtons objectsRef={objectsRef} />
     </div>
   );

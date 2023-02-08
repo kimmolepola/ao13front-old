@@ -126,7 +126,7 @@ const handleInfoElement = (
     o.infoElement.textContent = o.username;
     v.copy(object3D.position);
     v.project(camera);
-    o.infoElement.style.top = `calc(${h * -v.y + h}px + 10%)`;
+    o.infoElement.style.top = `calc(${h * -v.y + h}px + 5%)`;
     o.infoElement.style.left = `${w * v.x + w}px`;
   }
 };
