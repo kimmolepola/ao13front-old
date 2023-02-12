@@ -1,23 +1,19 @@
-import {
-  memo, useCallback, useEffect, useState,
-} from 'react';
-import {
-  useLocation, useNavigate, Routes, Route,
-} from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { memo, useCallback, useEffect, useState } from "react";
+import { useLocation, useNavigate, Routes, Route } from "react-router-dom";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
-import { checkOkToStart } from '../../networking/services/user.service';
-import { getTurnCredentials } from '../../networking/services/auth.service';
-import * as networkingHooks from '../../networking/hooks';
+import { checkOkToStart } from "../../networking/services/user.service";
+import { getTurnCredentials } from "../../networking/services/auth.service";
+import * as networkingHooks from "../../networking/hooks";
 
-import Settings from './Settings';
+import Settings from "./Settings";
 
-import * as theme from '../../theme';
-import * as atoms from '../../atoms';
+import * as theme from "../../theme";
+import * as atoms from "../../atoms";
 
 const LoggedIn = () => {
   const location = useLocation();
-  console.log('--LoggedIn');
+  console.log("--LoggedIn");
   const navigate = useNavigate();
   const user = useRecoilValue(atoms.user);
   const setTurnCredentials = useSetRecoilState(atoms.turnCredentials);
@@ -33,20 +29,18 @@ const LoggedIn = () => {
   const onClickRefresh = useCallback(async () => {
     setLoading(true);
     await refreshUser();
-    setTimeout(
-      () => setLoading(false),
-      250,
-    );
+    setTimeout(() => setLoading(false), 250);
   }, [refreshUser]);
 
   const onClickPlay = useCallback(async () => {
     if (!errorText) {
       const { data, error } = await checkOkToStart();
       if (data && data.success) {
-        const { data: credsData, error: credsError } = await getTurnCredentials();
+        const { data: credsData, error: credsError } =
+          await getTurnCredentials();
         if (credsData) {
           setTurnCredentials(credsData);
-          navigate('/play');
+          navigate("/play");
         } else {
           setErrorText(credsError);
           setTimeout(() => setErrorText(undefined), 5000);
@@ -60,13 +54,10 @@ const LoggedIn = () => {
 
   return (
     <Routes>
-      <Route
-        path="/settings"
-        element={<Settings />}
-      />
+      <Route path="/settings" element={<Settings />} />
       <Route
         path="*"
-        element={(
+        element={
           <>
             <div className="flex gap-4">
               {user && `Score: ${user.score}`}
@@ -76,15 +67,21 @@ const LoggedIn = () => {
                 onClick={onClickRefresh}
                 type="button"
               >
-                {'\u21BB'}
+                {"\u21BB"}
               </button>
             </div>
-            {errorText && <div className={theme.cValidationError}>{errorText}</div>}
-            <button className={theme.cButtonRose} onClick={onClickPlay} type="button">
+            {errorText && (
+              <div className={theme.cValidationError}>{errorText}</div>
+            )}
+            <button
+              className={theme.cButton}
+              onClick={onClickPlay}
+              type="button"
+            >
               Play
             </button>
           </>
-        )}
+        }
       />
     </Routes>
   );

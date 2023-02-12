@@ -1,17 +1,24 @@
+import { memo, useMemo, useCallback, RefObject } from "react";
+import { useRecoilValue } from "recoil";
 import {
-  memo, useMemo, useCallback, RefObject,
-} from 'react';
-import { useRecoilValue } from 'recoil';
-import {
-  TfiArrowCircleLeft, TfiArrowCircleRight, TfiArrowCircleUp, TfiArrowCircleDown,
+  TfiArrowCircleLeft,
+  TfiArrowCircleRight,
+  TfiArrowCircleUp,
+  TfiArrowCircleDown,
 } from "react-icons/tfi";
 
-import { handlePressed, handleReleased } from '../../controls';
+import { handlePressed, handleReleased } from "../../controls";
 
-import * as atoms from '../../../atoms';
-import * as types from '../../../types';
+import * as atoms from "../../../atoms";
+import * as types from "../../../types";
 
-const InfoElements = ({ objectsRef, ownId }: { objectsRef: RefObject<types.GameObject[]>; ownId: string | undefined }) => (
+const InfoTexts = ({
+  objectsRef,
+  ownId,
+}: {
+  objectsRef: RefObject<types.GameObject[]>;
+  ownId: string | undefined;
+}) =>
   Object.entries(objectsRef.current || []).reduce((acc: any, [id, object]) => {
     const o = object;
     if (id !== ownId) {
@@ -21,42 +28,50 @@ const InfoElements = ({ objectsRef, ownId }: { objectsRef: RefObject<types.GameO
           ref={(element) => {
             o.infoElement = element;
           }}
-          className="absolute text-white text-xs -translate-x-1/2"
-        />,
+          className="absolute text-white text-xs -translate-x-1/2 translate-y-1/2"
+        />
       );
     }
     return acc;
-  }, [])
-);
+  }, []);
 
-const InfoBox = ({ visible, objectsRef, ownId }: { visible: boolean, objectsRef: RefObject<types.GameObject[]>; ownId: string | undefined }) => (
+const InfoBox = ({
+  visible,
+  objectsRef,
+  ownId,
+}: {
+  visible: boolean;
+  objectsRef: RefObject<types.GameObject[]>;
+  ownId: string | undefined;
+}) =>
   visible ? (
     <div
       className="absolute left-5 top-5 w-20 bg-white opacity-80 whitespace-pre-line px-1 py-0.5 text-xs"
       ref={(element: HTMLDivElement) => {
         const ownObject = objectsRef.current?.find((x) => x.id === ownId);
+        console.log("--OWNOBJECT:", ownObject, objectsRef.current, ownId);
         if (ownObject) {
           ownObject.infoBoxElement = element;
         }
       }}
     />
-  ) : null
-);
+  ) : null;
 
-const Connecting = ({ visible }: { visible: boolean }) => (
+const ConnectingBox = ({ visible }: { visible: boolean }) =>
   visible ? (
     <div className="w-full h-full flex justify-center items-center">
-      <div className="bg-red-100 w-1/2 h-1/4 flex justify-center items-center">Connecting...</div>
+      <div className="bg-red-100 w-1/2 h-1/4 flex justify-center items-center">
+        Connecting...
+      </div>
     </div>
-  ) : null
-);
+  ) : null;
 
 const ControlButton = ({
   control,
   objectsRef,
 }: {
-  control: types.Keys,
-  objectsRef: RefObject<types.GameObject[]>,
+  control: types.Keys;
+  objectsRef: RefObject<types.GameObject[]>;
 }) => {
   const ownId = useRecoilValue(atoms.ownId);
 
@@ -97,7 +112,11 @@ const ControlButton = ({
   );
 };
 
-const ControlButtons = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => (
+const ControlButtons = ({
+  objectsRef,
+}: {
+  objectsRef: RefObject<types.GameObject[]>;
+}) => (
   <div className="landscape:hidden absolute left-0 right-0 bottom-8 flex flex-col items-center">
     <ControlButton control={types.Keys.UP} objectsRef={objectsRef} />
     <div className="w-full flex justify-evenly">
@@ -108,20 +127,31 @@ const ControlButtons = ({ objectsRef }: { objectsRef: RefObject<types.GameObject
   </div>
 );
 
-const CanvasOverlay = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
-  console.log('--CanvasOverlay');
+const CanvasOverlay = ({
+  objectsRef,
+}: {
+  objectsRef: RefObject<types.GameObject[]>;
+}) => {
+  console.log("--CanvasOverlay");
 
+  useRecoilValue(atoms.objectIds); // render when objectIds change
   const channelsOrdered = useRecoilValue(atoms.channelsOrdered);
   const channelsUnordered = useRecoilValue(atoms.channelsUnordered);
   const main = useRecoilValue(atoms.main);
   const ownId = useRecoilValue(atoms.ownId);
-  const connectedToMain = Boolean(main || (channelsOrdered.length && channelsUnordered.length));
+  const connectedToMain = Boolean(
+    main || (channelsOrdered.length && channelsUnordered.length)
+  );
 
   return (
     <div className="absolute left-0 right-0 top-0 bottom-[30%] landscape:right-[20%] landscape:bottom-0 z-10">
-      <InfoElements objectsRef={objectsRef} ownId={ownId} />
-      <Connecting visible={!connectedToMain} />
-      <InfoBox visible={connectedToMain} objectsRef={objectsRef} ownId={ownId} />
+      <InfoTexts objectsRef={objectsRef} ownId={ownId} />
+      <ConnectingBox visible={!connectedToMain} />
+      <InfoBox
+        visible={connectedToMain}
+        objectsRef={objectsRef}
+        ownId={ownId}
+      />
       <ControlButtons objectsRef={objectsRef} />
     </div>
   );

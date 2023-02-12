@@ -1,15 +1,15 @@
-import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
-import { setToken } from '../../networking/services/auth.service';
+import { useCallback } from "react";
+import { useSetRecoilState } from "recoil";
+import { setToken } from "../../networking/services/auth.service";
 
-import * as atoms from '../../atoms';
+import * as atoms from "../../atoms";
 
 export const useAuth = () => {
-  console.log('--useAuth');
+  console.log("--useAuth");
 
   const setUser = useSetRecoilState(atoms.user);
   const loadSavedUser = useCallback(() => {
-    const item = JSON.parse(localStorage.getItem('user') || 'null');
+    const item = JSON.parse(localStorage.getItem("user") || "null");
     setUser(item);
     setToken(item?.token);
   }, [setUser]);

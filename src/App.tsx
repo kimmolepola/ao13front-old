@@ -1,13 +1,13 @@
-import { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
 
-import Game from './game';
-import Frontpage from './frontpage';
+import Game from "./game";
+import Frontpage from "./frontpage";
 
-import * as frontpageHooks from './frontpage/hooks';
+import * as frontpageHooks from "./frontpage/hooks";
 
 const App = () => {
-  console.log('--App');
+  console.log("--App");
   const { loadSavedUser } = frontpageHooks.useAuth();
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const App = () => {
   return (
     <Routes>
       <Route path="/play" element={<Game />} />
-      <Route path="*" element={(<Frontpage />)} />
+      <Route path="*" element={<Frontpage />} />
     </Routes>
   );
 };

@@ -1,24 +1,24 @@
-import { memo, RefObject } from 'react';
-import * as THREE from 'three';
-import { useThree, useFrame } from '@react-three/fiber';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { memo, RefObject } from "react";
+import * as THREE from "three";
+import { useThree, useFrame } from "@react-three/fiber";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 
-import * as networkingHooks from '../../../networking/hooks';
-import { radiansToDegrees } from '../../../utils';
+import * as networkingHooks from "../../../networking/hooks";
+import { radiansToDegrees } from "../../../utils";
 import {
   interpolationAlpha,
   sendIntervalClient,
   sendIntervalMain,
   maxSpeed,
   minSpeed,
-} from '../../../parameters';
+} from "../../../parameters";
 
-import * as atoms from '../../../atoms';
-import * as types from '../../../types';
+import * as atoms from "../../../atoms";
+import * as types from "../../../types";
 
 const handleKeys = (delta: number, gameObject: types.GameObject) => {
   const o = gameObject;
-  for (const key of o.keyDowns) {
+  o.keyDowns.forEach((key) => {
     switch (key) {
       case types.Keys.UP:
         o.controlsUp += delta;
@@ -39,10 +39,14 @@ const handleKeys = (delta: number, gameObject: types.GameObject) => {
       default:
         break;
     }
-  }
+  });
 };
 
-const handleCamera = (camera: THREE.Camera, gameObject: types.GameObject, object3D: THREE.Object3D) => {
+const handleCamera = (
+  camera: THREE.Camera,
+  gameObject: types.GameObject,
+  object3D: THREE.Object3D
+) => {
   const c = camera;
   c.position.x = gameObject.object3D?.position.x || 0;
   c.position.y = gameObject.object3D?.position.y || 0;
@@ -52,7 +56,7 @@ const handleCamera = (camera: THREE.Camera, gameObject: types.GameObject, object
 
 const handleInfoBoxElement = (
   gameObject: types.GameObject,
-  object3D: THREE.Object3D,
+  object3D: THREE.Object3D
 ) => {
   const o = gameObject;
   if (o.infoBoxElement) {
@@ -66,7 +70,11 @@ const handleInfoBoxElement = (
   }
 };
 
-const handleMovement = (delta: number, gameObject: types.GameObject, object3D: THREE.Object3D) => {
+const handleMovement = (
+  delta: number,
+  gameObject: types.GameObject,
+  object3D: THREE.Object3D
+) => {
   const o = gameObject;
   const forceUp = delta > 1 ? o.controlsUp : delta * o.controlsUp;
   const forceDown = delta > 1 ? o.controlsDown : delta * o.controlsDown;
@@ -85,7 +93,10 @@ const handleMovement = (delta: number, gameObject: types.GameObject, object3D: T
   object3D.translateY(o.speed * delta);
 };
 
-const gatherUpdateData = (updateData: { [id: string]: types.UpdateObject }, o: types.GameObject) => {
+const gatherUpdateData = (
+  updateData: { [id: string]: types.UpdateObject },
+  o: types.GameObject
+) => {
   const data = updateData;
   data[o.id] = {
     uScore: o.score,
@@ -119,7 +130,7 @@ const handleInfoElement = (
   h: number,
   w: number,
   object3D: THREE.Object3D,
-  camera: THREE.Camera,
+  camera: THREE.Camera
 ) => {
   const o = gameObject;
   if (o.infoElement) {
@@ -143,15 +154,21 @@ const interpolatePosition = (o: types.GameObject, object3D: THREE.Object3D) => {
   object3D.quaternion.slerp(o.backendQuaternion, interpolationAlpha);
 };
 
-const Loop = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => {
-  console.log('--Loop');
+const Loop = ({
+  objectsRef,
+}: {
+  objectsRef: RefObject<types.GameObject[]>;
+}) => {
+  console.log("--Loop");
 
   const main = useRecoilValue(atoms.main);
   const ownId = useRecoilValue(atoms.ownId);
   const setScore = useSetRecoilState(atoms.score);
 
-  const { sendUnordered: sendUnorderedFromClient } = networkingHooks.useSendFromClient();
-  const { sendUnordered: sendUnorderedFromMain } = networkingHooks.useSendFromMain();
+  const { sendUnordered: sendUnorderedFromClient } =
+    networkingHooks.useSendFromClient();
+  const { sendUnordered: sendUnorderedFromMain } =
+    networkingHooks.useSendFromMain();
   const { size, camera } = useThree();
 
   const v = new THREE.Vector3();
@@ -164,7 +181,8 @@ const Loop = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => 
   const scoreTimeInteval = 9875;
 
   useFrame((state, delta) => {
-    if (main) { // main
+    if (main) {
+      // main
       const updateData: { [id: string]: types.UpdateObject } = {};
       for (let i = (objectsRef.current || []).length - 1; i > -1; i--) {
         const o = objectsRef.current?.[i];
@@ -190,9 +208,14 @@ const Loop = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => 
       }
       if (Date.now() > nextSendTime) {
         nextSendTime = Date.now() + sendIntervalMain;
-        sendUnorderedFromMain({ timestamp: Date.now(), type: types.NetDataType.UPDATE, data: updateData });
+        sendUnorderedFromMain({
+          timestamp: Date.now(),
+          type: types.NetDataType.UPDATE,
+          data: updateData,
+        });
       }
-    } else { // client
+    } else {
+      // client
       for (let i = (objectsRef.current || []).length - 1; i > -1; i--) {
         const o = objectsRef.current?.[i];
         if (o && o.object3D) {
@@ -202,7 +225,10 @@ const Loop = ({ objectsRef }: { objectsRef: RefObject<types.GameObject[]> }) => 
             handleInfoBoxElement(o, o.object3D);
             if (Date.now() > nextSendTime) {
               nextSendTime = Date.now() + sendIntervalClient;
-              sendUnorderedFromClient({ type: types.NetDataType.CONTROLS, data: gatherControlsData(o) });
+              sendUnorderedFromClient({
+                type: types.NetDataType.CONTROLS,
+                data: gatherControlsData(o),
+              });
               resetControlValues(o);
             }
           }

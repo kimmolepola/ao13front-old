@@ -1,32 +1,35 @@
-import { memo, useCallback, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { ChangeEvent, memo, useCallback, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import clsx from "clsx";
 
-import { setToken, login } from '../../networking/services/auth.service';
+import { setToken, login } from "../../networking/services/auth.service";
 
-import * as theme from '../../theme';
-import * as atoms from '../../atoms';
-import * as types from '../types';
-import * as hooks from '../hooks';
+import * as theme from "../../theme";
+import * as atoms from "../../atoms";
+import * as types from "../types";
+import * as hooks from "../hooks";
 
 const Login = () => {
-  console.log('--Login');
+  console.log("--Login");
   const setUser = useSetRecoilState(atoms.user);
   const navigate = useNavigate();
   const [validation, setValidation, resetValidation] = hooks.useValidation();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
-  const onSubmit = async (e: any) => {
+  const onSubmit = async (e: types.FormSubmitEvent) => {
     e.preventDefault();
     const newValidation = {
       dirty: true,
       state: types.ValidationState.OPEN,
       login: undefined,
-      username: username.length ? undefined : 'Required',
-      password: password.length ? undefined : 'Required',
+      username: username.length ? "" : "required",
+      password: password.length ? "" : "required",
     };
+    e.target[0]?.setCustomValidity(newValidation.username);
+    e.target[1]?.setCustomValidity(newValidation.password);
     if (!newValidation.username && !newValidation.password) {
       newValidation.state = types.ValidationState.LOADING;
       setValidation(newValidation);
@@ -36,71 +39,81 @@ const Login = () => {
       if (!error) {
         setUser(data);
         setToken(data.token);
-        setUsername('');
+        setUsername("");
         if (rememberMe) {
-          localStorage.setItem('user', JSON.stringify(data));
+          localStorage.setItem("user", JSON.stringify(data));
         }
       }
     }
-    setPassword('');
+    setPassword("");
     setValidation({ ...newValidation });
   };
 
-  const onChangeUsername = useCallback((e: any) => {
-    resetValidation();
-    setUsername(e.target.value);
-  }, [resetValidation]);
+  const onChangeUsername = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      e.target.setCustomValidity("");
+      resetValidation();
+      setUsername(e.target.value);
+    },
+    [resetValidation]
+  );
 
-  const onChangePassword = useCallback((e: any) => {
-    resetValidation();
-    setPassword(e.target.value);
-  }, [resetValidation]);
+  const onChangePassword = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      e.target.setCustomValidity("");
+      resetValidation();
+      setPassword(e.target.value);
+    },
+    [resetValidation]
+  );
 
   const onChangeRememberMe = useCallback((e: any) => {
     setRememberMe(e.target.checked);
   }, []);
 
-  const onClickSignUp = useCallback(() => { navigate('/signup'); }, [navigate]);
+  const onClickSignUp = useCallback(() => {
+    navigate("/signup");
+  }, [navigate]);
 
   return (
-    <div className={theme.cContainerPage}>
-      {validation.login && <div className={theme.cValidationError}>{validation.login}</div>}
+    <div className={theme.cContainer}>
       <form onSubmit={onSubmit} className={theme.cForm}>
-        {validation.username && <div className={theme.cValidationError}>{validation.username}</div>}
+        {validation.login && (
+          <div className={theme.cValidationError}>{validation.login}</div>
+        )}
         <input
-          className={theme.cInput(validation.username)}
+          className={theme.cInput}
           autoCapitalize="none"
           onChange={onChangeUsername}
           value={username}
           placeholder="username or email"
         />
-        {validation.password && <div className={theme.cValidationError}>{validation.password}</div>}
         <input
-          className={theme.cInput(validation.password)}
+          className={theme.cInput}
           type="password"
           onChange={onChangePassword}
           value={password}
           placeholder="password"
         />
         <button
-          className={theme.cButtonRose}
+          className={theme.cButton}
           disabled={validation.state === types.ValidationState.LOADING}
           type="submit"
         >
           Sign in
         </button>
         <label className="flex gap-1 cursor-pointer select-none">
-          <input type="checkbox" checked={rememberMe} onChange={onChangeRememberMe} />
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={onChangeRememberMe}
+          />
           Remember me
         </label>
       </form>
-      <Link
-        to="/forgottenpassword"
-      >
-        Forgotten password?
-      </Link>
+      <Link to="/forgottenpassword">Forgotten password?</Link>
       <button
-        className={theme.cButtonOrange}
+        className={clsx(theme.cButton, "bg-orange-400")}
         type="button"
         onClick={onClickSignUp}
       >

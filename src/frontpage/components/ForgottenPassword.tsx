@@ -1,92 +1,96 @@
-import {
-  memo, useMemo, useCallback, useState,
-} from 'react';
-import { useNavigate } from 'react-router-dom';
-import { requestPasswordReset } from '../../networking/services/auth.service';
+import { ChangeEvent, memo, useMemo, useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { requestPasswordReset } from "../../networking/services/auth.service";
 
-import * as theme from '../../theme';
-import * as types from '../types';
-import * as hooks from '../hooks';
+import * as theme from "../../theme";
+import * as types from "../types";
+import * as hooks from "../hooks";
 
 const ForgottenPassword = () => {
-  console.log('--ForgottenPassword');
+  console.log("--ForgottenPassword");
   const navigate = useNavigate();
   const [validation, setValidation, resetValidation] = hooks.useValidation();
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
 
   const stateText = useMemo(() => {
     switch (validation.state) {
       case types.ValidationState.LOADING:
-        return 'Please wait...';
+        return "Please wait...";
       case types.ValidationState.SUCCESS:
-        return 'Email sent (check spam)';
+        return "Email sent (check spam)";
       default:
-        return 'Enter your username or email';
+        return "Enter your username or email";
     }
   }, [validation.state]);
 
-  const onSubmit = async (e: any) => {
+  const onSubmit = async (e: types.FormSubmitEvent) => {
     e.preventDefault();
     const newValidation = {
       dirty: true,
       state: types.ValidationState.OPEN,
       request: undefined,
-      username: username.length ? undefined : 'required',
+      username: username.length ? "" : "required",
     };
+    e.target[0]?.setCustomValidity(newValidation.username);
     if (!newValidation.username) {
       newValidation.state = types.ValidationState.LOADING;
       setValidation(newValidation);
       const { error } = await requestPasswordReset({ username });
       newValidation.request = error;
-      newValidation.state = error ? types.ValidationState.OPEN : types.ValidationState.SUCCESS;
-      setUsername('');
+      newValidation.state = error
+        ? types.ValidationState.OPEN
+        : types.ValidationState.SUCCESS;
+      setUsername("");
     }
     setValidation({ ...newValidation });
   };
 
-  const onChangeUsername = useCallback((e: any) => {
-    resetValidation();
-    setUsername(e.target.value);
-  }, [resetValidation]);
+  const onChangeUsername = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      e.target.setCustomValidity("");
+      resetValidation();
+      setUsername(e.target.value);
+    },
+    [resetValidation]
+  );
 
   const onClickCancel = useCallback(() => {
-    navigate('/login');
+    navigate("/login");
   }, [navigate]);
 
   return (
-    <div className={theme.cContainerPage}>
+    <div className={theme.cContainer}>
       {stateText}
-      {validation.request && <div className={theme.cValidationError}>{validation.request}</div>}
-      {validation.state !== types.ValidationState.SUCCESS
-        && (
-          <form onSubmit={onSubmit} className={theme.cForm}>
-            {validation.username
-              && <div className={theme.cValidationError}>{validation.username}</div>}
-            <input
-              className={theme.cInput(validation.username)}
-              autoCapitalize="none"
-              onChange={onChangeUsername}
-              value={username}
-              placeholder="username or email"
-            />
-            <div className="flex justify-between gap-2 w-full">
-              <button
-                className="h-8 border border-rose-900 text-rose-900 bg-transparent grow"
-                onClick={onClickCancel}
-                type="button"
-              >
-                Cancel
-              </button>
-              <button
-                disabled={validation.state === types.ValidationState.LOADING}
-                type="submit"
-                className="h-8 border text-gray-50 bg-rose-900 grow"
-              >
-                Submit
-              </button>
-            </div>
-          </form>
-        )}
+      {validation.state !== types.ValidationState.SUCCESS && (
+        <form onSubmit={onSubmit} className={theme.cForm}>
+          {validation.request && (
+            <div className={theme.cValidationError}>{validation.request}</div>
+          )}
+          <input
+            className={theme.cInput}
+            autoCapitalize="none"
+            onChange={onChangeUsername}
+            value={username}
+            placeholder="username or email"
+          />
+          <div className="flex justify-between gap-2 w-full">
+            <button
+              className="h-8 border border-rose-900 text-rose-900 bg-transparent grow"
+              onClick={onClickCancel}
+              type="button"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={validation.state === types.ValidationState.LOADING}
+              type="submit"
+              className="h-8 border text-gray-50 bg-rose-900 grow"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 };

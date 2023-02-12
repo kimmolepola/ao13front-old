@@ -1,26 +1,27 @@
-import { RefObject } from 'react';
-import { useRecoilState } from 'recoil';
+import { RefObject } from "react";
+import { useSetRecoilState } from "recoil";
 
-import { chatMessageTimeToLive } from '../../parameters';
+import { chatMessageTimeToLive } from "../../parameters";
 
-import * as atoms from '../../atoms';
-import * as types from '../../types';
-import * as gameHooks from '../../game/hooks';
+import * as atoms from "../../atoms";
+import * as types from "../../types";
+import * as gameHooks from "../../game/hooks";
 
-export const useReceiveOnClient = (objectsRef: RefObject<types.GameObject[]>) => {
-  console.log('--useReceiveOnClient');
+export const useReceiveOnClient = (
+  objectsRef: RefObject<types.GameObject[]>
+) => {
+  console.log("--useReceiveOnClient");
 
-  const [chatMessages, setChatMessages] = useRecoilState(atoms.chatMessages);
-  const { handleUpdateData, handleStateData } = gameHooks.useObjectsOnClient(objectsRef);
+  const setChatMessages = useSetRecoilState(atoms.chatMessages);
+  const { handleUpdateData, handleStateData } =
+    gameHooks.useObjectsOnClient(objectsRef);
 
   let mostRecentTimestamp = 0;
 
-  const onReceive = (
-    data: types.NetData,
-  ) => {
+  const onReceive = (data: types.NetData) => {
     switch (data.type) {
       case types.NetDataType.STATE: {
-        console.log('--CLIENT on receive state:', data);
+        console.log("--CLIENT on receive state:", data);
         handleStateData(data);
         break;
       }
@@ -34,12 +35,14 @@ export const useReceiveOnClient = (objectsRef: RefObject<types.GameObject[]>) =>
       case types.NetDataType.CHATMESSAGE_MAIN: {
         const message = {
           ...data,
-          username: (objectsRef.current || []).find((x) => x.id === data.userId)?.username || '',
+          username:
+            (objectsRef.current || []).find((x) => x.id === data.userId)
+              ?.username || "",
         };
-        setChatMessages([message, ...chatMessages]);
+        setChatMessages((x) => [message, ...x]);
         setTimeout(
           () => setChatMessages((x) => x.filter((xx) => xx !== message)),
-          chatMessageTimeToLive,
+          chatMessageTimeToLive
         );
         break;
       }

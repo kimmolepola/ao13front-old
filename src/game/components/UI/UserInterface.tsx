@@ -1,17 +1,17 @@
-import { memo, RefObject } from 'react';
-import CanvasOverlay from './CanvasOverlay';
-import Sidepanel from './Sidepanel';
+import { memo, RefObject } from "react";
+import CanvasOverlay from "./CanvasOverlay";
+import Sidepanel from "./Sidepanel";
 
-import * as types from '../../../types';
+import * as types from "../../../types";
 
 const UserInterface = ({
   quit,
   objectsRef,
 }: {
-  quit: Function,
-  objectsRef: RefObject<types.GameObject[]>
+  quit: Function;
+  objectsRef: RefObject<types.GameObject[]>;
 }) => {
-  console.log('--UserInterface');
+  console.log("--UserInterface");
 
   return (
     <>

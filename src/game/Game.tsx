@@ -1,21 +1,19 @@
-import {
-  useEffect, useRef, memo, useCallback,
-} from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useEffect, useRef, memo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 
-import * as networkingHooks from '../networking/hooks';
+import * as networkingHooks from "../networking/hooks";
 
-import Canvas from './components/Canvas';
-import UserInterface from './components/UI';
+import Canvas from "./components/Canvas";
+import UserInterface from "./components/UI";
 
-import * as atoms from '../atoms';
-import * as hooks from './hooks';
+import * as atoms from "../atoms";
+import * as hooks from "./hooks";
 
 let initialized = false;
 
 const Game = () => {
-  console.log('--Game');
+  console.log("--Game");
 
   const navigate = useNavigate();
   const objectsRef = useRef([]);
@@ -26,20 +24,20 @@ const Game = () => {
   const turnCredentials = useRecoilValue(atoms.turnCredentials);
 
   const quit = useCallback(async () => {
-    navigate('/');
+    navigate("/");
     initialized = false;
     disconnect();
   }, [navigate, disconnect]);
 
   useEffect(() => {
-    console.log('--game useEffect, initialized:', initialized);
+    console.log("--game useEffect, initialized:", initialized);
     if (!initialized && turnCredentials) {
-      console.log('--initialize');
+      console.log("--initialize");
       initialized = true;
       connect();
     }
     return () => {
-      console.log('--game useEffect return');
+      console.log("--game useEffect return");
     };
   }, [connect, turnCredentials]);
 

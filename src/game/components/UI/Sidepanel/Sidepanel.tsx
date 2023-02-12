@@ -1,55 +1,18 @@
-import { memo, useCallback, RefObject } from 'react';
-import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
+import { memo, useCallback, RefObject } from "react";
+import { useRecoilValue } from "recoil";
 
-import ChatContainer from './ChatContainer';
-import theme from '../../../../themets.js';
-
-import * as atoms from '../../../../atoms';
-import * as types from '../../../../types';
-
-const Text = styled.div`
-  margin: ${theme.margins.basic};
-  opacity: ${theme.opacity.basic};
-  font-family: ${theme.fontFamily};
-  font-size: 16px;
-  color: ${theme.colors.highlight1};
-  font-weight: bold;
-  user-select: none;
-`;
-
-const Button = styled.button`
-  margin-bottom: ${theme.margins.large};
-  align-self: flex-end;
-  font-family: ${theme.fontFamily};
-  font-size: 10px;
-  height: 20px;
-  width: 40px;
-  ${theme.basicButton}
-  background-color: transparent;
-  color: ${theme.colors.highlight1};
-  font-weight: bold;
-`;
-
-const InfoBox = styled.div`
-  margin-bottom: ${theme.margins.basic};
-  color: ${theme.colors.bgMedium};
-  background: white;
-  padding: 2px;
-  font-family: ${theme.fontFamily};
-  font-size: 12px;
-  border-radius: ${theme.borderRadius};
-  cursor: default;
-`;
+import Chat from "./Chat";
+import * as atoms from "../../../../atoms";
+import * as types from "../../../../types";
 
 const Sidepanel = ({
   quit,
   objectsRef,
 }: {
-  quit: Function,
-  objectsRef: RefObject<types.GameObject[]>
+  quit: Function;
+  objectsRef: RefObject<types.GameObject[]>;
 }) => {
-  console.log('--Sidepanel');
+  console.log("--Sidepanel");
 
   const main = useRecoilValue(atoms.main);
   const connectedIdsOnMain = useRecoilValue(atoms.connectedIdsOnMain);
@@ -61,28 +24,28 @@ const Sidepanel = ({
   }, [quit]);
 
   return (
-    <div className="absolute left-0 right-0 top-[70%] bottom-0 landscape:top-0 landscape:left-[80%]">
+    <div className="absolute left-0 right-0 top-[70%] bottom-0 landscape:top-0 landscape:left-[80%] flex flex-col">
       <div className="flex flex-col">
-        <div className="flex w-full justify-between">
-          <Text>AO13</Text>
-          <Button onClick={onClickQuit}>Quit</Button>
-        </div>
-        <InfoBox>
-          <div>{main ? 'You are the game host' : null}</div>
-          {main && <div>{`Players: ${connectedIdsOnMain.length}`}</div>}
-          <div>
-            {connectionMessage}
+        <div className="flex w-full justify-between m-[1px]">
+          <div className="text-rose-900 font-bold select-none items-center">
+            AO13
           </div>
-        </InfoBox>
-        <InfoBox>
-          <p />
-          <p />
-          {score}
-          <p />
-          <p />
-        </InfoBox>
+          <button
+            className="text-rose-900 border-2 px-2 active:brightness-80 text-xs font-bold"
+            type="button"
+            onClick={onClickQuit}
+          >
+            Quit
+          </button>
+        </div>
+        <div className="flex gap-1 flex-wrap text-xs p-0.5 border">
+          {main && <div>You are the game host |</div>}
+          {main && <div>{`Players: ${connectedIdsOnMain.length} |`}</div>}
+          <div>{`${connectionMessage} |`}</div>
+          <div>{`Score: ${score}`}</div>
+        </div>
       </div>
-      <ChatContainer objectsRef={objectsRef} />
+      <Chat objectsRef={objectsRef} />
     </div>
   );
 };

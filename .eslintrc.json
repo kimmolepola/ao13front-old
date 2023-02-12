@@ -1,11 +1,13 @@
 {
   "env": {
     "browser": true,
-    "es6": true
+    "es2021": true
   },
   "extends": [
     "plugin:react/recommended",
-    "airbnb"
+    "airbnb",
+    "plugin:prettier/recommended",
+    "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -17,8 +19,9 @@
   },
   "plugins": [
     "react",
-    "@typescript-eslint",
-    "react-hooks"
+    "react-hooks",
+    "prettier",
+    "@typescript-eslint"
   ],
   "settings": {
     "import/resolver": {
@@ -26,50 +29,14 @@
     }
   },
   "rules": {
-    "quotes": "off",
-    "no-unsafe-optional-chaining": "off",
-    "prefer-template": "off",
-    "no-restricted-exports": [
-      "off"
-    ],
-    "react/jsx-first-prop-new-line": [
-      2,
-      "multiline"
-    ],
-    "react/jsx-max-props-per-line": [
-      2,
-      {
-        "maximum": 1,
-        "when": "multiline"
-      }
-    ],
-    "react/jsx-indent-props": [
-      2,
-      2
-    ],
-    "react/jsx-closing-bracket-location": [
-      2,
-      "tag-aligned"
-    ],
-    "max-len": "off",
-    "jsx-a11y/label-has-associated-control": [
-      "error",
-      {
-        "assert": "either" // either check for `htmlFor` or `nesting`
-      }
-    ],
-    "import/prefer-default-export": "off",
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-unused-vars": [
+      "warn"
+    ],
     "no-shadow": "off",
     "@typescript-eslint/no-shadow": [
-      "error"
+      "warn"
     ],
-    "no-lone-blocks": "warn",
-    "no-plusplus": "off",
-    "no-restricted-syntax": "off",
-    "no-console": "off",
-    "react/require-default-props": "off",
     "react/react-in-jsx-scope": "off",
     "import/extensions": [
       "error",
@@ -77,12 +44,6 @@
       {
         "ts": "never",
         "tsx": "never"
-      }
-    ],
-    "react-hooks/exhaustive-deps": [
-      "warn",
-      {
-        "additionalHooks": "(useRecoilCallback|useRecoilTransaction_UNSTABLE)"
       }
     ],
     "react/jsx-filename-extension": [
@@ -102,6 +63,64 @@
         "namedComponents": "arrow-function",
         "unnamedComponents": "arrow-function"
       }
-    ]
+    ],
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      },
+      {
+        "usePrettierrc": true
+      }
+    ],
+    "import/no-dynamic-require": "off",
+    "global-require": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "no-use-before-define": "off",
+    "import/no-cycle": "off",
+    "react/prop-types": "off",
+    "import/no-named-as-default": "off",
+    "import/no-named-as-default-member": "off",
+    "react/jsx-props-no-spreading": "off",
+    "no-param-reassign": "off",
+    "radix": "off",
+    "import/order": "off",
+    "no-plusplus": "off",
+    "no-underscore-dangle": "off",
+    "no-unused-expressions": "off",
+    "array-callback-return": "warn",
+    "react/jsx-no-bind": "off",
+    "class-methods-use-this": "off",
+    "consistent-return": "off",
+    "new-cap": "off",
+    "react/destructuring-assignment": "off",
+    "react/forbid-prop-types": "off",
+    "import/prefer-default-export": "off",
+    "react/no-unused-state": "warn",
+    "no-nested-ternary": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "react/sort-comp": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "no-return-assign": "warn",
+    "react/no-array-index-key": "warn",
+    "guard-for-in": "warn",
+    "no-restricted-syntax": "warn",
+    "max-classes-per-file": "off",
+    "react/state-in-constructor": "off",
+    "react/static-property-placement": "off",
+    "react/prefer-stateless-function": "off",
+    "react/no-did-update-set-state": "warn",
+    "camelcase": "off",
+    "prefer-destructuring": "warn",
+    "no-await-in-loop": "warn",
+    "no-restricted-globals": "off",
+    "no-bitwise": "off",
+    "eqeqeq": "warn",
+    "jsx-a11y/label-has-associated-control": "off",
+    "react/button-has-type": "off",
+    "no-console": "off",
+    "no-restricted-exports":"off"
   }
 }

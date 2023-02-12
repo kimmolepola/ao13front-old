@@ -1,74 +1,86 @@
-import { RefObject } from 'react';
-import {
-  atom,
-} from 'recoil';
-import { Socket } from 'socket.io-client';
+import { RefObject } from "react";
+import { atom } from "recoil";
+import { Socket } from "socket.io-client";
 
-import * as types from './types';
+import * as types from "./types";
 
-export const turnCredentials = atom<{ urls: string, username: string, credential: string } | undefined>({
-  key: 'turnCredentials',
+export const turnCredentials = atom<
+  { urls: string; username: string; credential: string } | undefined
+>({
+  key: "turnCredentials",
   default: undefined,
 });
 
 export const score = atom<number>({
-  key: 'score',
+  key: "score",
   default: 0,
 });
 
 export const overlayInfotext = atom<RefObject<HTMLDivElement> | undefined>({
-  key: 'overlayInfotext',
+  key: "overlayInfotext",
   default: undefined,
   dangerouslyAllowMutability: true,
 });
 
 export const chatMessages = atom<types.ChatMessage[]>({
-  key: 'chatMessages',
+  key: "chatMessages",
   default: [],
 });
 
 export const objectIds = atom<string[]>({
-  key: 'objectIds',
+  key: "objectIds",
   default: [],
 });
 
 export const connectedIdsOnMain = atom<string[]>({
-  key: 'connectedIds',
+  key: "connectedIds",
   default: [],
 });
 
 export const ownId = atom<string | undefined>({
-  key: 'ownId',
+  key: "ownId",
   default: undefined,
 });
 
 export const main = atom<boolean>({
-  key: 'main',
+  key: "main",
   default: false,
 });
 
-export const channelsOrdered = atom<{ remoteId: string, channel: RTCDataChannel }[]>({
-  key: 'channelsOrdered',
+export const channelsOrdered = atom<
+  { remoteId: string; channel: RTCDataChannel }[]
+>({
+  key: "channelsOrdered",
   default: [],
 });
 
-export const channelsUnordered = atom<{ remoteId: string, channel: RTCDataChannel }[]>({
-  key: 'channelsUnordered',
+export const channelsUnordered = atom<
+  { remoteId: string; channel: RTCDataChannel }[]
+>({
+  key: "channelsUnordered",
   default: [],
 });
 
-export const connectionMessage = atom<string | undefined>({ key: 'connectionMessage', default: undefined });
-
-export const user = atom<{
-  token: string | undefined,
-  username: string,
-  score: number
-} | undefined>({
-  key: 'user',
+export const connectionMessage = atom<string | undefined>({
+  key: "connectionMessage",
   default: undefined,
 });
 
-export const socket = atom<undefined | Socket & { auth: { [key: string]: any } }>({
+export const user = atom<
+  | {
+      token: string | undefined;
+      username: string;
+      score: number;
+    }
+  | undefined
+>({
+  key: "user",
+  default: undefined,
+});
+
+export const socket = atom<
+  undefined | (Socket & { auth: { [key: string]: any } })
+>({
   key: "socket",
   default: undefined,
   dangerouslyAllowMutability: true,
