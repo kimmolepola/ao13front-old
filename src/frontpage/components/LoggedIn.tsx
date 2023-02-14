@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useState } from "react";
-import { useLocation, useNavigate, Routes, Route } from "react-router-dom";
+import { useLocation, Routes, Route } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import { checkOkToStart } from "../../networking/services/user.service";
@@ -12,10 +12,11 @@ import * as theme from "../../theme";
 import * as atoms from "../../atoms";
 
 const LoggedIn = () => {
-  const location = useLocation();
   console.log("--LoggedIn");
-  const navigate = useNavigate();
+
+  const location = useLocation();
   const user = useRecoilValue(atoms.user);
+  const setPage = useSetRecoilState(atoms.page);
   const setTurnCredentials = useSetRecoilState(atoms.turnCredentials);
   const { refreshUser } = networkingHooks.useUser();
 
@@ -40,7 +41,7 @@ const LoggedIn = () => {
           await getTurnCredentials();
         if (credsData) {
           setTurnCredentials(credsData);
-          navigate("/play");
+          setPage("game");
         } else {
           setErrorText(credsError);
           setTimeout(() => setErrorText(undefined), 5000);
@@ -50,7 +51,7 @@ const LoggedIn = () => {
         setTimeout(() => setErrorText(undefined), 5000);
       }
     }
-  }, [errorText, setErrorText, navigate, setTurnCredentials]);
+  }, [errorText, setErrorText, setTurnCredentials, setPage]);
 
   return (
     <Routes>

@@ -85,3 +85,8 @@ export const socket = atom<
   default: undefined,
   dangerouslyAllowMutability: true,
 });
+
+export const page = atom<"frontpage" | "game">({
+  key: "page",
+  default: "frontpage",
+});

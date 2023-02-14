@@ -1,6 +1,7 @@
 import { ChangeEvent, memo, useMemo, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { requestPasswordReset } from "../../networking/services/auth.service";
+import clsx from "clsx";
 
 import * as theme from "../../theme";
 import * as types from "../types";
@@ -73,9 +74,12 @@ const ForgottenPassword = () => {
             value={username}
             placeholder="username or email"
           />
-          <div className="flex justify-between gap-2 w-full">
+          <div className="flex justify-center gap-2 w-full">
             <button
-              className="h-8 border border-rose-900 text-rose-900 bg-transparent grow"
+              className={clsx(
+                theme.cButton,
+                "bg-transparent border-rose-900 text-rose-900"
+              )}
               onClick={onClickCancel}
               type="button"
             >
@@ -84,7 +88,7 @@ const ForgottenPassword = () => {
             <button
               disabled={validation.state === types.ValidationState.LOADING}
               type="submit"
-              className="h-8 border text-gray-50 bg-rose-900 grow"
+              className={theme.cButton}
             >
               Submit
             </button>

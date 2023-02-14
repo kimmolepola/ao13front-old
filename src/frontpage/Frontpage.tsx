@@ -1,5 +1,11 @@
 import { memo } from "react";
-import { Link, useLocation, Routes, Route } from "react-router-dom";
+import {
+  useLocation,
+  BrowserRouter,
+  Link,
+  Routes,
+  Route,
+} from "react-router-dom";
 import { useRecoilValue } from "recoil";
 
 import Login from "./components/Login";
@@ -34,6 +40,7 @@ const Frontpage = () => {
             AO13
           </Link>
         )}
+
         <Routes>
           <Route path="/resetpassword" element={<ResetPassword />} />
           <Route path="/forgottenpassword" element={<ForgottenPassword />} />
@@ -45,4 +52,12 @@ const Frontpage = () => {
   );
 };
 
-export default memo(Frontpage);
+const Container = () => (
+  <BrowserRouter>
+    <Routes>
+      <Route path="*" element={<Frontpage />} />
+    </Routes>
+  </BrowserRouter>
+);
+
+export default memo(Container);

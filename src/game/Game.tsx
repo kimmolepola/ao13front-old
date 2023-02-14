@@ -1,6 +1,5 @@
 import { useEffect, useRef, memo, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import * as networkingHooks from "../networking/hooks";
 
@@ -15,19 +14,19 @@ let initialized = false;
 const Game = () => {
   console.log("--Game");
 
-  const navigate = useNavigate();
   const objectsRef = useRef([]);
   const { connect, disconnect } = networkingHooks.useConnections(objectsRef);
 
   hooks.useControls(objectsRef);
 
+  const setPage = useSetRecoilState(atoms.page);
   const turnCredentials = useRecoilValue(atoms.turnCredentials);
 
   const quit = useCallback(async () => {
-    navigate("/");
+    setPage("frontpage");
     initialized = false;
     disconnect();
-  }, [navigate, disconnect]);
+  }, [setPage, disconnect]);
 
   useEffect(() => {
     console.log("--game useEffect, initialized:", initialized);
