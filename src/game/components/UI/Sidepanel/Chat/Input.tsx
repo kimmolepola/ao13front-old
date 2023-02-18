@@ -45,14 +45,12 @@ const Input = ({
             username:
               objectsRef.current?.find((xx) => xx.id === ownId)?.username || "",
           };
-          const chatMessageFromMain = {
-            type: types.NetDataType
-              .CHATMESSAGE_MAIN as types.NetDataType.CHATMESSAGE_MAIN,
+          sendOrderedFromMain({
+            type: types.NetDataType.CHATMESSAGE_MAIN,
             id: message.id,
             text: message.text,
             userId: message.userId,
-          };
-          sendOrderedFromMain(chatMessageFromMain);
+          });
           setChatMessages((x) => [message, ...x]);
           setTimeout(
             () => setChatMessages((x) => x.filter((xx) => xx !== message)),

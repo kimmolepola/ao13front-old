@@ -33,6 +33,7 @@ export const useReceiveOnClient = (
         break;
       }
       case types.NetDataType.CHATMESSAGE_MAIN: {
+        console.log("--CLIENT on receive chat:", data);
         const message = {
           ...data,
           username:
