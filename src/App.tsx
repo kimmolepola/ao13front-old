@@ -8,6 +8,7 @@ import * as frontpageHooks from "./frontpage/hooks";
 import * as atoms from "./atoms";
 
 const App = () => {
+  console.log("--address:", window.location);
   console.log("--App");
   const page = useRecoilValue(atoms.page);
   const { loadSavedUser } = frontpageHooks.useAuth();
