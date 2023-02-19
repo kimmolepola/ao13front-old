@@ -3,7 +3,6 @@ import {
   ChangeEvent,
   FocusEvent,
   memo,
-  RefObject,
   useCallback,
   useState,
 } from "react";
@@ -11,17 +10,14 @@ import { AiOutlineEnter } from "react-icons/ai";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import clsx from "clsx";
 
+import { objects } from "src/globals";
 import * as parameters from "src/parameters";
 import * as theme from "src/theme";
 import * as atoms from "src/atoms";
-import * as networkingHooks from "src/networking/hooks";
+import * as networkingHooks from "src/networking/hooks2";
 import * as types from "src/types";
 
-const Input = ({
-  objectsRef,
-}: {
-  objectsRef: RefObject<types.GameObject[]>;
-}) => {
+const Input = () => {
   console.log("--InputForm");
 
   const setChatMessages = useSetRecoilState(atoms.chatMessages);
@@ -42,8 +38,7 @@ const Input = ({
             id: ownId + Date.now().toString(),
             text: value,
             userId: ownId,
-            username:
-              objectsRef.current?.find((xx) => xx.id === ownId)?.username || "",
+            username: objects.find((xx) => xx.id === ownId)?.username || "",
           };
           sendOrderedFromMain({
             type: types.NetDataType.CHATMESSAGE_MAIN,
@@ -67,7 +62,6 @@ const Input = ({
     },
     [
       main,
-      objectsRef,
       ownId,
       sendOrderedFromClient,
       sendOrderedFromMain,

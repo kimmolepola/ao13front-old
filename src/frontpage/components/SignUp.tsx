@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import clsx from "clsx";
 
-import { signup } from "../../networking/services/auth.service";
+import { signup } from "src/networking/services/auth.service";
 
-import * as theme from "../../theme";
-import * as atoms from "../../atoms";
+import * as theme from "src/theme";
+import * as atoms from "src/atoms";
 import * as types from "../types";
 import * as hooks from "../hooks";
 

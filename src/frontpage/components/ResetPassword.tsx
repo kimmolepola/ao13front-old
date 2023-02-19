@@ -1,8 +1,8 @@
 import { ChangeEvent, memo, useMemo, useCallback, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { resetPassword } from "../../networking/services/auth.service";
+import { resetPassword } from "src/networking/services/auth.service";
 
-import * as theme from "../../theme";
+import * as theme from "src/theme";
 import * as types from "../types";
 import * as hooks from "../hooks";
 

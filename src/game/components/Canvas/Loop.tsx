@@ -1,20 +1,20 @@
-import { memo, RefObject } from "react";
+import { memo } from "react";
 import * as THREE from "three";
 import { useThree, useFrame } from "@react-three/fiber";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 
-import * as networkingHooks from "../../../networking/hooks";
-import { radiansToDegrees } from "../../../utils";
+import * as networkingHooks from "src/networking/hooks2";
+import { radiansToDegrees } from "src/utils";
 import {
   interpolationAlpha,
   sendIntervalClient,
   sendIntervalMain,
   maxSpeed,
   minSpeed,
-} from "../../../parameters";
-
-import * as atoms from "../../../atoms";
-import * as types from "../../../types";
+} from "src/parameters";
+import { objects } from "src/globals";
+import * as atoms from "src/atoms";
+import * as types from "src/types";
 
 const handleKeys = (delta: number, gameObject: types.GameObject) => {
   const o = gameObject;
@@ -154,11 +154,7 @@ const interpolatePosition = (o: types.GameObject, object3D: THREE.Object3D) => {
   object3D.quaternion.slerp(o.backendQuaternion, interpolationAlpha);
 };
 
-const Loop = ({
-  objectsRef,
-}: {
-  objectsRef: RefObject<types.GameObject[]>;
-}) => {
+const Loop = () => {
   console.log("--Loop");
 
   const main = useRecoilValue(atoms.main);
@@ -184,8 +180,8 @@ const Loop = ({
     if (main) {
       // main
       const updateData: { [id: string]: types.UpdateObject } = {};
-      for (let i = (objectsRef.current || []).length - 1; i > -1; i--) {
-        const o = objectsRef.current?.[i];
+      for (let i = objects.length - 1; i > -1; i--) {
+        const o = objects[i];
         if (o && o.object3D) {
           if (o.id === ownId) {
             handleKeys(delta, o);
@@ -216,8 +212,8 @@ const Loop = ({
       }
     } else {
       // client
-      for (let i = (objectsRef.current || []).length - 1; i > -1; i--) {
-        const o = objectsRef.current?.[i];
+      for (let i = objects.length - 1; i > -1; i--) {
+        const o = objects[i];
         if (o && o.object3D) {
           if (o.id === ownId) {
             handleKeys(delta, o);

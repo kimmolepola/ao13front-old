@@ -6,5 +6,5 @@ export const savePlayerDataInterval = 100000;
 export const sendIntervalClient = 50;
 export const sendIntervalMain = 51;
 export const sendIntervalMainState = 10000;
-export const interpolationAlpha = 0.01;
+export const interpolationAlpha = 0.05;
 export const chatMessageTimeToLive = 60000;

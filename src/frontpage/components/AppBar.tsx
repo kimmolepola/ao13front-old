@@ -2,9 +2,9 @@ import { memo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
 
-import { logout, setToken } from "../../networking/services/auth.service";
+import { logout, setToken } from "src/networking/services/auth.service";
 
-import * as atoms from "../../atoms";
+import * as atoms from "src/atoms";
 
 const AppBar = () => {
   console.log("--AppBar");

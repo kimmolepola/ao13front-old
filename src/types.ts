@@ -1,6 +1,13 @@
 import { RefObject } from "react";
 import * as THREE from "three";
 
+export type PeerConnection = {
+  remoteId: string;
+  peerConnection: RTCPeerConnection;
+  orderedChannel: RTCDataChannel;
+  unorderedChannel: RTCDataChannel;
+};
+
 export type PeerConnectionsDictionary = {
   [id: string]: {
     peerConnection: RTCPeerConnection;

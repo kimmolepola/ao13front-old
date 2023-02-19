@@ -3,10 +3,10 @@ import { useNavigate, Link } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import clsx from "clsx";
 
-import { setToken, login } from "../../networking/services/auth.service";
+import { setToken, login } from "src/networking/services/auth.service";
 
-import * as theme from "../../theme";
-import * as atoms from "../../atoms";
+import * as theme from "src/theme";
+import * as atoms from "src/atoms";
 import * as types from "../types";
 import * as hooks from "../hooks";
 

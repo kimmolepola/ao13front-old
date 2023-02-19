@@ -2,14 +2,14 @@ import { memo, useCallback, useEffect, useState } from "react";
 import { useLocation, Routes, Route } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
-import { checkOkToStart } from "../../networking/services/user.service";
-import { getTurnCredentials } from "../../networking/services/auth.service";
-import * as networkingHooks from "../../networking/hooks";
+import { checkOkToStart } from "src/networking/services/user.service";
+import { getTurnCredentials } from "src/networking/services/auth.service";
+import * as networkingHooks from "src/networking/hooks3";
 
 import Settings from "./Settings";
 
-import * as theme from "../../theme";
-import * as atoms from "../../atoms";
+import * as theme from "src/theme";
+import * as atoms from "src/atoms";
 
 const LoggedIn = () => {
   console.log("--LoggedIn");

@@ -17,7 +17,7 @@ const Chat = () => {
             key={x.id}
             className={clsx(
               "flex gap-1 p-0.5",
-              x.userId !== ownId ? "bg-amber-300" : "bg-stone-300"
+              x.userId === ownId ? "bg-amber-300" : "bg-stone-300"
             )}
           >
             <div className="grow text-xs">

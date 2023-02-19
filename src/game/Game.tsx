@@ -1,7 +1,7 @@
-import { useEffect, useRef, memo, useCallback } from "react";
+import { useEffect, memo, useCallback } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
-import * as networkingHooks from "../networking/hooks";
+import * as networkingHooks from "../networking/hooks2";
 
 import Canvas from "./components/Canvas";
 import UserInterface from "./components/UI";
@@ -14,10 +14,8 @@ let initialized = false;
 const Game = () => {
   console.log("--Game");
 
-  const objectsRef = useRef([]);
-  const { connect, disconnect } = networkingHooks.useConnections(objectsRef);
-
-  hooks.useControls(objectsRef);
+  const { connect, disconnect } = networkingHooks.useConnection();
+  hooks.useControls();
 
   const setPage = useSetRecoilState(atoms.page);
   const turnCredentials = useRecoilValue(atoms.turnCredentials);
@@ -42,8 +40,8 @@ const Game = () => {
 
   return (
     <>
-      <Canvas objectsRef={objectsRef} />
-      <UserInterface quit={quit} objectsRef={objectsRef} />
+      <Canvas />
+      <UserInterface quit={quit} />
     </>
   );
 };

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { backendUrl } from "src/config";
-import * as types from "../../types";
+import * as types from "src/types";
 
 // eslint-disable-next-line import/prefer-default-export
 export const getGameObject = async (id: any) => {

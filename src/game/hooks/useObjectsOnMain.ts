@@ -6,7 +6,7 @@ import {
   savePlayerData,
   getGameObject,
 } from "../../networking/services/gameObject.service";
-import * as networkingHooks from "../../networking/hooks";
+import * as networkingHooks from "../../networking/hooks3";
 
 import * as parameters from "../../parameters";
 import * as atoms from "../../atoms";

@@ -1,4 +1,4 @@
-import { memo, Suspense, RefObject } from "react";
+import { memo, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 // eslint-disable-next-line
 import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from 'recoil';
@@ -6,13 +6,7 @@ import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from 'recoil';
 import Loop from "./Loop";
 import Objects from "./Objects";
 
-import * as types from "../../../types";
-
-const CanvasContainer = ({
-  objectsRef,
-}: {
-  objectsRef: RefObject<types.GameObject[]>;
-}) => {
+const CanvasContainer = () => {
   console.log("--CanvasContainer");
 
   const RecoilBridge = useRecoilBridgeAcrossReactRoots_UNSTABLE();
@@ -29,9 +23,9 @@ const CanvasContainer = ({
       >
         <RecoilBridge>
           <color attach="background" args={["bisque"]} />
-          <Loop objectsRef={objectsRef} />
+          <Loop />
           <Suspense fallback={null}>
-            <Objects objectsRef={objectsRef} />
+            <Objects />
           </Suspense>
         </RecoilBridge>
       </Canvas>

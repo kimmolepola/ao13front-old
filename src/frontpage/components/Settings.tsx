@@ -2,10 +2,10 @@ import { ChangeEvent, memo, useMemo, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 
-import { updateUsername } from "../../networking/services/user.service";
+import { updateUsername } from "src/networking/services/user.service";
 
-import * as theme from "../../theme";
-import * as atoms from "../../atoms";
+import * as theme from "src/theme";
+import * as atoms from "src/atoms";
 import * as types from "../types";
 import * as hooks from "../hooks";
 

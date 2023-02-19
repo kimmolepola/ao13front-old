@@ -28,7 +28,11 @@
       "typescript": {}
     }
   },
+  "globals": {
+    "JSX": "readonly"
+  },
   "rules": {
+    "prefer-template": "off",
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn"

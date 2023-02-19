@@ -1,4 +1,4 @@
-import { useEffect, useCallback, RefObject } from "react";
+import { useEffect, useCallback } from "react";
 import { useRecoilValue } from "recoil";
 
 import { handlePressed, handleReleased } from "../controls";
@@ -21,7 +21,7 @@ const convertKeyToControl = (key: string) => {
   }
 };
 
-export const useControls = (objectsRef: RefObject<types.GameObject[]>) => {
+export const useControls = () => {
   console.log("--useControls");
 
   const ownId = useRecoilValue(atoms.ownId);
@@ -30,17 +30,17 @@ export const useControls = (objectsRef: RefObject<types.GameObject[]>) => {
     (e: any) => {
       if (e.repeat) return;
       const control = convertKeyToControl(e.code);
-      if (control && ownId) handlePressed(control, ownId, objectsRef);
+      if (control && ownId) handlePressed(control, ownId);
     },
-    [objectsRef, ownId]
+    [ownId]
   );
 
   const handleKeyUp = useCallback(
     (e: any) => {
       const control = convertKeyToControl(e.code);
-      if (control && ownId) handleReleased(control, ownId, objectsRef);
+      if (control && ownId) handleReleased(control, ownId);
     },
-    [objectsRef, ownId]
+    [ownId]
   );
 
   useEffect(() => {

@@ -32,6 +32,11 @@ export const objectIds = atom<string[]>({
   default: [],
 });
 
+export const connectedAmount = atom<number>({
+  key: "connectedAmount",
+  default: 0,
+});
+
 export const connectedIdsOnMain = atom<string[]>({
   key: "connectedIds",
   default: [],

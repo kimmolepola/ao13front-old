@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { useSetRecoilState } from "recoil";
-import { setToken } from "../../networking/services/auth.service";
+import { setToken } from "src/networking/services/auth.service";
 
-import * as atoms from "../../atoms";
+import * as atoms from "src/atoms";
 
 export const useAuth = () => {
   console.log("--useAuth");

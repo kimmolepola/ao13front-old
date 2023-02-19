@@ -15,14 +15,17 @@ export const useSendFromMain = () => {
   const sendOrdered = useCallback(
     (data: types.State | types.ChatMessageFromMain) => {
       console.log("--MAIN send ordered:", data);
-      const dataString = JSON.stringify(data);
-      orderedChannels.forEach((x) => {
-        try {
+      try {
+        const dataString = JSON.stringify(data);
+        console.log("--MAIN dataString:", dataString);
+        console.log("--MAIN ordered channgels:", orderedChannels);
+        orderedChannels.forEach((x) => {
+          console.log("--MAIN send:", x, dataString);
           x.channel.send(dataString);
-        } catch (error) {
-          logError(error, data);
-        }
-      });
+        });
+      } catch (error) {
+        logError(error, data);
+      }
     },
     [orderedChannels]
   );

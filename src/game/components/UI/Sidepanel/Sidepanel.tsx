@@ -1,21 +1,15 @@
-import { memo, useCallback, RefObject } from "react";
+import { memo, useCallback } from "react";
 import { useRecoilValue } from "recoil";
 
 import Chat from "./Chat";
-import * as atoms from "../../../../atoms";
-import * as types from "../../../../types";
+import * as atoms from "src/atoms";
 
-const Sidepanel = ({
-  quit,
-  objectsRef,
-}: {
-  quit: Function;
-  objectsRef: RefObject<types.GameObject[]>;
-}) => {
+const Sidepanel = ({ quit }: { quit: () => void }) => {
   console.log("--Sidepanel");
 
+  const user = useRecoilValue(atoms.user);
   const main = useRecoilValue(atoms.main);
-  const connectedIdsOnMain = useRecoilValue(atoms.connectedIdsOnMain);
+  const connectedAmount = useRecoilValue(atoms.connectedAmount);
   const connectionMessage = useRecoilValue(atoms.connectionMessage);
   const score = useRecoilValue(atoms.score);
 
@@ -39,13 +33,14 @@ const Sidepanel = ({
           </button>
         </div>
         <div className="flex gap-1 flex-wrap text-xs p-0.5 border">
-          {main && <div>You are the game host |</div>}
-          {main && <div>{`Players: ${connectedIdsOnMain.length} |`}</div>}
+          {"hello" + Boolean(main)}
+          <div>{user?.username} |</div>
+          {main && <div>{`Players: ${connectedAmount + 1} |`}</div>}
           <div>{`${connectionMessage} |`}</div>
           <div>{`Score: ${score}`}</div>
         </div>
       </div>
-      <Chat objectsRef={objectsRef} />
+      <Chat />
     </div>
   );
 };
