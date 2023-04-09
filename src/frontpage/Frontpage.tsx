@@ -24,10 +24,10 @@ const Frontpage = () => {
   const location = useLocation();
 
   return (
-    <>
+    <div className="h-full flex flex-col bg-blue-200">
       {Boolean(user) && <AppBar />}
       <div
-        className={`flex flex-col items-center absolute inset-0 bg-rose-50 text-zinc-800 gap-4 ${
+        className={`grow flex flex-col items-center bg-rose-50 text-zinc-800 gap-4 ${
           user ? "pt-12 top-12" : "pt-24"
         }`}
       >
@@ -48,7 +48,7 @@ const Frontpage = () => {
           <Route path="*" element={!user ? <Login /> : <LoggedIn />} />
         </Routes>
       </div>
-    </>
+    </div>
   );
 };
 

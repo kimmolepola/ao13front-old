@@ -5,6 +5,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: Arial, Helvetica, sans-serif;
+  height: 100%;
+}
+.root {
+  height: 100%;
 }
 @import "tailwindcss/base";
 @import "tailwindcss/components";
